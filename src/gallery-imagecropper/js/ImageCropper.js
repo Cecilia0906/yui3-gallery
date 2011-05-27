@@ -31,6 +31,24 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
+	_moveResizeKnob: function (e) {
+		var tick = e.shiftKey ? this.get('shiftKeyTick') : this.get('keyTick');
+		if (e.direction == 'n' || e.direction == 'w') {
+			tick *= -1;
+		}
+		switch (e.direction) {
+			case 'n':
+			case 's':
+				e.target.setY(e.target.getY() + tick);
+				break;
+			case 'e':
+			case 'w':
+				e.target.setX(e.target.getX() + tick);
+				break;
+		}
+		this._syncResizeMask();
+	},
+	
 	_defCropMaskValueFn: function () {
 		return Y.Node.create(ImageCropper.CROP_MASK_TEMPLATE);
 	},
@@ -86,10 +104,10 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		this.get('resizeMask').setStyle('backgroundPosition', (-resizeKnob.get('offsetLeft')) + 'px ' + (-resizeKnob.get('offsetTop')) + 'px');
 	},
 	
-	_syncCropMask: function (contentBox) {
+	_syncCropMask: function (e) {
 		this.get('cropMask').setStyles({
-			width: contentBox.get('width'),
-			height: contentBox.get('height')
+			width: e.target.get('width'),
+			height: e.target.get('height')
 		});
 	},
 	
@@ -108,12 +126,40 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		}, this);
 	},
 	
+	_bindResize: function (resizeKnob, contentBox) {
+		var resize = this._resize = new Y.Resize({
+			node: resizeKnob
+		});
+		resize.on('resize:resize', this._syncResizeMask, this);
+		resize.plug(Y.Plugin.ResizeConstrained, {
+			constrain: contentBox,
+			minHeight: this.get('minHeight'),
+			minWidth: this.get('minWidth'),
+			preserveRatio: this.get('preserveRatio')
+		});
+		YArray.each(ImageCropper.RESIZE_EVENTS, Y.bind(this._icEventProxy, this, resize, 'resize'));
+	},
+	
+	_bindDrag: function (resizeKnob, contentBox) {
+		var drag = this._drag = new Y.DD.Drag({
+			node: resizeKnob,
+			handles: [this.get('resizeMask')]
+		});
+		drag.on('drag:drag', this._syncResizeMask, this);
+		drag.plug(Y.Plugin.DDConstrained, {
+			constrain2node: contentBox
+		});
+		YArray.each(ImageCropper.DRAG_EVENTS, Y.bind(this._icEventProxy, this, drag, 'drag'));
+	},
+	
 	initializer: function () {
 		this.set('initialXY', this.get('initialXY') || [10, 10]);
 		this.set('initWidth', this.get('initWidth'));
 		this.set('initHeight', this.get('initHeight'));
 
 		this.after('srcChange', this._handleSrcChange);
+		
+		this._icHandlers = [];
 		
 		YArray.each(ImageCropper.RESIZE_ATTRS, function (attr) {
 			this.after(attr + 'Change', this._syncResizeAttr);
@@ -131,53 +177,39 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	bindUI: function () {
 		
 		var contentBox = this.get('contentBox'),
-			resizeKnob = this.get('resizeKnob'),
-			self = this,
-			resize,
-			drag,
-			syncResizeMask = Y.bind(this._syncResizeMask, this);
+			resizeKnob = this.get('resizeKnob');
 			
-		contentBox.on('load', Y.bind(this._syncCropMask, this, contentBox));
+		this._icHandlers.push(
+			contentBox.on('load', this._syncCropMask, this),
+			resizeKnob.on('focus', this._attachKeyBehavior, this),
+			resizeKnob.on('blur', this._detachKeyBehavior, this),
+			resizeKnob.on('arrow', this._moveResizeKnob, this)
+		);
 		
-		resize = this._resize = new Y.Resize({
-			node: resizeKnob,
-			on: {
-				'resize:resize': syncResizeMask
-			}
-		});
-		resize.plug(Y.Plugin.ResizeConstrained, {
-			constrain: contentBox,
-			minHeight: this.get('minHeight'),
-			minWidth: this.get('minWidth'),
-			preserveRatio: this.get('preserveRatio')
-		});
-		YArray.each(ImageCropper.RESIZE_EVENTS, Y.bind(this._icEventProxy, this, resize, 'resize'));
-		
-		drag = this._drag = new Y.DD.Drag({
-			node: resizeKnob,
-			handles: [this.get('resizeMask')],
-			on: {
-				'drag:drag': syncResizeMask
-			}
-		});
-		drag.plug(Y.Plugin.DDConstrained, {
-			constrain2node: contentBox
-		});
-		YArray.each(ImageCropper.DRAG_EVENTS, Y.bind(this._icEventProxy, this, drag, 'drag'));
-		
+		this._bindResize(resizeKnob, contentBox);
+		this._bindDrag(resizeKnob, contentBox);
 	},
 	
 	syncUI: function () {
 		var contentBox = this.get('contentBox').set('src', this.get('src'));
 		
-		this._syncCropMask(contentBox);
+		this._syncCropMask({
+			target: contentBox
+		});
 		this._syncResizeKnob();
 		this._syncResizeMask();
 	},
 	
 	destructor: function () {
-		this._resize.destroy();
-		this._drag.destroy();
+		if (this._resize) {
+			this._resize.destroy();
+		}
+		if (this._drag) {
+			this._drag.destroy();
+		}
+		YArray.each(this._icHandlers, function (handler) {
+			handler.detach();
+		});
 		
 		this._drag = this._resize = null;
 	}
