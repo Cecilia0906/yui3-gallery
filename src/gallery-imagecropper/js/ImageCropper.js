@@ -34,20 +34,36 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	_moveResizeKnob: function (e) {
 		e.preventDefault(); // prevent scroll in Firefox
 		
-		var tick = e.shiftKey ? this.get('shiftKeyTick') : this.get('keyTick');
-		if (e.direction == 'n' || e.direction == 'w') {
-			tick *= -1;
+		var resizeKnob = e.target,
+			contentBox = this.get('contentBox'),
+			contentX = contentBox.getX(),
+			contentY = contentBox.getY(),
+			contentWidth = contentBox.get('offsetWidth'),
+			contentHeight = contentBox.get('offsetHeight'),
+			knobWidth = resizeKnob.get('offsetWidth'),
+			knobHeight = resizeKnob.get('offsetHeight'),
+		
+			tick = e.shiftKey ? this.get('shiftKeyTick') : this.get('keyTick'),
+			direction = e.direction,
+			
+			tickH = direction.indexOf('w') > -1 ? -tick : direction.indexOf('e') > -1 ? tick : 0,
+			tickV = direction.indexOf('n') > -1 ? -tick : direction.indexOf('s') > -1 ? tick : 0,
+			
+			x = resizeKnob.getX() + tickH,
+			y = resizeKnob.getY() + tickV;
+			
+		if (x < contentX) {
+			x = contentX;
+		} else if (x + knobWidth > contentX + contentWidth) {
+			x = contentX + contentWidth - knobWidth;
 		}
-		switch (e.direction) {
-			case 'n':
-			case 's':
-				e.target.setY(e.target.getY() + tick);
-				break;
-			case 'e':
-			case 'w':
-				e.target.setX(e.target.getX() + tick);
-				break;
+		if (y < contentY) {
+			y = contentY;
+		} else if (y + knobHeight > contentY + contentHeight) {
+			y = contentY + contentHeight - knobHeight;
 		}
+		resizeKnob.setXY([x, y]);
+		
 		this._syncResizeMask();
 	},
 	
@@ -75,6 +91,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		if (!node.inDoc()) {
 			boundingBox.append(node);
 		}
+		node.setStyle('backgroundImage', 'url(' + this.get('src') + ')');
 	},
 
 	_renderResizeMask: function () {
@@ -82,7 +99,6 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		if (!node.inDoc()) {
 			this.get('resizeKnob').append(node);
 		}
-		node.setStyle('backgroundImage', 'url(' + this.get('src') + ')');
 	},
 
 	_handleSrcChange: function (e) {
@@ -103,7 +119,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	_syncResizeMask: function () {
 		var resizeKnob = this.get('resizeKnob');
-		this.get('resizeMask').setStyle('backgroundPosition', (-resizeKnob.get('offsetLeft')) + 'px ' + (-resizeKnob.get('offsetTop')) + 'px');
+		resizeKnob.setStyle('backgroundPosition', (-resizeKnob.get('offsetLeft')) + 'px ' + (-resizeKnob.get('offsetTop')) + 'px');
 	},
 	
 	_syncCropMask: function (e) {
