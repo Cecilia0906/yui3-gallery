@@ -16,9 +16,13 @@ YUI({
 	}
 }).use('yql', 'gallery-imagecropper', function (Y) {
 	
-	Y.YQL('select * from flickr.photos.interestingness limit 1', function (response) {
+	Y.random = function (limit) {
+		return Math.floor(Math.random() * limit);
+	};
+	
+	Y.YQL('select * from flickr.photos.interestingness limit 10', function (response) {
 		
-		var photo = response.query.results.photo;
+		var photo = response.query.results.photo[Y.random(10)];
 	
 		var img = Y.Node.create('<img src="http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '.jpg"/>')
 					.appendTo(document.body);
