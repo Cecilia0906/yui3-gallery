@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>ImageCropper test</title>
+	<link rel="stylesheet" href="https://github.com/juandopazo/yui3-gallery/raw/imagecropper/src/gallery-imagecropper/css/gallery-imagecropper.css">
 </head>
 <body>
 	<script src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js&3.3.0/build/loader/loader-min.js"></script>
@@ -15,7 +16,19 @@ YUI({
 	}
 }).use('yql', 'gallery-imagecropper', function (Y) {
 	
+	Y.YQL('select * from flickr.photos.interestingness limit 1', function (response) {
+		
+		var photo = response.query.results.photo;
 	
+		var img = Y.Node.create('<img src="http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '.jpg"/>')
+					.appendTo(document.body);
+		
+		var imagecropper = new Y.ImageCropper({
+			srcNode: img
+		});
+		imagecropper.render();
+		
+	});
 	
 });
 	</script>
