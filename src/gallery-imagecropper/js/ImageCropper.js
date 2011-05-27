@@ -32,6 +32,8 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	CONTENT_TEMPLATE: '<img/>',
 	
 	_moveResizeKnob: function (e) {
+		e.preventDefault(); // prevent scroll in Firefox
+		
 		var tick = e.shiftKey ? this.get('shiftKeyTick') : this.get('keyTick');
 		if (e.direction == 'n' || e.direction == 'w') {
 			tick *= -1;
