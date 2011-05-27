@@ -7,6 +7,10 @@
 	position: absolute;
 }
 
+.yui3-imagecropper-resize-knob {
+	border: 1px dashed #fff;
+}
+
 .yui3-imagecropper-mask {
 	top: 0;
 	left: 0;

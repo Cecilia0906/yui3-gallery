@@ -6,6 +6,7 @@
  */
 
 var Lang = Y.Lang,
+	isNumber = Lang.isNumber,
 	getClassName = Y.ClassNameManager.getClassName,
 	IMAGE_CROPPER = 'imagecropper',
 	RESIZE = 'resize',
@@ -161,12 +162,14 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	destructor: function () {
 		this._resize.destroy();
 		this._drag.destroy();
+		
+		this._drag = this._resize = null;
 	}
 	
 }, {
 	
 	CROP_MASK_TEMPLATE: '<div class="' + _classNames.cropMask + '"></div>',
-	RESIZE_KNOB_TEMPLATE: '<div class="' + _classNames.resizeKnob + '"></div>',
+	RESIZE_KNOB_TEMPLATE: '<div class="' + _classNames.resizeKnob + '" tabindex="0"></div>',
 	RESIZE_MASK_TEMPLATE: '<div class="' + _classNames.resizeMask + '"></div>',
 	
 	HTML_PARSER: {
@@ -229,12 +232,12 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		keyTick: {
 			value: 1,
-			validator: Lang.isNumber
+			validator: isNumber
 		},
 		
 		shiftKeyTick: {
 			value: 10,
-			validator: Lang.isNumber
+			validator: isNumber
 		},
 		
 		useKeys: {
@@ -249,12 +252,12 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		minHeight: {
 			value: 50,
-			validator: Lang.isNumber
+			validator: isNumber
 		},
 		
 		minWidth: {
 			value: 50,
-			validator: Lang.isNumber
+			validator: isNumber
 		},
 		
 		preserveRatio: {
@@ -264,7 +267,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		initHeight: {
 			value: 0,
-			validator: Lang.isNumber,
+			validator: isNumber,
 			setter: function (value) {
 				var minHeight = this.get('minHeight');
 				return value < minHeight ? minHeight : value;
@@ -273,7 +276,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		initWidth: {
 			value: 0,
-			validator: Lang.isNumber,
+			validator: isNumber,
 			setter: function (value) {
 				var minWidth = this.get('minWidth');
 				return value < minWidth ? minWidth : value;
