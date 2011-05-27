@@ -124,6 +124,8 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			resize,
 			drag,
 			syncResizeMask = Y.bind(this._syncResizeMask, this);
+			
+		contentBox.on('load', Y.bind(this._syncCropMask, this, contentBox));
 		
 		resize = this._resize = new Y.Resize({
 			node: resizeKnob,
