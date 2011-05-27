@@ -12,7 +12,7 @@ var Lang = Y.Lang,
 	MASK = 'mask',
 	KNOB = 'knob',
 	
-    _classNames = {
+	_classNames = {
 		cropMask: getClassName(IMAGE_CROPPER, MASK),
 		resizeKnob: getClassName(IMAGE_CROPPER, RESIZE, KNOB),
 		resizeMask: getClassName(IMAGE_CROPPER, RESIZE, MASK)
@@ -29,39 +29,39 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
-    _defCropMaskValueFn: function () {
-        return Y.Node.create(ImageCropper.CROP_MASK_TEMPLATE);
-    },
+	_defCropMaskValueFn: function () {
+		return Y.Node.create(ImageCropper.CROP_MASK_TEMPLATE);
+	},
 
-    _defResizeKnobValueFn: function () {
-        return Y.Node.create(ImageCropper.RESIZE_KNOB_TEMPLATE);
-    },
+	_defResizeKnobValueFn: function () {
+		return Y.Node.create(ImageCropper.RESIZE_KNOB_TEMPLATE);
+	},
 
-    _defResizeMaskValueFn: function () {
-        return Y.Node.create(ImageCropper.RESIZE_MASK_TEMPLATE);
-    },
+	_defResizeMaskValueFn: function () {
+		return Y.Node.create(ImageCropper.RESIZE_MASK_TEMPLATE);
+	},
 
-    _renderCropMask: function (boundingBox) {
-        var node = this.get('cropMask');
-        if (!node.inDoc()) {
-            boundingBox.append(node);
-        }
-    },
+	_renderCropMask: function (boundingBox) {
+		var node = this.get('cropMask');
+		if (!node.inDoc()) {
+			boundingBox.append(node);
+		}
+	},
 
-    _renderResizeKnob: function (boundingBox) {
-        var node = this.get('resizeKnob');
-        if (!node.inDoc()) {
-            boundingBox.append(node);
-        }
-    },
+	_renderResizeKnob: function (boundingBox) {
+		var node = this.get('resizeKnob');
+		if (!node.inDoc()) {
+			boundingBox.append(node);
+		}
+	},
 
-    _renderResizeMask: function () {
-        var node = this.get('resizeMask');
-        if (!node.inDoc()) {
-            this.get('resizeKnob').append(node);
-        }
-        node.setStyle('backgroundImage', 'url(' + this.get('src') + ')');
-    },
+	_renderResizeMask: function () {
+		var node = this.get('resizeMask');
+		if (!node.inDoc()) {
+			this.get('resizeKnob').append(node);
+		}
+		node.setStyle('backgroundImage', 'url(' + this.get('src') + ')');
+	},
 
 	_handleSrcChange: function (e) {
 		this.get('contentBox').set('src', e.newVal);
@@ -189,38 +189,38 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		resizeMask: {
 			setter: function (node) {
-                node = Y.one(node);
-                if (node) {
-                    node.addClass(_classNames.resizeMask);
-                }
-                return node;
-            },
+				node = Y.one(node);
+				if (node) {
+					node.addClass(_classNames.resizeMask);
+				}
+				return node;
+			},
 
-            valueFn: '_defResizeMaskValueFn'
+			valueFn: '_defResizeMaskValueFn'
 		},
 		
 		resizeKnob: {
 			setter: function (node) {
-                node = Y.one(node);
-                if (node) {
-                    node.addClass(_classNames.resizeKnob);
-                }
-                return node;
-            },
+				node = Y.one(node);
+				if (node) {
+					node.addClass(_classNames.resizeKnob);
+				}
+				return node;
+			},
 
-            valueFn: '_defResizeKnobValueFn'
+			valueFn: '_defResizeKnobValueFn'
 		},
 		
 		cropMask: {
 			setter: function (node) {
-                node = Y.one(node);
-                if (node) {
-                    node.addClass(_classNames.cropMask);
-                }
-                return node;
-            },
+				node = Y.one(node);
+				if (node) {
+					node.addClass(_classNames.cropMask);
+				}
+				return node;
+			},
 
-            valueFn: '_defCropMaskValueFn'
+			valueFn: '_defCropMaskValueFn'
 		},
 		
 		initialXY: {
