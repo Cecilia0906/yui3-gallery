@@ -7,6 +7,7 @@
 
 var Lang = Y.Lang,
 	isNumber = Lang.isNumber,
+	YArray = Y.Array,
 	getClassName = Y.ClassNameManager.getClassName,
 	IMAGE_CROPPER = 'imagecropper',
 	RESIZE = 'resize',
@@ -98,15 +99,25 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		}
 	},
 	
+	_icEventProxy: function (target, ns, eventType) {
+		eventType = ns + ':' + eventType;
+		target.on(eventType, function (e) {
+			var o = {};
+			o[ns + 'Event'] = e;
+			this.fire(eventType, o);
+		}, this);
+	},
+	
 	initializer: function () {
 		this.set('initialXY', this.get('initialXY') || [10, 10]);
 		this.set('initWidth', this.get('initWidth'));
 		this.set('initHeight', this.get('initHeight'));
 
 		this.after('srcChange', this._handleSrcChange);
-		this.after('minWidthChange', this._syncResizeAttr);
-		this.after('minHeightChange', this._syncResizeAttr);
-		this.after('preserveRatioChange', this._syncResizeAttr);
+		
+		YArray.each(ImageCropper.RESIZE_ATTRS, function (attr) {
+			this.after(attr + 'Change', this._syncResizeAttr);
+		}, this);
 	},
 	
 	renderUI: function () {
@@ -121,6 +132,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		var contentBox = this.get('contentBox'),
 			resizeKnob = this.get('resizeKnob'),
+			self = this,
 			resize,
 			drag,
 			syncResizeMask = Y.bind(this._syncResizeMask, this);
@@ -139,6 +151,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			minWidth: this.get('minWidth'),
 			preserveRatio: this.get('preserveRatio')
 		});
+		YArray.each(ImageCropper.RESIZE_EVENTS, Y.bind(this._icEventProxy, this, resize, 'resize'));
 		
 		drag = this._drag = new Y.DD.Drag({
 			node: resizeKnob,
@@ -150,6 +163,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		drag.plug(Y.Plugin.DDConstrained, {
 			constrain2node: contentBox
 		});
+		YArray.each(ImageCropper.DRAG_EVENTS, Y.bind(this._icEventProxy, this, drag, 'drag'));
 		
 	},
 	
@@ -173,6 +187,10 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	CROP_MASK_TEMPLATE: '<div class="' + _classNames.cropMask + '"></div>',
 	RESIZE_KNOB_TEMPLATE: '<div class="' + _classNames.resizeKnob + '" tabindex="0"></div>',
 	RESIZE_MASK_TEMPLATE: '<div class="' + _classNames.resizeMask + '"></div>',
+	
+	RESIZE_EVENTS: ['start', 'resize', 'end'],
+	RESIZE_ATTRS: ['minWidth', 'minHeight', 'preserveRatio'],
+	DRAG_EVENTS: ['start', 'drag', 'end'],
 	
 	HTML_PARSER: {
 		
