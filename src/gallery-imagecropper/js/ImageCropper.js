@@ -91,7 +91,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		if (!node.inDoc()) {
 			boundingBox.append(node);
 		}
-		node.setStyle('backgroundImage', 'url(' + this.get('image') + ')');
+		node.setStyle('backgroundImage', 'url(' + this.get('source') + ')');
 	},
 
 	_renderResizeMask: function () {
@@ -120,13 +120,6 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	_syncResizeMask: function () {
 		var resizeKnob = this.get('resizeKnob');
 		resizeKnob.setStyle('backgroundPosition', (-resizeKnob.get('offsetLeft')) + 'px ' + (-resizeKnob.get('offsetTop')) + 'px');
-	},
-	
-	_syncCropMask: function (e) {
-		this.get('cropMask').setStyles({
-			width: e.target.get('width'),
-			height: e.target.get('height')
-		});
 	},
 	
 	_syncResizeAttr: function (e) {
@@ -198,7 +191,6 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			resizeKnob = this.get('resizeKnob');
 			
 		this._icHandlers.push(
-			contentBox.on('load', this._syncCropMask, this),
 			resizeKnob.on('focus', this._attachKeyBehavior, this),
 			resizeKnob.on('blur', this._detachKeyBehavior, this),
 			resizeKnob.on('arrow', this._moveResizeKnob, this)
@@ -209,11 +201,8 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	syncUI: function () {
-		var contentBox = this.get('contentBox').set('src', this.get('image'));
+		var contentBox = this.get('contentBox').set('src', this.get('source'));
 		
-		this._syncCropMask({
-			target: contentBox
-		});
 		this._syncResizeKnob();
 		this._syncResizeMask();
 	},
@@ -244,7 +233,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	HTML_PARSER: {
 		
-		image: function (srcNode) {
+		source: function (srcNode) {
 			return srcNode.get('src');
 		},
 		
@@ -256,7 +245,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	ATTRS: {
 		
-		image: {
+		source: {
 			value: ''
 		},
 		

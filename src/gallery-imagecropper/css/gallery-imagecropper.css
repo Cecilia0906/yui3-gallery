@@ -7,7 +7,9 @@
 	position: absolute;
 }
 
-.yui3-imagecropper-resize-knob {
+.yui3-imagecropper-mask, .yui3-imagecropper-resize-mask {
+	width: 100%;
+	height: 100%;
 }
 
 .yui3-imagecropper-mask {
@@ -19,8 +21,6 @@
 }
 
 .yui3-imagecropper-resize-mask {
-	width: 100%;
-	height: 100%;
 	cursor: move;
 	border: 1px dashed #fff;
 }
