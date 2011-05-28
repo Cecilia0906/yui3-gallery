@@ -1,7 +1,7 @@
 
 /**
  * @description <p>Creates a Image Cropper control.</p>
- * @requires base, widget, resize
+ * @requires widget, resize, gallery-event-arrow
  * @module imagecropper
  */
 
@@ -27,10 +27,31 @@ var Lang = Y.Lang,
  * @extends Widget
  * @param {Object} config Object liternal containing configuration parameters.
 */
+/**
+ * The identity of the widget.
+ *
+ * @property ImageCropper.NAME
+ * @type String
+ * @default 'imagecropper'
+ * @readOnly
+ * @protected
+ * @static
+ */
 ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
+	_toggleKeys: function (e) {
+		if (e.newVal) {
+			this._bindArrows();
+		} else {
+			this._unbindArrows();
+		}
+	},
+	
+	/**
+	 * 
+	 */
 	_moveResizeKnob: function (e) {
 		e.preventDefault(); // prevent scroll in Firefox
 		
@@ -135,12 +156,10 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		target.on(sourceEvent, function (e) {
 			
 			var o = {
-				coords: {
-					width: resizeKnob.get('offsetWidth'),
-					height: resizeKnob.get('offsetHeight'),
-					left: resizeKnob.get('offsetLeft'),
-					top: resizeKnob.get('offsetTop')
-				}
+				width: resizeKnob.get('offsetWidth'),
+				height: resizeKnob.get('offsetHeight'),
+				left: resizeKnob.get('offsetLeft'),
+				top: resizeKnob.get('offsetTop')
 			};
 			o[ns + 'Event'] = e;
 			
@@ -148,10 +167,56 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			
 			o.sourceEvent = sourceEvent;
 			
-			// instead of firing crop:drag and crop:resize, fire crop:crop to have a unified event for all changes in the crop area
+			/**
+			* @event crop:start
+			* @description Fires at the start of a crop operation. Unifies drag:start and and resize:start.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>left</dt><dd>The current X position of the crop area relative to the base image.</dd>
+			* <dt>top</dt><dd>The current Y position of the crop area relative to the base image.</dd>
+			* <dt>width</dt><dd>The new width of the crop area.</dd>
+			* <dt>height</dt><dd>The new height of the crop area.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event crop:crop
+			* @description Fires every time the crop area changes. Unifies drag:drag and resize:resize.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>left</dt><dd>The current X position of the crop area relative to the base image.</dd>
+			* <dt>top</dt><dd>The current Y position of the crop area relative to the base image.</dd>
+			* <dt>width</dt><dd>The new width of the crop area.</dd>
+			* <dt>height</dt><dd>The new height of the crop area.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event crop:end
+			* @description Fires at the end of a crop operation. Unifies drag:end and resize:end.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>left</dt><dd>The current X position of the crop area relative to the base image.</dd>
+			* <dt>top</dt><dd>The current Y position of the crop area relative to the base image.</dd>
+			* <dt>width</dt><dd>The new width of the crop area.</dd>
+			* <dt>height</dt><dd>The new height of the crop area.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
 			this.fire('crop:' + (eventType == ns ? 'crop' : eventType), o);
 			
 		}, this);
+	},
+	
+	_bindArrows: function () {
+		this._unbindArrows();
+		this._arrowHandler = this.get('resizeKnob').on('arrow', this._moveResizeKnob, this);
+	},
+	
+	_unbindArrows: function () {
+		if (this._arrowHandler) {
+			this._arrowHandler.detach();
+		}
 	},
 	
 	_bindResize: function (resizeKnob, contentBox) {
@@ -185,7 +250,8 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		this.set('initWidth', this.get('initWidth'));
 		this.set('initHeight', this.get('initHeight'));
 
-		this.after('srcChange', this._handleSrcChange);
+		this.after('sourceChange', this._handleSrcChange);
+		this.after('useKeysChange', this._toggleKeys);
 		
 		this._icHandlers = [];
 		
@@ -209,9 +275,10 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			
 		this._icHandlers.push(
 			resizeKnob.on('focus', this._attachKeyBehavior, this),
-			resizeKnob.on('blur', this._detachKeyBehavior, this),
-			resizeKnob.on('arrow', this._moveResizeKnob, this)
+			resizeKnob.on('blur', this._detachKeyBehavior, this)
 		);
+		
+		this._bindArrows();
 		
 		this._bindResize(resizeKnob, contentBox);
 		this._bindDrag(resizeKnob, contentBox);
@@ -224,13 +291,20 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		this._syncResizeMask();
 	},
 	
+	/**
+	 * Returns the coordinates needed to crop the image
+	 * 
+	 * @method getCropCoords
+	 * @return {Object} The top, left, height, width and image url of the image being cropped
+	 */
 	getCropCoords: function () {
 		var resizeKnob = this.get('resizeKnob');
 		return {
 			left: resizeKnob.get('offsetLeft'),
 			top: resizeKnob.get('offsetTop'),
 			width: resizeKnob.get('offsetWidth'),
-			height: resizeKnob.get('offsetHeight')
+			height: resizeKnob.get('offsetHeight'),
+			image: this.get('source')
 		};
 	},
 	
@@ -244,18 +318,67 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		YArray.each(this._icHandlers, function (handler) {
 			handler.detach();
 		});
+		this._unbindArrows();
 		
 		this._drag = this._resize = null;
 	}
 	
 }, {
 	
+	/**
+	 * Template that will contain the ImageCropper's mask.
+	 *
+	 * @property ImageCropper.CROP_MASK_TEMPLATE
+	 * @type {HTML}
+	 * @default &lt;div class="[...-mask]">&lt;/div>
+	 * @protected
+	 */
 	CROP_MASK_TEMPLATE: '<div class="' + _classNames.cropMask + '"></div>',
+	/**
+	 * Template that will contain the ImageCropper's resize node.
+	 *
+	 * @property ImageCropper.RESIZE_KNOB_TEMPLATE
+	 * @type {HTML}
+	 * @default &lt;div class="[...-resize-knob]" tabindex="0">&lt;/div>
+	 * @protected
+	 */
 	RESIZE_KNOB_TEMPLATE: '<div class="' + _classNames.resizeKnob + '" tabindex="0"></div>',
+	/**
+	 * Template that will contain the ImageCropper's resize mask.
+	 *
+	 * @property ImageCropper.RESIZE_MASK_TEMPLATE
+	 * @type {HTML}
+	 * @default &lt;div class="[...-resize-mask]">&lt;/div>
+	 * @protected
+	 */
 	RESIZE_MASK_TEMPLATE: '<div class="' + _classNames.resizeMask + '"></div>',
 	
+	/**
+	 * Array of events to relay from the Resize utility to the ImageCropper 
+	 *
+	 * @property ImageCropper.RESIZE_EVENTS
+	 * @type {Array}
+	 * @private
+	 * @static
+	 */
 	RESIZE_EVENTS: ['start', 'resize', 'end'],
+	/**
+	 * Array of attributes to relay from the ImageCropper to the Resize utility 
+	 *
+	 * @property ImageCropper.RESIZE_ATTRS
+	 * @type {Array}
+	 * @private
+	 * @static
+	 */
 	RESIZE_ATTRS: ['minWidth', 'minHeight', 'preserveRatio'],
+	/**
+	 * Array of events to relay from the Drag utility to the ImageCropper 
+	 *
+	 * @property ImageCropper.DRAG_EVENTS
+	 * @type {Array}
+	 * @private
+	 * @static
+	 */
 	DRAG_EVENTS: ['start', 'drag', 'end'],
 	
 	HTML_PARSER: {
@@ -270,12 +393,33 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 	},
 	
+	/**
+	 * Static property used to define the default attribute configuration of
+	 * the Widget.
+	 *
+	 * @property ImageCropper.ATTRS
+	 * @type {Object}
+	 * @protected
+	 * @static
+	 */
 	ATTRS: {
 		
+		/**
+		 * The source attribute of the image we are cropping
+		 *
+		 * @attribute source
+		 * @type {String}
+		 */
 		source: {
 			value: ''
 		},
 		
+		/**
+		 * The resize mask used to highlight the crop area
+		 *
+		 * @attribute resizeMask
+		 * @type {Node}
+		 */
 		resizeMask: {
 			setter: function (node) {
 				node = Y.one(node);
@@ -288,6 +432,12 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			valueFn: '_defResizeMaskValueFn'
 		},
 		
+		/**
+		 * The resized element
+		 *
+		 * @attribute resizeKnob
+		 * @type {Node}
+		 */
 		resizeKnob: {
 			setter: function (node) {
 				node = Y.one(node);
@@ -300,6 +450,12 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			valueFn: '_defResizeKnobValueFn'
 		},
 		
+		/**
+		 * Element used to shadow the part of the image we're not cropping
+		 *
+		 * @attribute cropMask
+		 * @type {Node}
+		 */
 		cropMask: {
 			setter: function (node) {
 				node = Y.one(node);
@@ -312,45 +468,111 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			valueFn: '_defCropMaskValueFn'
 		},
 		
+		/**
+		 * Array of the XY position that we need to set the crop element to when we build it
+		 *
+		 * @attribute initialXY
+		 * @type {Array}
+		 * @default [10, 10]
+		 */
 		initialXY: {
 			validator: Lang.isArray
 		},
 		
+		/**
+		 * The pixel tick for the arrow keys
+		 *
+		 * @attribute keyTick
+		 * @type {Number}
+		 * @default 1
+		 */
 		keyTick: {
 			value: 1,
 			validator: isNumber
 		},
 		
+		/**
+		 * The pixel tick for shift + the arrow keys
+		 *
+		 * @attribute shiftKeyTick
+		 * @type {Number}
+		 * @default 10
+		 */
 		shiftKeyTick: {
 			value: 10,
 			validator: isNumber
 		},
 		
+		/**
+		 * Should we use the Arrow keys to position the crop element
+		 *
+		 * @attribute useKeys
+		 * @type {Boolean}
+		 * @default true
+		 */
 		useKeys: {
 			value: true,
 			validator: Lang.isBoolean
 		},
 		
+		/**
+		 * Show the Resize and Drag utilities status
+		 *
+		 * @attribute status
+		 * @type {Boolean}
+		 * @readOnly
+		 */
 		status: {
-			value: true,
-			validator: Lang.isBoolean
+			readOnly: true,
+			getter: function () {
+				var resizing = this._resize ? this._resize.get('resizing') : false,
+					drag = this._drag ? this._drag.get('dragging') : false;
+				return resizing || drag;
+			}
 		},
 		
+		/**
+		 * MinHeight of the crop area
+		 *
+		 * @attribute minHeight
+		 * @type {Number}
+		 * @default 50
+		 */
 		minHeight: {
 			value: 50,
 			validator: isNumber
 		},
 		
+		/**
+		 * MinWidth of the crop area
+		 *
+		 * @attribute minWidth
+		 * @type {Number}
+		 * @default 50
+		 */
 		minWidth: {
 			value: 50,
 			validator: isNumber
 		},
 		
+		/**
+		 * Set the preserveRatio config option of the Resize Utlility
+		 *
+		 * @attribute preserveRatio
+		 * @type {Boolean}
+		 * @default false
+		 */
 		preserveRatio: {
 			value: false,
 			validator: Lang.isBoolean
 		},
 		
+		/**
+		 * Set the initlal height of the crop area, defaults to minHeight
+		 *
+		 * @attribute initHeight
+		 * @type {Number}
+		 */
 		initHeight: {
 			value: 0,
 			validator: isNumber,
@@ -360,6 +582,12 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			}
 		},
 		
+		/**
+		 * Set the initlal width of the crop area, defaults to minWidth
+		 *
+		 * @attribute initWidth
+		 * @type {Number}
+		 */
 		initWidth: {
 			value: 0,
 			validator: isNumber,
