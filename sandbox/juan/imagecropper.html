@@ -1,17 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>ImageCropper test</title>
+<!DOCTYPE html> 
+<html> 
+<head> 
+	<title>ImageCropper test</title> 
 	<link rel="stylesheet" href="https://github.com/juandopazo/yui3-gallery/raw/imagecropper/src/gallery-imagecropper/css/gallery-imagecropper.css">
-</head>
+	<style>
+		.yui3-imagecropper {
+			background: #666;
+		}
+	</style> 
+</head> 
 <body>
-	<script src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js&3.3.0/build/loader/loader-min.js"></script>
-	<script>
+	<div style="position: absolute; left: 550px; top: 10px;">
+		<div id="result"></div>
+		<div id="test"></div>
+	</div>
+	<script src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui-min.js&3.3.0/build/loader/loader-min.js"></script> 
+	<script> 
 YUI({
+	gallery: 'gallery-2011.01.18-21-05',
 	modules: {
 		'gallery-imagecropper': {
 			fullpath: 'http://juandopazo.github.com/yui3-gallery/build/gallery-imagecropper/gallery-imagecropper.js',
-			requires: ['resize', 'widget']
+			requires: ['resize', 'widget', 'gallery-event-arrow']
 		}
 	}
 }).use('yql', 'gallery-imagecropper', function (Y) {
@@ -20,21 +30,49 @@ YUI({
 		return Math.floor(Math.random() * limit);
 	};
 	
-	Y.YQL('select * from flickr.photos.interestingness limit 10', function (response) {
-		
-		var photo = response.query.results.photo[Y.random(10)];
-	
-		var img = Y.Node.create('<img src="http://farm' + photo.farm + '.static.flickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '.jpg"/>')
-					.appendTo(document.body);
-		
-		var imagecropper = new Y.ImageCropper({
-			srcNode: img
+	Y.Node.addMethod('setBackgroundXY', function (node, xy) {
+		xy = xy || [0, 0];
+		Y.Array.each(xy, function (val, i) {
+			if (Y.Lang.isNumber(val)) {
+				xy[i] += 'px';
+			}
 		});
-		imagecropper.render();
+		this.setStyles({
+			backgroundPosition: xy.join(' '),
+			backgroundPositionX: xy[0],
+			backgroundPositionY: xy[1]
+		});
+	});
+	
+	Y.YQL('select width,height,source from flickr.photos.sizes where photo_id in (select id from flickr.photos.interestingness limit 10) and label = "Medium"', function (response) {
+		
+		var photo = response.query.results.size[Y.random(10)],
+			test = Y.one('#test'),
+			result = Y.one('#result'),
+		
+			imagecropper = new Y.ImageCropper(photo).render(),
+			
+			coords = imagecropper.getCropCoords();
+		
+		imagecropper.on('crop:crop', function (e) {
+			var coords = e.coords;
+			//console.log(e.offsetLeft + 'x' + e.offsetTop + ' ' + e.offsetWidth + 'x' + e.offsetHeight);
+			test.setContent(coords.left + 'x' + coords.top + ' ' + coords.width + 'x' + coords.height);
+			result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
+				width: coords.width,
+				height: coords.height
+			});
+		});
+		
+		result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
+			backgroundImage: 'url(' + imagecropper.get('source') + ')',
+			width: coords.width,
+			height: coords.height
+		})
 		
 	});
 	
 });
 	</script>
-</body>
+</body> 
 </html>
