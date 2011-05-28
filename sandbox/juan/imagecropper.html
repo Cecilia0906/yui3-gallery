@@ -55,20 +55,21 @@ YUI({
 			coords = imagecropper.getCropCoords();
 		
 		imagecropper.on('crop:crop', function (e) {
-			var coords = e.coords;
-			//console.log(e.offsetLeft + 'x' + e.offsetTop + ' ' + e.offsetWidth + 'x' + e.offsetHeight);
-			test.setContent(coords.left + 'x' + coords.top + ' ' + coords.width + 'x' + coords.height);
-			result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
-				width: coords.width,
-				height: coords.height
+			
+			test.setContent(e.left + 'x' + e.top + ' ' + e.width + 'x' + e.height);
+			
+			result.setBackgroundXY([-e.left, -e.top]).setStyles({
+				width: e.width,
+				height: e.height
 			});
+			
 		});
 		
 		result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
-			backgroundImage: 'url(' + imagecropper.get('source') + ')',
+			backgroundImage: 'url(' + coords.image + ')',
 			width: coords.width,
 			height: coords.height
-		})
+		});
 		
 	});
 	
