@@ -36,12 +36,6 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		var resizeKnob = e.target,
 			contentBox = this.get('contentBox'),
-			contentX = contentBox.getX(),
-			contentY = contentBox.getY(),
-			contentWidth = contentBox.get('offsetWidth'),
-			contentHeight = contentBox.get('offsetHeight'),
-			knobWidth = resizeKnob.get('offsetWidth'),
-			knobHeight = resizeKnob.get('offsetHeight'),
 		
 			tick = e.shiftKey ? this.get('shiftKeyTick') : this.get('keyTick'),
 			direction = e.direction,
@@ -50,17 +44,23 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			tickV = direction.indexOf('n') > -1 ? -tick : direction.indexOf('s') > -1 ? tick : 0,
 			
 			x = resizeKnob.getX() + tickH,
-			y = resizeKnob.getY() + tickV;
+			y = resizeKnob.getY() + tickV,
 			
-		if (x < contentX) {
-			x = contentX;
-		} else if (x + knobWidth > contentX + contentWidth) {
-			x = contentX + contentWidth - knobWidth;
+			minX = contentBox.getX(),
+			minY = contentBox.getY(),
+			
+			maxX = minX + contentBox.get('offsetWidth') - resizeKnob.get('offsetWidth'),
+			maxY = minY + contentBox.get('offsetHeight') - resizeKnob.get('offsetHeight');
+			
+		if (x < minX) {
+			x = minX;
+		} else if (x > maxX) {
+			x = maxX;
 		}
-		if (y < contentY) {
-			y = contentY;
-		} else if (y + knobHeight > contentY + contentHeight) {
-			y = contentY + contentHeight - knobHeight;
+		if (y < minY) {
+			y = minY;
+		} else if (y > maxY) {
+			y = maxY;
 		}
 		resizeKnob.setXY([x, y]);
 		
@@ -129,11 +129,28 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	_icEventProxy: function (target, ns, eventType) {
-		eventType = ns + ':' + eventType;
-		target.on(eventType, function (e) {
-			var o = {};
+		var sourceEvent = ns + ':' + eventType,
+			resizeKnob = this.get('resizeKnob');
+			
+		target.on(sourceEvent, function (e) {
+			
+			var o = {
+				coords: {
+					width: resizeKnob.get('offsetWidth'),
+					height: resizeKnob.get('offsetHeight'),
+					left: resizeKnob.get('offsetLeft'),
+					top: resizeKnob.get('offsetTop')
+				}
+			};
 			o[ns + 'Event'] = e;
-			this.fire(eventType, o);
+			
+			this.fire(sourceEvent, o);
+			
+			o.sourceEvent = sourceEvent;
+			
+			// instead of firing crop:drag and crop:resize, fire crop:crop to have a unified event for all changes in the crop area
+			this.fire('crop:' + (eventType == ns ? 'crop' : eventType), o);
+			
 		}, this);
 	},
 	
@@ -201,10 +218,20 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	syncUI: function () {
-		var contentBox = this.get('contentBox').set('src', this.get('source'));
+		this.get('contentBox').set('src', this.get('source'));
 		
 		this._syncResizeKnob();
 		this._syncResizeMask();
+	},
+	
+	getCropCoords: function () {
+		var resizeKnob = this.get('resizeKnob');
+		return {
+			left: resizeKnob.get('offsetLeft'),
+			top: resizeKnob.get('offsetTop'),
+			width: resizeKnob.get('offsetWidth'),
+			height: resizeKnob.get('offsetHeight')
+		};
 	},
 	
 	destructor: function () {
