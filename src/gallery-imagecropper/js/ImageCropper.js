@@ -91,7 +91,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		if (!node.inDoc()) {
 			boundingBox.append(node);
 		}
-		node.setStyle('backgroundImage', 'url(' + this.get('src') + ')');
+		node.setStyle('backgroundImage', 'url(' + this.get('image') + ')');
 	},
 
 	_renderResizeMask: function () {
@@ -209,7 +209,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	syncUI: function () {
-		var contentBox = this.get('contentBox').set('src', this.get('src'));
+		var contentBox = this.get('contentBox').set('src', this.get('image'));
 		
 		this._syncCropMask({
 			target: contentBox
@@ -244,7 +244,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	HTML_PARSER: {
 		
-		src: function (srcNode) {
+		image: function (srcNode) {
 			return srcNode.get('src');
 		},
 		
@@ -256,7 +256,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	ATTRS: {
 		
-		src: {
+		image: {
 			value: ''
 		},
 		
