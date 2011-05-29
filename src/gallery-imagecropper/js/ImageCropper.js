@@ -376,6 +376,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @type {HTML}
 	 * @default &lt;div class="[...-mask]">&lt;/div>
 	 * @protected
+	 * @static
 	 */
 	CROP_MASK_TEMPLATE: '<div class="' + _classNames.cropMask + '"></div>',
 	/**
@@ -385,6 +386,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @type {HTML}
 	 * @default &lt;div class="[...-resize-knob]" tabindex="0">&lt;/div>
 	 * @protected
+	 * @static
 	 */
 	RESIZE_KNOB_TEMPLATE: '<div class="' + _classNames.resizeKnob + '" tabindex="0"></div>',
 	/**
@@ -394,6 +396,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @type {HTML}
 	 * @default &lt;div class="[...-resize-mask]">&lt;/div>
 	 * @protected
+	 * @static
 	 */
 	RESIZE_MASK_TEMPLATE: '<div class="' + _classNames.resizeMask + '"></div>',
 	
