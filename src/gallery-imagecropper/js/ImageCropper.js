@@ -160,6 +160,60 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			};
 			o[ns + 'Event'] = e;
 			
+			/**
+			* @event resize:start
+			* @description Relay of the Resize utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event resize:resize
+			* @description Relay of the Resize utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event resize:end
+			* @description Relay of the Resize utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event drag:start
+			* @description Relay of the Drag utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event drag:resize
+			* @description Relay of the Drag utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event drag:end
+			* @description Relay of the Drag utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
 			this.fire(sourceEvent, o);
 			
 			o.sourceEvent = sourceEvent;
@@ -206,14 +260,11 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	_bindArrows: function () {
-		this._unbindArrows();
 		this._arrowHandler = this.get('resizeKnob').on('arrow', this._moveResizeKnob, this);
 	},
 	
 	_unbindArrows: function () {
-		if (this._arrowHandler) {
-			this._arrowHandler.detach();
-		}
+		this._arrowHandler && this._arrowHandler.detach();
 	},
 	
 	_bindResize: function (resizeKnob, contentBox) {
@@ -266,7 +317,6 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	bindUI: function () {
-		
 		var contentBox = this.get('contentBox'),
 			resizeKnob = this.get('resizeKnob');
 			
@@ -306,12 +356,9 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	destructor: function () {
-		if (this._resize) {
-			this._resize.destroy();
-		}
-		if (this._drag) {
-			this._drag.destroy();
-		}
+		this._resize && this._resize.destroy();
+		this._drag && this._drag.destroy();
+		
 		YArray.each(this._icHandlers, function (handler) {
 			handler.detach();
 		});
@@ -407,9 +454,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 * @attribute source
 		 * @type {String}
 		 */
-		source: {
-			value: ''
-		},
+		source: { value: '' },
 		
 		/**
 		 * The resize mask used to highlight the crop area
