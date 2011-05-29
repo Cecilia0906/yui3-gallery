@@ -49,9 +49,6 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		}
 	},
 	
-	/**
-	 * 
-	 */
 	_moveResizeKnob: function (e) {
 		e.preventDefault(); // prevent scroll in Firefox
 		
