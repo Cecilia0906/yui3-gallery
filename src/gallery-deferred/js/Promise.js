@@ -42,7 +42,7 @@ function Promise() {
 	this.rejected = false;
 }
 Promise.prototype = {
-	
+	constructor: Promise,
 	/**
 	 * @method then
 	 * @description Adds callbacks to the list of callbacks tracked by the promise
@@ -159,6 +159,18 @@ Promise.prototype = {
 		return this;
 	},
 	
+	/**
+	 * @method defer
+	 * @description Returns a new promise. This method will be mostly used by implementors that extend this class to create
+	 * additional asynchronous functionalityu. For example:
+	 * <pre><code>
+	 * wait: function (delay) {
+	 * 	 return this.defer(function (promise) {
+	 * 	   Y.later(delay || 0, promise, promise.resolve);
+	 *   });
+	 * }</code></pre>
+	 * @return {Deferred}
+	 */
 	defer: function (callback, context) {
 		var promise = new this.constructor();
 		this.then(Y.bind(callback, context || this, promise));
