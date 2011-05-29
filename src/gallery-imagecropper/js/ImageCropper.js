@@ -37,7 +37,7 @@ var Lang = Y.Lang,
  * @protected
  * @static
  */
-ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
+ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
@@ -597,3 +597,5 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	}
 	
 });
+
+Y.ImageCropper = ImageCropper;
