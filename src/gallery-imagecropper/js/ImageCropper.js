@@ -2,7 +2,7 @@
 /**
  * @description <p>Creates a Image Cropper control.</p>
  * @requires widget, resize, gallery-event-arrow
- * @module imagecropper
+ * @module gallery-imagecropper
  */
 
 var Lang = Y.Lang,
