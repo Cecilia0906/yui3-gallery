@@ -4,7 +4,7 @@ YUI.add('gallery-imagecropper', function(Y) {
 /**
  * @description <p>Creates a Image Cropper control.</p>
  * @requires widget, resize, gallery-event-arrow
- * @module imagecropper
+ * @module gallery-imagecropper
  */
 
 var Lang = Y.Lang,
@@ -39,7 +39,7 @@ var Lang = Y.Lang,
  * @protected
  * @static
  */
-ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
+ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
@@ -51,14 +51,14 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		}
 	},
 	
-	/**
-	 * 
-	 */
 	_moveResizeKnob: function (e) {
 		e.preventDefault(); // prevent scroll in Firefox
 		
 		var resizeKnob = e.target,
 			contentBox = this.get('contentBox'),
+			
+			knobWidth = resizeKnob.get('offsetWidth'),
+			knobHeight = resizeKnob.get('offsetHeight'),
 		
 			tick = e.shiftKey ? this.get('shiftKeyTick') : this.get('keyTick'),
 			direction = e.direction,
@@ -72,8 +72,16 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			minX = contentBox.getX(),
 			minY = contentBox.getY(),
 			
-			maxX = minX + contentBox.get('offsetWidth') - resizeKnob.get('offsetWidth'),
-			maxY = minY + contentBox.get('offsetHeight') - resizeKnob.get('offsetHeight');
+			maxX = minX + contentBox.get('offsetWidth') - knobWidth,
+			maxY = minY + contentBox.get('offsetHeight') - knobHeight,
+			
+			o = {
+				width: knobWidth,
+				height: knobHeight,
+				left: resizeKnob.get('offsetLeft'),
+				top: resizeKnob.get('offsetTop'),
+				sourceEvent: e.type
+			};
 			
 		if (x < minX) {
 			x = minX;
@@ -86,6 +94,11 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			y = maxY;
 		}
 		resizeKnob.setXY([x, y]);
+		
+		o[e.type + 'Event'] = e;
+		this.fire('crop:start', o);
+		this.fire('crop:crop', o);
+		this.fire('crop:end', o);
 		
 		this._syncResizeMask();
 	},
@@ -165,6 +178,60 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			};
 			o[ns + 'Event'] = e;
 			
+			/**
+			* @event resize:start
+			* @description Relay of the Resize utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event resize:resize
+			* @description Relay of the Resize utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event resize:end
+			* @description Relay of the Resize utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event drag:start
+			* @description Relay of the Drag utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event drag:resize
+			* @description Relay of the Drag utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
+			/**
+			* @event drag:end
+			* @description Relay of the Drag utility event.
+			* @param {EventFacade} event An Event Facade object with the following specific property added:
+			* <dl>
+			* <dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>
+			* </dl>
+			* @type {CustomEvent}
+			*/
 			this.fire(sourceEvent, o);
 			
 			o.sourceEvent = sourceEvent;
@@ -211,7 +278,6 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	_bindArrows: function () {
-		this._unbindArrows();
 		this._arrowHandler = this.get('resizeKnob').on('arrow', this._moveResizeKnob, this);
 	},
 	
@@ -271,7 +337,6 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	bindUI: function () {
-		
 		var contentBox = this.get('contentBox'),
 			resizeKnob = this.get('resizeKnob');
 			
@@ -317,6 +382,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		if (this._drag) {
 			this._drag.destroy();
 		}
+		
 		YArray.each(this._icHandlers, function (handler) {
 			handler.detach();
 		});
@@ -334,6 +400,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @type {HTML}
 	 * @default &lt;div class="[...-mask]">&lt;/div>
 	 * @protected
+	 * @static
 	 */
 	CROP_MASK_TEMPLATE: '<div class="' + _classNames.cropMask + '"></div>',
 	/**
@@ -343,6 +410,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @type {HTML}
 	 * @default &lt;div class="[...-resize-knob]" tabindex="0">&lt;/div>
 	 * @protected
+	 * @static
 	 */
 	RESIZE_KNOB_TEMPLATE: '<div class="' + _classNames.resizeKnob + '" tabindex="0"></div>',
 	/**
@@ -352,6 +420,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @type {HTML}
 	 * @default &lt;div class="[...-resize-mask]">&lt;/div>
 	 * @protected
+	 * @static
 	 */
 	RESIZE_MASK_TEMPLATE: '<div class="' + _classNames.resizeMask + '"></div>',
 	
@@ -412,9 +481,7 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 * @attribute source
 		 * @type {String}
 		 */
-		source: {
-			value: ''
-		},
+		source: { value: '' },
 		
 		/**
 		 * The resize mask used to highlight the crop area
@@ -602,6 +669,8 @@ ImageCropper = Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	}
 	
 });
+
+Y.ImageCropper = ImageCropper;
 
 
 
