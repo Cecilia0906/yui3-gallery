@@ -2,7 +2,7 @@ YUI.add('gallery-imagecropper', function(Y) {
 
 
 /**
- * @description <p>Creates a Image Cropper control.</p>
+ * @description <p>Creates an Image Cropper control.</p>
  * @requires widget, resize, gallery-event-arrow
  * @module gallery-imagecropper
  */
@@ -25,9 +25,9 @@ var Lang = Y.Lang,
 /**
  * @constructor
  * @class ImageCropper
- * @description <p>Creates a Image Cropper control.</p>
+ * @description <p>Creates an Image Cropper control.</p>
  * @extends Widget
- * @param {Object} config Object liternal containing configuration parameters.
+ * @param {Object} config Object literal containing configuration parameters.
 */
 /**
  * The identity of the widget.
@@ -75,13 +75,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			maxX = minX + contentBox.get('offsetWidth') - knobWidth,
 			maxY = minY + contentBox.get('offsetHeight') - knobHeight,
 			
-			o = {
-				width: knobWidth,
-				height: knobHeight,
-				left: resizeKnob.get('offsetLeft'),
-				top: resizeKnob.get('offsetTop'),
-				sourceEvent: e.type
-			};
+			o;
 			
 		if (x < minX) {
 			x = minX;
@@ -94,6 +88,14 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			y = maxY;
 		}
 		resizeKnob.setXY([x, y]);
+		
+		o = {
+			width: knobWidth,
+			height: knobHeight,
+			left: resizeKnob.get('offsetLeft'),
+			top: resizeKnob.get('offsetTop'),
+			sourceEvent: e.type
+		};
 		
 		o[e.type + 'Event'] = e;
 		this.fire('crop:start', o);
