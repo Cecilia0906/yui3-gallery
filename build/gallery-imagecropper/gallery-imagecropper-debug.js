@@ -368,14 +368,28 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @return {Object} The top, left, height, width and image url of the image being cropped
 	 */
 	getCropCoords: function () {
-		var resizeKnob = this.get('resizeKnob');
-		return {
-			left: resizeKnob.get('offsetLeft'),
-			top: resizeKnob.get('offsetTop'),
-			width: resizeKnob.get('offsetWidth'),
-			height: resizeKnob.get('offsetHeight'),
-			image: this.get('source')
-		};
+		var resizeKnob = this.get('resizeKnob'),
+			result, xy;
+		
+		if (resizeKnob.inDoc()) {
+			result = {
+				left: resizeKnob.get('offsetLeft'),
+				top: resizeKnob.get('offsetTop'),
+				width: resizeKnob.get('offsetWidth'),
+				height: resizeKnob.get('offsetHeight')
+			};
+		} else {
+			xy = this.get('initialXY');
+			result = {
+				left: xy[0],
+				top: xy[1],
+				width: this.get('initWidth'),
+				height: this.get('initHeight')
+			};
+		}
+		result.image = this.get('source');
+		
+		return result;
 	},
 	
 	destructor: function () {
