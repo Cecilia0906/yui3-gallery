@@ -343,7 +343,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		this._icHandlers.push(
 			resizeKnob.on('focus', this._attachKeyBehavior, this),
 			resizeKnob.on('blur', this._detachKeyBehavior, this),
-			resizeKnob.on('mousedown', resizeKnob.focus)
+			resizeKnob.on('mousedown', resizeKnob.focus, resizeKnob)
 		);
 		
 		this._bindArrows();
