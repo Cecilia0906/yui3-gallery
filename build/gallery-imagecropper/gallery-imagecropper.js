@@ -392,6 +392,21 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		return result;
 	},
 	
+	/**
+	 * Resets the crop element back to it's original position
+	 * 
+	 * @method reset
+	 * @chainable
+	 */
+	reset: function () {
+		this.get('resizeKnob').setXY(this.get('initialXY')).setStyles({
+			width: this.get('initWidth'),
+			height: this.get('initHeight')
+		});
+		this._syncResizeMask();
+		return this;
+	},
+	
 	destructor: function () {
 		if (this._resize) {
 			this._resize.destroy();
