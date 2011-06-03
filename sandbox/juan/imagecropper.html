@@ -1,18 +1,24 @@
 <!DOCTYPE html> 
 <html> 
 <head> 
-	<title>ImageCropper test</title> 
+	<title>ImageCropper - Gallery</title> 
 	<link rel="stylesheet" href="http://github.com/juandopazo/yui3-gallery/raw/imagecropper/src/gallery-imagecropper/assets/gallery-imagecropper-core.css">
 	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
 		.yui3-imagecropper {
 			background: #666;
 		}
 	</style> 
 </head> 
 <body>
-	<div style="position: absolute; left: 550px; top: 10px;">
+	<h1>ImageCropper - Gallery</h1>
+	<div id="imagecropper"></div>
+	<div style="position: absolute; left: 550px; top: 79px;">
 		<div id="result"></div>
-		<div id="test"></div>
+		<p id="coords"></p>
 	</div>
 	<script src="http://yui.yahooapis.com/combo?3.4.0pr1/build/yui/yui-min.js&3.4.0pr1/build/loader/loader-min.js"></script> 
 	<script> 
@@ -26,8 +32,8 @@ YUI({
 	}
 }).use('yql', 'gallery-imagecropper', function (Y) {
 	
-	Y.random = function (limit) {
-		return Math.floor(Math.random() * limit);
+	Y.random = function (n) {
+		return Math.floor(Math.random() * n);
 	};
 	
 	Y.Node.addMethod('setBackgroundXY', function (node, xy) {
@@ -47,16 +53,15 @@ YUI({
 	Y.YQL('select width,height,source from flickr.photos.sizes where photo_id in (select id from flickr.photos.interestingness limit 10) and label = "Medium"', function (response) {
 		
 		var photo = response.query.results.size[Y.random(10)],
-			test = Y.one('#test'),
+			coordview = Y.one('#coords'),
 			result = Y.one('#result'),
-		
-			imagecropper = new Y.ImageCropper(photo).render(),
 			
+			imagecropper = new Y.ImageCropper(photo),
 			coords = imagecropper.getCropCoords();
-		
+			
 		imagecropper.on('crop:crop', function (e) {
 			
-			test.setContent(e.left + 'x' + e.top + ' ' + e.width + 'x' + e.height);
+			coordview.setContent(e.left + 'x' + e.top + ' ' + e.width + 'x' + e.height);
 			
 			result.setBackgroundXY([-e.left, -e.top]).setStyles({
 				width: e.width,
@@ -65,11 +70,14 @@ YUI({
 			
 		});
 		
+		imagecropper.render('#imagecropper');
+		
 		result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
 			backgroundImage: 'url(' + coords.image + ')',
 			width: coords.width,
 			height: coords.height
 		});
+		coordview.setContent(coords.left + 'x' + coords.top + ' ' + coords.width + 'x' + coords.height);
 		
 	});
 	
