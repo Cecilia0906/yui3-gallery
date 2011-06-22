@@ -705,5 +705,4 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 Y.ImageCropper = ImageCropper;
 
 
-
-}, '@VERSION@' ,{requires:['widget','resize','gallery-event-arrow']});
+}, 'gallery-2011.06.15-19-18' ,{requires:['widget','resize','gallery-event-arrow']});

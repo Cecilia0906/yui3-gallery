@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
 	<title>ImageCropper - Gallery</title> 
-	<link rel="stylesheet" href="http://github.com/juandopazo/yui3-gallery/raw/master/src/gallery-imagecropper/assets/gallery-imagecropper-core.css">
+	<link rel="stylesheet" href="http://juandopazo.github.com/yui3-gallery/build/gallery-imagecropper/assets/gallery-imagecropper-core.css">
 	<style>
 		body {
 			margin: 0;
@@ -24,13 +24,8 @@
 	<script src="http://yui.yahooapis.com/combo?3.4.0pr1/build/yui/yui-min.js&amp;3.4.0pr1/build/loader/loader-min.js"></script> 
 	<script> 
 YUI({
-	gallery: 'gallery-2011.01.18-21-05',
-	modules: {
-		'gallery-imagecropper': {
-			fullpath: 'http://juandopazo.github.com/yui3-gallery/build/gallery-imagecropper/gallery-imagecropper.js',
-			requires: ['resize', 'widget', 'gallery-event-arrow']
-		}
-	}
+	gallery: 'gallery-2011.06.22-20-13',
+	fetchCSS: false
 }).use('yql', 'gallery-imagecropper', function (Y) {
 	
 	Y.random = function (n) {

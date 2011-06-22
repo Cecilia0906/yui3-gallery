@@ -1,5 +1,3 @@
-YUI.add('gallery-imagecropper', function(Y) {
-
 
 /**
  * @description <p>Creates an Image Cropper control.</p>
@@ -703,11 +701,3 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 });
 
 Y.ImageCropper = ImageCropper;
-
-
-<<<<<<< HEAD
-
-}, '@VERSION@' ,{requires:['widget','resize','gallery-event-arrow']});
-=======
-}, 'gallery-2011.06.15-19-18' ,{requires:['widget','resize','gallery-event-arrow']});
->>>>>>> master
