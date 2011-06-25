@@ -14,8 +14,9 @@
  * @return Promise
  */
 Y.defer = function (fn, context) {
-	var deferred = new Y.Promise();
-	return deferred.defer(fn, context);
+	var promise = new Y.Promise();
+	fn(promise);
+	return promise;
 };
 
 /**
@@ -26,7 +27,7 @@ Y.defer = function (fn, context) {
  */
 Y.when = function () {
 	var deferreds = YArray._spread(YArray(arguments)),
-		args = [null],
+		args = [],
 		resolved = 0,
 		rejected = 0;
 			

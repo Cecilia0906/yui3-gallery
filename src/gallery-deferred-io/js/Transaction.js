@@ -1,14 +1,11 @@
 
-	var Lang = Y.Lang,
-		_io = Y.io;
-		
 	function normalizeConfig(config, args) {
 		config = config || {};
 		config.on = config.on || {};
-		if (Lang.isFunction(config)) {
+		if (Y.Lang.isFunction(config)) {
 			config = { on: { complete: config } };
 		}
-		return Y.mix(config, args);
+		return Y.mix(config, args, true);
 	}
 
 	/**
@@ -17,51 +14,18 @@
 	 * @constructor
 	 * @extends Promise
 	 */
-	function Transaction() {
-		Transaction.superclass.constructor.call(this);
+	function Transaction(config) {
+		config = config || {};
+		config.emitFacade = true;
+		Transaction.superclass.constructor.call(this, config);
 	}
 	Y.extend(Transaction, Y.Promise);
-	
-	Y.io = function (uri, config) {
-		config = normalizeConfig(config);
-		
-		var onSuccess = config.on.success,
-			onFailure = config.on.failure,
-			transaction = new Y.io.Transaction();
-			
-		function handleFailure(id, response) {
-			transaction.fire('failure', response);
-			if (onFailure) {
-				onFailure.apply(this, arguments);
-			}
-		}
-				
-		Y.mix(config.on, {
-			success: function (id, response) {
-				if (config.parser) {
-					try {
-						response.response = config.parser(response.responseText);
-					} catch (e) {
-						handleFailure.apply(this, arguments);
-						return;
-					}
-				}
-				transaction.fire('success', response);
-				if (onSuccess) {
-					onSuccess.call(this, id, response);
-				}
-			},
-			failure: handleFailure
-		}, true);
-		
-		return Y.mix(transaction, _io(uri, config));
-	};
 	
 	Y.mix(Y.io, {
 		
 		Transaction: Transaction,
 		
-		defer: function (uri, config) {
+		_defer: function (uri, config) {
 			config = normalizeConfig(config);
 			var transaction = new Y.io.Transaction();
 			
@@ -71,63 +35,65 @@
 				
 			config.on = {
 				success: function (id, response) {
+					var args = { responseXML: response.responseXML, responseText: response.responseText };
 					if (config.parser) {
 						try {
-							response.response = config.parser(response.responseText);
+							args.data = config.parser(response.responseText);
 						} catch (e) {
 							transaction.fire('failure', response);
 							return;
 						}
 					}
-					transaction.fire('success', response);
+					transaction.fire('success', args);
 				},
 				failure: function (id, response) {
-					transaction.fire('failure', response);
+					var args = { responseXML: response.responseXML, responseText: response.responseText };
+					transaction.fire('failure', args);
 				}
 			};
 			
-			return Y.mix(transaction, _io(uri, config));
+			return Y.mix(transaction, Y.io(uri, config));
 		},
 		
-		addMethod: function (name, fn) {
+		addMethod: function (fn, name) {
 			Y.io[name] = fn;
 			Transaction.prototype[name] = function () {
 				return fn.apply(Y.io, arguments);
 			};
-		},
-		
-		addMethods: function (methods) {
-			Y.each(methods, Y.io.addMethod);
 		}
 		
 	});
 
-	Y.io.addMethods({
+	Y.each({
 		get: function (uri, config) {
-			return Y.io.defer(uri, config);
+			return Y.io._defer(uri, normalizeConfig(config, {
+				method: 'GET'
+			}));
 		},
 		
 		post: function (uri, data, config) {
-			return Y.io.defer(uri, normalizeConfig(config, {
+			return Y.io._defer(uri, normalizeConfig(config, {
 				method: 'POST',
 				data: data
 			}));
 		},
 		
 		postForm: function (uri, id, config) {
-			return Y.io.defer(uri, normalizeConfig(config, {
+			return Y.io._defer(uri, normalizeConfig(config, {
 				method: 'POST',
 				form: { id: id }
 			}));
-		},
-		
-		getJSON: function (uri, config) {
+		}
+	}, Y.io.addMethod);
+	
+	if (Y.JSON) {
+		Y.io.addMethod('getJSON', function (uri, config) {
 			config = normalizeConfig(config);
 			config.parser = Y.JSON.parse;
 			
-			return Y.io.defer(uri, config);
-		}
-	});
+			return Y.io._defer(uri, config);
+		});
+	}
 	
 	if (Y.jsonp) {
 		Y.io.addMethod('jsonp', function (uri, config) {

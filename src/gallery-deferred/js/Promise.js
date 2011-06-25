@@ -33,14 +33,21 @@ YArray._spread = function (args) {
  * @param {Function|Array} doneCallbacks A function or array of functions to run when the promise is resolved
  * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
  */
-function Promise() {
+function Promise(config) {
 	Promise.superclass.constructor.apply(this, arguments);
 	
+	config = this._config = config || {};
+	
 	var eventConf = {
-		emitFacade: true,
+		emitFacade: false,
 		fireOnce: true,
 		preventable: false
 	};
+	Y.Object.each(eventConf, function (value, key) {
+		if (Lang.isBoolean(config[key])) {
+			eventConf[key] = config[key];
+		}
+	});
 	this.publish('success', eventConf);
 	this.publish('failure', eventConf);
 	this.publish('complete', eventConf);
@@ -131,7 +138,7 @@ Y.extend(Promise, Y.EventTarget, {
 	 * @return {Deferred}
 	 */
 	defer: function (callback, context) {
-		var promise = new this.constructor();
+		var promise = new this.constructor(this._config);
 		this.then(Y.bind(callback, context || this, promise));
 		return promise;
 	}
