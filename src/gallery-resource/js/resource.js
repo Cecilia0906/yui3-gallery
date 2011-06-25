@@ -19,13 +19,12 @@
 		E_SUCCESS = 'success',
 		E_FAILURE = 'failure',
 		
-		HEAD = 'head',
+		HEAD = 'HEAD',
 		OPTIONS = 'OPTIONS',
-		GET = 'get',
-		POST = 'post',
-		PUT = 'put',
-		DELETE = 'delete',
-		JSONP = 'jsonp',
+		GET = 'GET',
+		POST = 'POST',
+		PUT = 'PUT',
+		DELETE = 'DELETE',
 		
 		isString = Y.Lang.isString,
 		isObject = Y.Lang.isObject,
