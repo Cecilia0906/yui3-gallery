@@ -25,20 +25,12 @@ YUI({
 			modules: {
 				'gallery-deferred': {
 					path: 'gallery-deferred/build_tmp/gallery-deferred.js',
-					requires: ['event-custom', 'array-extras']
+					requires: ['event-custom', 'io-base']
 				},
-				'gallery-deferred-io': {
-					path: 'gallery-deferred-io/build_tmp/gallery-deferred-io.js',
-					requires: ['gallery-deferred', 'io-base']
-				},
-				'gallery-deferred-node': {
-					path: 'gallery-deferred-node/build_tmp/gallery-deferred-node.js',
-					requires: ['gallery-deferred', 'node', 'plugin']
-				}
 			}
 		}
 	}
-}).use('node-load', 'transition', 'gallery-deferred-node', function (Y) {
+}).use('node', 'plugin', 'node-load', 'transition', 'gallery-deferred', function (Y) {
 	
 	var node = Y.one('#test').plug(Y.Node.Deferred);
 	

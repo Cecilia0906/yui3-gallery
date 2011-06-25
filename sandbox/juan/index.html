@@ -14,16 +14,12 @@ YUI({
 			modules: {
 				'gallery-deferred': {
 					path: 'gallery-deferred/build_tmp/gallery-deferred.js',
-					requires: ['event-custom']
-				},
-				'gallery-deferred-io': {
-					path: 'gallery-deferred-io/build_tmp/gallery-deferred-io.js',
-					requires: ['gallery-deferred', 'io-base']
+					requires: ['event-custom', 'io-base']
 				}
 			}
 		}
 	}
-}).use('gallery-deferred-io', function (Y) {
+}).use('gallery-deferred', function (Y) {
 	
 	Y.when(Y.io.get('test1.html'), Y.io.get('test2.html')).then(function (a, b) {
 		console.log(a[0].responseText, b[0].responseText);
