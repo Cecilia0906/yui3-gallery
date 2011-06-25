@@ -58,7 +58,7 @@
 		addMethod: function (fn, name) {
 			Y.io[name] = fn;
 			Transaction.prototype[name] = function () {
-				return fn.apply(Y.io, arguments);
+				return Y.io[name].apply(Y.io, arguments);
 			};
 		}
 		
