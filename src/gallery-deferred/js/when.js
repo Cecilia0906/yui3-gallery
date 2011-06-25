@@ -14,7 +14,7 @@
  * @return Promise
  */
 Y.defer = function (fn, context) {
-	var deferred = new Y.Deferred();
+	var deferred = new Y.Promise();
 	return deferred.defer(fn, context);
 };
 
@@ -25,40 +25,38 @@ Y.defer = function (fn, context) {
  * @return Promise
  */
 Y.when = function () {
-	var deferreds = YArray._spread(SLICE.call(arguments)),
-		args = [],
-		i = 0,
+	var deferreds = YArray._spread(YArray(arguments)),
+		args = [null],
 		resolved = 0,
 		rejected = 0;
 			
 	return Y.defer(function (promise) {
 		function notify() {
 			if (rejected > 0) {
-				promise.rejectWith(promise, args);
+				promise.reject.apply(promise, args);
 			} else {
-				promise.resolveWith(promise, args);
+				promise.resolve.apply(promise, args);
 			}
 		}
 			
 		function done() {
-			args.push(SLICE.call(arguments));
+			args.push(YArray(arguments));
 			resolved++;
-			if (resolved + rejected == deferreds.length) {
+			if (resolved + rejected === deferreds.length) {
 				notify();
 			}
 		}
 		
 		function fail() {
-			args.push(SLICE.call(arguments));
+			args.push(YArray(arguments));
 			rejected++;
-			if (resolved + rejected == deferreds.length) {
+			if (resolved + rejected === deferreds.length) {
 				notify();
 			}
 		}
 
-		while (i < deferreds.length) {
-			deferreds[i].end(done, fail);
-			i++;
-		}		
+		YArray.each(deferreds, function (deferred) {
+			deferred.then(done, fail);
+		});
 	});
 };

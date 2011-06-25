@@ -1,8 +1,6 @@
 var Lang = Y.Lang,
 	YArray = Y.Array,
-	AP = Array.prototype,
-	SLICE = AP.slice,
-	PUSH = AP.push;
+	AP = Array.prototype;
 
 /*
  * Turns a value into an array with the value as its first element, or takes an array and spreads
@@ -12,7 +10,7 @@ var Lang = Y.Lang,
  * @private
  */
 YArray._spread = function (args) {
-	args = Lang.isArray(args) ? args : [args];
+	args = !Lang.isValue(args) ? [] : Lang.isArray(args) ? args : [args];
 	var i = 0;
 	while (i < args.length) {
 		if (Lang.isArray(args[i])) {
@@ -36,13 +34,18 @@ YArray._spread = function (args) {
  * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
  */
 function Promise() {
-	this._done = [];
-	this._fail = [];
-	this.resolved = false;
-	this.rejected = false;
+	Promise.superclass.constructor.apply(this, arguments);
+	
+	var eventConf = {
+		emitFacade: true,
+		fireOnce: true,
+		preventable: false
+	};
+	this.publish('success', eventConf);
+	this.publish('failure', eventConf);
+	this.publish('complete', eventConf);
 }
-Promise.prototype = {
-	constructor: Promise,
+Y.extend(Promise, Y.EventTarget, {
 	/**
 	 * @method then
 	 * @description Adds callbacks to the list of callbacks tracked by the promise
@@ -51,50 +54,48 @@ Promise.prototype = {
 	 * @chainable
 	 */
 	then: function (doneCallbacks, failCallbacks) {
-		doneCallbacks = YArray._spread(doneCallbacks);
-		failCallbacks = YArray._spread(failCallbacks);
-		if (this.resolved) {
-			this._notify(doneCallbacks, this._args || [], this);
-		} else if (!this.rejected){
-			PUSH.apply(this._done, doneCallbacks);
-		}
-		if (this.rejected) {
-			this._notify(failCallbacks, this._args || [], this);
-		} else if (!this.resolved){
-			PUSH.apply(this._fail, failCallbacks);
-		}
+		var self = this;
+		YArray.each(YArray._spread(doneCallbacks), function (callback) {
+			self.on('success', callback);
+		});
+		YArray.each(YArray._spread(failCallbacks), function (callback) {
+			self.on('failure', callback);
+		});
 		return this;
 	},
 	
 	/**
 	 * @method done
-	 * @description Adds callbacks to the success list
+	 * @description Listens to the 'success' event
 	 * @param {Function|Array} doneCallbacks Takes any number of functions or arrays of functions to run when the promise is resolved
 	 * @chainable 
 	 */
 	done: function () {
-		return this.then(SLICE.call(arguments));
+		return this.then(Y.Array(arguments));
 	},
 	
 	/**
 	 * @method fail
-	 * @description Adds callbacks to the failure list
+	 * @description Listens to the 'failure' event
 	 * @param {Function|Array} failCallbacks Takes any number of functions or arrays of functions to run when the promise is rejected
 	 * @chainable 
 	 */
 	fail: function () {
-		return this.then(null, SLICE.call(arguments));
+		return this.then(null, Y.Array(arguments));
 	},
 	
 	/**
 	 * @method always
-	 * @description Adds callbacks to both the failure and the success lists
+	 * @description Listens to the 'complete' event
 	 * @param {Function|Array} callbacks Takes any number of functions or arrays of functions to run when the promise is rejected or resolved
 	 * @chainable 
 	 */
 	always: function () {
-		var args = SLICE.call(arguments);
-		return this.then(args, args);
+		var self = this;
+		YArray.each(Y.Array(arguments), function (callback) {
+			self.on('complete', callback);
+		});
+		return this;
 	},
 	
 	/**
@@ -104,7 +105,7 @@ Promise.prototype = {
 	 * @chainable
 	 */
 	resolve: function () {
-		return this.resolveWith(this, SLICE.call(arguments));
+		return this.fire.apply(this, ['success'].concat(Y.Array(arguments)));
 	},
 	
 	/**
@@ -114,49 +115,7 @@ Promise.prototype = {
 	 * @chainable
 	 */
 	reject: function () {
-		return this.rejectWith(this, SLICE.call(arguments));
-	},
-	
-	/**
-	 * @method resolveWith
-	 * @description Resolves the promise and notifies all callbacks
-	 * @param {Object} context The object to use as context for the callbacks
-	 * @param {Array} args A list of arguments that will be passed to the success callbacks
-	 * @chainable
-	 */
-	resolveWith: function (context, args) {
-		this.resolved = true;
-		this._args = args;
-		return this._notify(this._done, args, context);
-	},
-	
-	/**
-	 * @method rejectWith
-	 * @description Rejects the promise and notifies all callbacks
-	 * @param {Object} context The object to use as context for the callbacks
-	 * @param {Array} args A list of arguments that will be passed to the failure callbacks
-	 * @chainable
-	 */
-	rejectWith: function (context, args) {
-		this.rejected = true;
-		this._args = args;
-		return this._notify(this._fail, args, context);
-	},
-	
-	/**
-	 * @method notify
-	 * @description Notifies the success or failure callbacks
-	 * @param {Boolean} success Whether to notify the success or failure callbacks
-	 * @param {Array} args A list of arguments to pass to the callbacks
-	 * @param {Object} thisp Context to apply to the callbacks
-	 * @chainable
-	 * @private
-	 */
-	_notify: function (callbacks, args, thisp) {
-		for (var i = 0, length = callbacks.length; i < length; i++) {
-			callbacks[i].apply(thisp, args);
-		}
-		return this;
+		return this.fire.apply(this, ['failure'].concat(Y.Array(arguments)));
 	},
 	
 	/**
@@ -177,6 +136,6 @@ Promise.prototype = {
 		return promise;
 	}
 	
-};
+});
 
 Y.Promise = Promise;

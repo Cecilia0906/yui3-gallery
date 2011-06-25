@@ -3,15 +3,15 @@ function NodeDeferred(config) {
 	NodeDeferred.superclass.constructor.apply(this, arguments);
 	this.host = config.host;
 }
-Y.extend(NodeDeferred, Deferred, null, {
+Y.extend(NodeDeferred, Y.Deferred, null, {
 	NS: 'deferred',
 	
 	importMethod: function (method) {
 		NodeDeferred.prototype[method] = function () {
 			if (this.host[method]) {
-				var args = SLICE.call(arguments),
+				var args = Y.Array(arguments),
 					callback;
-				if (Lang.isFunction(args[args.length - 1])) {
+				if (Y.Lang.isFunction(args[args.length - 1])) {
 					callback = args.pop();
 				}
 				return this.defer(function (promise) {
@@ -29,8 +29,6 @@ Y.extend(NodeDeferred, Deferred, null, {
 	}
 });
 
-YArray.each(['hide', 'load', 'show', 'transition'], NodeDeferred.importMethod);
+Y.Array.each(['hide', 'load', 'show', 'transition'], NodeDeferred.importMethod);
 
-if (Y.Node) {
-	Y.Node.Deferred = NodeDeferred;
-}
+Y.Node.Deferred = NodeDeferred;
