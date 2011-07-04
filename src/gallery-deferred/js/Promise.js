@@ -1,29 +1,6 @@
 var Lang = Y.Lang,
 	YArray = Y.Array,
 	AP = Array.prototype;
-
-/*
- * Turns a value into an array with the value as its first element, or takes an array and spreads
- * each array element into elements of the parent array
- * @param {Object|Array} args The value or array to spread
- * @return Array
- * @private
- */
-YArray._spread = function (args) {
-	args = !Lang.isValue(args) ? [] : Lang.isArray(args) ? args : [args];
-	var i = 0;
-	while (i < args.length) {
-		if (Lang.isArray(args[i])) {
-			AP.splice.apply(args, [i, 1].concat(args[i]));
-		} else if (!Lang.isValue(args[i])) {
-			args.splice(i, 1);
-		} else {
-			i++;
-		}
-	}
-	return args;
-};
-
 	
 /**
  * A promise keeps two lists of callbacks, one for the success scenario and another for the failure case.
@@ -36,18 +13,13 @@ YArray._spread = function (args) {
 function Promise(config) {
 	Promise.superclass.constructor.apply(this, arguments);
 	
-	config = this._config = config || {};
+	this._config = config || {};
 	
 	var eventConf = {
 		emitFacade: false,
 		fireOnce: true,
 		preventable: false
 	};
-	Y.Object.each(eventConf, function (value, key) {
-		if (Lang.isBoolean(config[key])) {
-			eventConf[key] = config[key];
-		}
-	});
 	this.publish('success', eventConf);
 	this.publish('failure', eventConf);
 	this.publish('complete', eventConf);
@@ -62,10 +34,10 @@ Y.extend(Promise, Y.EventTarget, {
 	 */
 	then: function (doneCallbacks, failCallbacks) {
 		var self = this;
-		YArray.each(YArray._spread(doneCallbacks), function (callback) {
+		YArray.each(Promise._spreadArray(doneCallbacks), function (callback) {
 			self.on('success', callback);
 		});
-		YArray.each(YArray._spread(failCallbacks), function (callback) {
+		YArray.each(Promise._spreadArray(failCallbacks), function (callback) {
 			self.on('failure', callback);
 		});
 		return this;
@@ -131,9 +103,9 @@ Y.extend(Promise, Y.EventTarget, {
 	 * additional asynchronous functionalityu. For example:
 	 * <pre><code>
 	 * wait: function (delay) {
-	 * 	 return this.defer(function (promise) {
-	 * 	   Y.later(delay || 0, promise, promise.resolve);
-	 *   });
+	 *		return this.defer(function (promise) {
+	 *		Y.later(delay || 0, promise, promise.resolve);
+	 * });
 	 * }</code></pre>
 	 * @return {Deferred}
 	 */
@@ -143,6 +115,29 @@ Y.extend(Promise, Y.EventTarget, {
 		return promise;
 	}
 	
+}, {
+	/*
+	 * Turns a value into an array with the value as its first element, or takes an array and spreads
+	 * each array element into elements of the parent array
+	 * @param {Object|Array} args The value or array to spread
+	 * @return Array
+	 * @private
+	 * @static
+	 */
+	_spreadArray: function (args) {
+		args = !Lang.isValue(args) ? [] : Lang.isArray(args) ? args : [args];
+		var i = 0;
+		while (i < args.length) {
+			if (Lang.isArray(args[i])) {
+				AP.splice.apply(args, [i, 1].concat(args[i]));
+			} else if (!Lang.isValue(args[i])) {
+				args.splice(i, 1);
+			} else {
+				i++;
+			}
+		}
+		return args;
+	}
 });
 
 Y.Promise = Promise;
