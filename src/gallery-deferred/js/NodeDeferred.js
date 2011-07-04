@@ -1,9 +1,10 @@
 
+	function NodeDeferred(config) {
+		NodeDeferred.superclass.constructor.apply(this, arguments);
+		this.host = config.host;
+	}
+	
 	if (Y.Node && Y.Plugin) {
-		function NodeDeferred(config) {
-			NodeDeferred.superclass.constructor.apply(this, arguments);
-			this.host = config.host;
-		}
 		Y.extend(NodeDeferred, Y.Promise, null, {
 			NS: 'deferred',
 			

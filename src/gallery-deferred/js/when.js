@@ -26,7 +26,7 @@ Y.defer = function (fn, context) {
  * @return Promise
  */
 Y.when = function () {
-	var deferreds = YArray._spread(YArray(arguments)),
+	var deferreds = Y.Promise._spreadArray(YArray(arguments)),
 		args = [],
 		resolved = 0,
 		rejected = 0;
