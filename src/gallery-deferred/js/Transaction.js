@@ -1,24 +1,24 @@
 
 	/**
 	 * Represents the promise of an IO transaction being completed
-	 * @class io.Transaction
+	 * @class io.Request
 	 * @constructor
 	 * @extends Promise
 	 */
-	function Transaction() {
-		Transaction.superclass.constructor.apply(this, arguments);
+	function Request() {
+		Request.superclass.constructor.apply(this, arguments);
 		var eventConfig = { emitFacade: true };
 		this.publish('success', eventConfig);
 		this.publish('failure', eventConfig);
 		this.publish('complete', eventConfig);
 	}
-	Y.extend(Transaction, Y.Promise, null, {
+	Y.extend(Request, Y.Promise, null, {
 		NAME: 'io-transaction'
 	});
 	
 	Y.mix(Y.io, {
 		
-		Transaction: Transaction,
+		Request: Request,
 		
 		/**
 		 * Utility function for normalizing an IO configuration object.
@@ -39,7 +39,7 @@
 		},
 		
 		/**
-		 * Makes an IO request and returns a new io.Transaction object for it.
+		 * Makes an IO request and returns a new io.Request object for it.
 		 * It also normalizes callbacks as event handlers with an EventFacade
 		 * @method _defer
 		 * @for io
@@ -48,7 +48,7 @@
 		 */
 		_defer: function (uri, config) {
 			config = Y.io._normalizeConfig(config);
-			var transaction = new Y.io.Transaction();
+			var transaction = new Y.io.Request();
 			
 			if (config.on) {
 				transaction.on(config.on);
@@ -80,7 +80,7 @@
 		
 		addMethod: function (fn, name) {
 			Y.io[name] = fn;
-			Transaction.prototype[name] = function () {
+			Request.prototype[name] = function () {
 				return Y.io[name].apply(Y.io, arguments);
 			};
 		}
@@ -93,7 +93,7 @@
 		 * @method get
 		 * @param {String} uri Path to the transaction resource
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Transaction
+		 * @return io.Request
 		 * @for io
 		 * @static
 		 */
@@ -108,7 +108,7 @@
 		 * @method get
 		 * @param {String} uri Path to the transaction resource
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Transaction
+		 * @return io.Request
 		 * @for io
 		 * @static
 		 */
@@ -125,7 +125,7 @@
 		 * @param {String} uri Path to the transaction resource
 		 * @param {String} id The id of the form to serialize and send in the transaction
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Transaction
+		 * @return io.Request
 		 * @for io
 		 * @static
 		 */
@@ -143,7 +143,7 @@
 		 * @method getJSON
 		 * @param {String} uri Path to the transaction resource
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Transaction
+		 * @return io.Request
 		 * @for io
 		 * @static
 		 */
@@ -161,13 +161,13 @@
 		 * @method jsonp
 		 * @param {String} uri Path to the jsonp service
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Transaction
+		 * @return io.Request
 		 * @for io
 		 * @static
 		 */
 		Y.io.addMethod('jsonp', function (uri, config) {
 			config = Y.io._normalizeConfig(config);
-			var transaction = new Y.io.Transaction();
+			var transaction = new Y.io.Request();
 			
 			if (config.on) {
 				transaction.on(config.on);
