@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IO test</title>
+	<style type="text/css">
+		#test {
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			top: 30px;
+			left: 30px;
+			background: #999;
+		}
+	</style>
+</head>
+<body>
+	<div id="test"></div>
+	<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.4.0pr2/build/yui/yui.js&amp;3.4.0pr2/build/loader/loader.js"></script>
+	<script type="text/javascript">
+YUI({
+	filter: 'raw',
+	groups: {
+		deferred: {
+			base: '/yui3-gallery/src/',
+			modules: {
+				'gallery-deferred': {
+					path: 'gallery-deferred/build_tmp/gallery-deferred.js',
+					requires: ['event-custom', 'io-base']
+				},
+			}
+		}
+	}
+}).use('node', 'plugin', 'node-load', 'transition', 'gallery-deferred', function (Y) {
+	
+	var node = Y.one('#test').plug(Y.Node.Deferred);
+	
+	node.deferred.transition({ left: 270 }).transition({ top: 270 }).load('test1.html').transition({ width: 300, height: 300, top: 30 }).then(function () {
+		console.log(arguments);
+	});
+	
+});
+	</script>
+</body>
+</html>

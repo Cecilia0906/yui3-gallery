@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>IO test</title>
+</head>
+<body>
+	<script type="text/javascript" src="http://yui.yahooapis.com/combo?3.4.0pr2/build/yui/yui.js&amp;3.4.0pr2/build/loader/loader.js"></script>
+	<script type="text/javascript">
+YUI({
+	filter: 'raw',
+	groups: {
+		deferred: {
+			base: '/yui3-gallery/src/',
+			modules: {
+				'gallery-deferred': {
+					path: 'gallery-deferred/build_tmp/gallery-deferred.js',
+					requires: ['event-custom', 'io-base']
+				}
+			}
+		}
+	}
+}).use('gallery-deferred', function (Y) {
+	
+	Y.when(Y.io.get('test1.html'), Y.io.get('test2.html')).then(function (a, b) {
+		console.log(a[0].responseText, b[0].responseText);
+	});
+	
+});
+	</script>
+</body>
+</html>
