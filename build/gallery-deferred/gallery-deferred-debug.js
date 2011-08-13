@@ -44,7 +44,7 @@ function Promise() {
 	this.rejected = false;
 }
 Promise.prototype = {
-	
+	constructor: Promise,
 	/**
 	 * @method then
 	 * @description Adds callbacks to the list of callbacks tracked by the promise
@@ -161,6 +161,21 @@ Promise.prototype = {
 		return this;
 	},
 	
+<<<<<<< HEAD
+=======
+	/**
+	 * @method defer
+	 * @description Returns a new promise. This method will be mostly used by implementors that extend this class to create
+	 * additional asynchronous functionalityu. For example:
+	 * <pre><code>
+	 * wait: function (delay) {
+	 * 	 return this.defer(function (promise) {
+	 * 	   Y.later(delay || 0, promise, promise.resolve);
+	 *   });
+	 * }</code></pre>
+	 * @return {Deferred}
+	 */
+>>>>>>> master
 	defer: function (callback, context) {
 		var promise = new this.constructor();
 		this.then(Y.bind(callback, context || this, promise));
@@ -217,6 +232,21 @@ Deferred.prototype = {
 		this._current = next;
 	},
 
+<<<<<<< HEAD
+=======
+	/**
+	 * @method defer
+	 * @description Returns a new promise. This method will be mostly used by implementors that extend this class to create
+	 * additional asynchronous functionalityu. For example:
+	 * <pre><code>
+	 * wait: function (delay) {
+	 * 	 return this.defer(function (promise) {
+	 * 	   Y.later(delay || 0, promise, promise.resolve);
+	 *   });
+	 * }</code></pre>
+	 * @return {Deferred}
+	 */
+>>>>>>> master
 	defer: function (fn, context) {
 		context = context || this;
 		var promise = new Promise(),
@@ -238,12 +268,36 @@ Deferred.prototype = {
 		return this;
 	},
 	
+<<<<<<< HEAD
 	end: function (doneCallbacks, failCallbacks) {
 		this.then(doneCallbacks);
 		this._fail.push.apply(this._fail, YArray._spread(failCallbacks));
 		if (this._starter) {
 			this._starter();
 		}
+=======
+	/**
+	 * @method end
+	 * @description Adds done and fail callbacks and runs the first promise in the queue
+	 * @param {Function|Array} doneCallbacks A function or array of functions to run when the promise is resolved
+	 * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
+	 * @chainable
+	 */
+	end: function (doneCallbacks, failCallbacks) {
+		this.then(doneCallbacks);
+		this._fail.push.apply(this._fail, YArray._spread(failCallbacks));
+		return this.run();
+	},
+	
+	/**
+	 * @method run
+	 * @description Runs the first promise in the queue. The fact that deferreds don't run automatically
+	 * means that you can use them as callbacks for Deferred.then
+	 * @chainable
+	 */
+	run: function () {
+		this._starter && this._starter();
+>>>>>>> master
 		return this;
 	},
 	
@@ -277,12 +331,31 @@ Deferred.prototype = {
 		return this;
 	},
 
+<<<<<<< HEAD
 	isResolved: function () {
 		return this._current.isResolved();
 	},
 	
 	isRejected: function () {
 		return this._current.isRejected();
+=======
+	/**
+	 * @method isResolved
+	 * @description Whether the current promise is resoved or not
+	 * @return {Boolean}
+	 */
+	isResolved: function () {
+		return !!this._current.resolved;
+	},
+	
+	/**
+	 * @method isResolved
+	 * @description Whether the current promise is rejected or not
+	 * @return {Boolean}
+	 */
+	isRejected: function () {
+		return !!this._current.rejected;
+>>>>>>> master
 	},
 	
 	_notifyFailure: function () {
@@ -336,8 +409,20 @@ Deferred.prototype = {
 	 * @chainable
 	 * @private
 	 */
+<<<<<<< HEAD
 	
 YArray.each(['done', 'fail', 'always', 'resolve', 'reject', '_notify'], function (method) {
+=======
+/**
+ * @property Deferred.PROMISE_METHODS
+ * @description Methods to copy from Promise
+ * @static
+ * @protected
+ */
+Deferred.PROMISE_METHODS = ['done', 'fail', 'always', 'resolve', 'reject', '_notify'];
+
+YArray.each(Deferred.PROMISE_METHODS, function (method) {
+>>>>>>> master
 	Deferred.prototype[method] = Promise.prototype[method];
 });
 
