@@ -1,6 +1,6 @@
 
 	/**
-	 * Represents the promise of an IO transaction being completed
+	 * Represents the promise of an IO request being completed
 	 * @class io.Request
 	 * @constructor
 	 * @extends Promise
@@ -13,7 +13,7 @@
 		this.publish('complete', eventConfig);
 	}
 	Y.extend(Request, Y.Promise, null, {
-		NAME: 'io-transaction'
+		NAME: 'io-request'
 	});
 	
 	Y.mix(Y.io, {
@@ -30,10 +30,11 @@
 		 * @static
 		 */
 		_normalizeConfig: function (config, args) {
-			config = config || {};
-			config.on = config.on || {};
 			if (Y.Lang.isFunction(config)) {
 				config = { on: { complete: config } };
+			} else {
+				config = config || {};
+				config.on = config.on || {};
 			}
 			return Y.mix(config, args, true);
 		},
@@ -78,16 +79,36 @@
 			return Y.mix(transaction, Y.io(uri, config));
 		},
 		
-		addMethod: function (fn, name) {
+        /**
+         * Add a deferred function to Y.io and add it as a method of Y.Request
+         * @method addMethod
+         * @for Y.io
+         * @static
+         * @param {String} name Name of the method
+         * @param {Function} fn Method
+         */
+		addMethod: function (name, fn) {
 			Y.io[name] = fn;
 			Request.prototype[name] = function () {
 				return Y.io[name].apply(Y.io, arguments);
 			};
-		}
+		},
 		
+		/**
+		 * Adds multiple methods to Y.io and Y.Request from an object
+		 * @method addMethods
+		 * @for Y.io
+		 * @static
+		 * @param {Obejct} methods Key/value pairs of names and functions
+		 */
+		addMethods: function (methods) {
+			Y.Object.each(methods, function (fn, name) {
+				Y.io.addMethod(name, fn);
+			});
+		}
 	});
 
-	Y.each({
+	Y.io.addMethods({
 		/**
 		 * Makes a new GET HTTP transaction
 		 * @method get
@@ -135,7 +156,7 @@
 				form: { id: id }
 			}));
 		}
-	}, Y.io.addMethod);
+	});
 	
 	if (Y.JSON) {
 		/**
@@ -167,23 +188,21 @@
 		 */
 		Y.io.addMethod('jsonp', function (uri, config) {
 			config = Y.io._normalizeConfig(config);
-			var transaction = new Y.io.Request();
+			var request = new Y.io.Request();
 			
 			if (config.on) {
-				transaction.on(config.on);
+				request.on(config.on);
 			}
 			
-			config.on = {
-				success: function (data) {
-					transaction.fire('success', { data: data });
-				},
-				failure: function (data) {
-					transaction.fire('failure', { data: data });
-				}
-			};
+			config.on = {};
+			Y.Array.each(['success', 'failure', 'complete'], function (eventName) {
+				config.on[eventName] = function (data) {
+					request.fire(eventName, { data: data });
+				};
+			});
 			
 			Y.jsonp(uri, config);
 			
-			return transaction;
+			return request;
 		});
 	}
