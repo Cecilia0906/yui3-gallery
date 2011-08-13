@@ -34,10 +34,10 @@ Y.extend(Promise, Y.EventTarget, {
 	 */
 	then: function (doneCallbacks, failCallbacks) {
 		var self = this;
-		YArray.each(Promise._spreadArray(doneCallbacks), function (callback) {
+		YArray.each(Promise._flatten(doneCallbacks), function (callback) {
 			self.on('success', callback);
 		});
-		YArray.each(Promise._spreadArray(failCallbacks), function (callback) {
+		YArray.each(Promise._flatten(failCallbacks), function (callback) {
 			self.on('failure', callback);
 		});
 		return this;
@@ -119,24 +119,16 @@ Y.extend(Promise, Y.EventTarget, {
 	/*
 	 * Turns a value into an array with the value as its first element, or takes an array and spreads
 	 * each array element into elements of the parent array
+	 * @method _flatten
 	 * @param {Object|Array} args The value or array to spread
 	 * @return Array
 	 * @private
 	 * @static
 	 */
-	_spreadArray: function (args) {
-		args = !Lang.isValue(args) ? [] : Lang.isArray(args) ? args : [args];
-		var i = 0;
-		while (i < args.length) {
-			if (Lang.isArray(args[i])) {
-				AP.splice.apply(args, [i, 1].concat(args[i]));
-			} else if (!Lang.isValue(args[i])) {
-				args.splice(i, 1);
-			} else {
-				i++;
-			}
-		}
-		return args;
+	_flatten: function (arr) {
+		return YArray.reduce(YArray(arr), function (a, b) {
+			return YArray(a).concat(YArray(b));
+		});
 	}
 });
 
