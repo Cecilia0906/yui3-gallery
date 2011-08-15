@@ -3,7 +3,7 @@
 	 * A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()
 	 * @class Node.Deferred
 	 * @constructor
-	 * @extends Promise
+	 * @extends Deferred
 	 * @param {Object} config An object literal containing plugin configuration
 	 */
 	function NodeDeferred(config) {
@@ -12,7 +12,7 @@
 	}
 	
 	if (Y.Node && Y.Plugin) {
-		Y.extend(NodeDeferred, Y.Promise, null, {
+		Y.extend(NodeDeferred, Y.Deferred, null, {
 			/**
 			 * Plugin namespace
 			 * @property {String} NS 'deferred'

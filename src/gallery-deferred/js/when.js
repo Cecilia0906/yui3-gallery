@@ -11,10 +11,10 @@
  * or reject() at a certain point
  * @method defer
  * @param {Function} fn A function that encloses an async call.
- * @return Promise
+ * @return {Deferred} a promise
  */
 Y.defer = function (fn, context) {
-	var promise = new Y.Promise();
+	var promise = new Y.Deferred();
 	fn(promise);
 	return promise;
 };
@@ -22,42 +22,43 @@ Y.defer = function (fn, context) {
 /**
  * @method when
  * @description Waits for a series of asynchronous calls to be completed
- * @param {Deferred|Array} deferred Any number of Deferred instances or arrays of instances
- * @return Promise
+ * @param {Deferred|Array|Function} deferred Any number of Deferred instances or arrays of instances. If a function is provided, it is executed at once
+ * @return {Deferred} a promise
  */
 Y.when = function () {
-	var deferreds = Y.Promise._flatten(arguments),
+	var deferreds = Y.Deferred._flatten(arguments),
 		args = [],
 		resolved = 0,
 		rejected = 0;
 			
 	return Y.defer(function (promise) {
-		function notify() {
-			if (rejected > 0) {
-				promise.reject.apply(promise, args);
-			} else {
-				promise.resolve.apply(promise, args);
+		function notify(_args) {
+			args.push(YArray(_args));
+			if (resolved + rejected === deferreds.length) {
+				if (rejected > 0) {
+					promise.reject.apply(promise, args);
+				} else {
+					promise.resolve.apply(promise, args);
+				}
 			}
 		}
 			
 		function done() {
-			args.push(YArray(arguments));
 			resolved++;
-			if (resolved + rejected === deferreds.length) {
-				notify();
-			}
+			notify(arguments);
 		}
 		
 		function fail() {
-			args.push(YArray(arguments));
 			rejected++;
-			if (resolved + rejected === deferreds.length) {
-				notify();
-			}
+			notify(arguments);
 		}
 
 		YArray.each(deferreds, function (deferred) {
-			deferred.then(done, fail);
+			if (Y.Lang.isFunction(deferred)) {
+				done(deferred());
+			} else {
+				deferred.then(done, fail);
+			}
 		});
 	});
 };

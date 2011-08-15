@@ -3,7 +3,7 @@
 	 * Represents the promise of an IO request being completed
 	 * @class io.Request
 	 * @constructor
-	 * @extends Promise
+	 * @extends Deferred
 	 */
 	function Request() {
 		Request.superclass.constructor.apply(this, arguments);
@@ -12,7 +12,7 @@
 		this.publish('failure', eventConfig);
 		this.publish('complete', eventConfig);
 	}
-	Y.extend(Request, Y.Promise, null, {
+	Y.extend(Request, Y.Deferred, null, {
 		NAME: 'io-request'
 	});
 	

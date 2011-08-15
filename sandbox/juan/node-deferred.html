@@ -19,10 +19,9 @@
 	<script src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui.js&3.3.0/build/loader/loader.js"></script>
 	<script>
 		YUI({
-			filter: 'raw',
 			modules: {
 				'gallery-deferred': {
-					fullpath: 'https://raw.github.com/juandopazo/yui3-gallery/deferred/build/gallery-deferred/gallery-deferred.js'
+					fullpath: 'http://juandopazo.github.com/yui3-gallery/build/gallery-deferred/gallery-deferred.js'
 				}
 			}
 		}).use('node', 'node-load', 'transition', 'plugin', 'gallery-deferred', function (Y) {
@@ -32,8 +31,7 @@
 			node.deferred.transition({ left: '300px' })
 						.transition({ top: '300px' })
 						.load('node-deferred-content.html')
-						.transition({ width: '420px', height: '420px', top: '30px' })
-						.end();
+						.transition({ width: '420px', height: '420px', top: '30px' });
 			
 		});
 	</script>
