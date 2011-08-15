@@ -35,7 +35,7 @@
 									.transition({ width: '420px', height: '420px', top: '30px' });
 			
 			Y.when(Y.io.get('test1.html'), Y.io.get('test2.html'), deferredAction).then(function (a, b) {
-				Y.log(a[0], b[0]);
+				Y.log([a[0], b[0]]);
 			});
 
 		});
