@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2011, Juan Ignacio Dopazo. All rights reserved.
+ * Code licensed under the BSD License
+ * http://yuilibrary.com/gallery/show/deferred
+ */
 var Lang = Y.Lang,
 	YArray = Y.Array,
 	AP = Array.prototype;
