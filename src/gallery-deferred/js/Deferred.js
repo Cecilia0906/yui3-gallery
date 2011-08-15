@@ -126,9 +126,16 @@ Y.extend(Deferred, Y.EventTarget, {
 	 * @static
 	 */
 	_flatten: function (arr) {
-		return YArray.reduce(YArray(arr), function (a, b) {
-			return YArray(a).concat(YArray(b));
-		});
+		var i = 0;
+		arr = YArray(arr).concat();
+		while (i < arr.length) {
+			if (Y.Lang.isArray(arr[i])) {
+				Array.prototype.splice.apply(arr, [i, 1].concat(arr[i]));
+			} else {
+				i++;
+			}
+		}
+		return arr;
 	}
 });
 

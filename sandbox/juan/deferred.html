@@ -12,17 +12,17 @@
 			left: 30px;
 			font-size: 40px;
 		}
-	</style>Updated Deferred example
+	</style>
 </head>
 <body>
 	<div id="test"></div>
-	<script src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui.js&3.3.0/build/loader/loader.js"></script>
+	<script src="http://yui.yahooapis.com/3.4.0pr3/build/yui/yui.js"></script>
 	<script>
 		YUI({
 			filter: 'raw',
 			modules: {
 				'gallery-deferred': {
-					fullpath: 'http://juandopazo.github.com/yui3-gallery/build/gallery-deferred/gallery-deferred.js'
+					fullpath: '/yui3-gallery/build/gallery-deferred/gallery-deferred.js'
 				}
 			}
 		}).use('node', 'node-load', 'transition', 'plugin', 'gallery-deferred', function (Y) {
@@ -34,8 +34,8 @@
 									.load('node-deferred-content.html')
 									.transition({ width: '420px', height: '420px', top: '30px' });
 			
-			Y.when(Y.io.get('test1.html'), Y.io.defer('test2.html'), deferredAction).then(function (a, b) {
-				console.log(a[1], b[1]);
+			Y.when(Y.io.get('test1.html'), Y.io.get('test2.html'), deferredAction).then(function (a, b) {
+				console.log(a[0], b[0]);
 			});
 
 		});
