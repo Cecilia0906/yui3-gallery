@@ -5,13 +5,13 @@ var Lang = Y.Lang,
 /**
  * A promise keeps two lists of callbacks, one for the success scenario and another for the failure case.
  * It runs these callbacks once a call to resolve() or reject() is made
- * @class Promise
+ * @class Deferred
  * @constructor
  * @param {Function|Array} doneCallbacks A function or array of functions to run when the promise is resolved
  * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
  */
-function Promise(config) {
-	Promise.superclass.constructor.apply(this, arguments);
+function Deferred(config) {
+	Deferred.superclass.constructor.apply(this, arguments);
 	
 	this._config = config || {};
 	
@@ -24,7 +24,7 @@ function Promise(config) {
 	this.publish('failure', eventConf);
 	this.publish('complete', eventConf);
 }
-Y.extend(Promise, Y.EventTarget, {
+Y.extend(Deferred, Y.EventTarget, {
 	/**
 	 * @method then
 	 * @description Adds callbacks to the list of callbacks tracked by the promise
@@ -34,10 +34,10 @@ Y.extend(Promise, Y.EventTarget, {
 	 */
 	then: function (doneCallbacks, failCallbacks) {
 		var self = this;
-		YArray.each(Promise._flatten(doneCallbacks), function (callback) {
+		YArray.each(Deferred._flatten(doneCallbacks), function (callback) {
 			self.on('success', callback);
 		});
-		YArray.each(Promise._flatten(failCallbacks), function (callback) {
+		YArray.each(Deferred._flatten(failCallbacks), function (callback) {
 			self.on('failure', callback);
 		});
 		return this;
@@ -132,4 +132,4 @@ Y.extend(Promise, Y.EventTarget, {
 	}
 });
 
-Y.Promise = Promise;
+Y.Deferred = Deferred;
