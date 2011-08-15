@@ -12,7 +12,7 @@
 			left: 30px;
 			font-size: 40px;
 		}
-	</style>
+	</style>Updated Deferred example
 </head>
 <body>
 	<div id="test"></div>
@@ -22,8 +22,7 @@
 			filter: 'raw',
 			modules: {
 				'gallery-deferred': {
-					fullpath: 'https://raw.github.com/juandopazo/yui3-gallery/deferred/build/gallery-deferred/gallery-deferred.js',
-					requires: ['array-extras']
+					fullpath: 'http://juandopazo.github.com/yui3-gallery/build/gallery-deferred/gallery-deferred.js'
 				}
 			}
 		}).use('node', 'node-load', 'transition', 'plugin', 'gallery-deferred', function (Y) {
@@ -35,7 +34,7 @@
 									.load('node-deferred-content.html')
 									.transition({ width: '420px', height: '420px', top: '30px' });
 			
-			Y.when(Y.io.defer('io-deferred.html'), deferredAction).then(Y.io.defer('node-deferred.html')).end(function (a, b) {
+			Y.when(Y.io.get('test1.html'), Y.io.defer('test2.html'), deferredAction).then(function (a, b) {
 				console.log(a[1], b[1]);
 			});
 
