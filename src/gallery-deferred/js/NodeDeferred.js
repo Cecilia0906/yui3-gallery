@@ -57,7 +57,7 @@
 			}
 		});
 		
-		Y.Array.each(['hide', 'load', 'show', 'transition'], NodeDeferred.importMethod);
+		Y.Array.each(['hide', 'load', 'show', 'transition', 'once', 'onceAfter'], NodeDeferred.importMethod);
 		
 		Y.Node.Deferred = NodeDeferred;
 	}
