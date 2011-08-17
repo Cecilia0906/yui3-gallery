@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Y.io.defer test</title>
+</head>
+<body>
+	<script src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui.js&3.3.0/build/loader/loader.js"></script>
+	<script>
+		YUI({
+			filter: 'raw',
+			modules: {
+				'gallery-deferred': {
+//					fullpath: 'http://github.com/juandopazo/yui3-gallery-dev/raw/master/src/gallery-deferred/build_tmp/gallery-deferred.js'
+					fullpath: 'http://localhost/yui3-gallery-dev/src/gallery-deferred/build_tmp/gallery-deferred.js',
+					requires: ['array-extras']
+				}
+			}
+		}).use('io', 'gallery-deferred', function (Y) {
+			
+			Y.when(Y.io.defer('node-deferred.html'), Y.io.defer('node-deferred-content.html')).end(function (a, b) {
+				console.log(a[1], b[1]);
+			});
+			
+		});
+	</script>
+</body>
+</html>
