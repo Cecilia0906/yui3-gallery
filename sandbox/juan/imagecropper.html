@@ -14,18 +14,17 @@
 		}
 	</style> 
 </head> 
-<body>
+<body class="yui3-skin-sam">
 	<h1>ImageCropper - Gallery</h1>
 	<div id="imagecropper"></div>
 	<div style="position: absolute; left: 550px; top: 79px;">
 		<div id="result"></div>
 		<p id="coords"></p>
 	</div>
-	<script src="http://yui.yahooapis.com/combo?3.4.0pr1/build/yui/yui-min.js&amp;3.4.0pr1/build/loader/loader-min.js"></script> 
+	<script src="http://yui.yahooapis.com/3.4.0/build/yui/yui-min.js"></script> 
 	<script> 
 YUI({
-	gallery: 'gallery-2011.06.22-20-13',
-	fetchCSS: false
+	gallery: 'gallery-2011.06.29-23-18'
 }).use('yql', 'gallery-imagecropper', function (Y) {
 	
 	Y.random = function (n) {
