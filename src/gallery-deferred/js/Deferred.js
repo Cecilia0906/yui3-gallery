@@ -1,30 +1,46 @@
+/*
+ * Copyright (c) 2011, Juan Ignacio Dopazo. All rights reserved.
+ * Code licensed under the BSD License
+ * http://yuilibrary.com/gallery/show/deferred
+ */
+/**
+ * @module gallery-deferred
+ * @requires event-custom
+ */
 var Lang = Y.Lang,
 	YArray = Y.Array,
 	AP = Array.prototype;
 	
 /**
- * A promise keeps two lists of callbacks, one for the success scenario and another for the failure case.
- * It runs these callbacks once a call to resolve() or reject() is made
+ * A deferred keeps two lists of callbacks, one for the success scenario and another for the failure case.
+ * It runs these callbacks once a call to resolve() or reject() is made.
+ * 
+ * This class is designed to augment others
  * @class Deferred
  * @constructor
- * @param {Function|Array} doneCallbacks A function or array of functions to run when the promise is resolved
- * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
  */
 function Deferred(config) {
-	Deferred.superclass.constructor.apply(this, arguments);
-	
 	this._config = config || {};
+	
+	var et = this._et = new Y.EventTarget();
 	
 	var eventConf = {
 		emitFacade: false,
 		fireOnce: true,
 		preventable: false
 	};
-	this.publish('success', eventConf);
-	this.publish('failure', eventConf);
-	this.publish('complete', eventConf);
+	et.publish('success', eventConf);
+	et.publish('failure', eventConf);
+	et.publish('complete', eventConf);
 }
-Y.extend(Deferred, Y.EventTarget, {
+Y.mix(Deferred.prototype, {
+	_on: function () {
+		return this._et.on.apply(this._et, arguments);
+	},
+	_fire: function () {
+		this._et.fire.apply(this._et, arguments);
+		return this;
+	},
 	/**
 	 * @method then
 	 * @description Adds callbacks to the list of callbacks tracked by the promise
@@ -35,10 +51,10 @@ Y.extend(Deferred, Y.EventTarget, {
 	then: function (doneCallbacks, failCallbacks) {
 		var self = this;
 		YArray.each(Deferred._flatten(doneCallbacks), function (callback) {
-			self.on('success', callback);
+			self._on('success', callback);
 		});
 		YArray.each(Deferred._flatten(failCallbacks), function (callback) {
-			self.on('failure', callback);
+			self._on('failure', callback);
 		});
 		return this;
 	},
@@ -72,7 +88,7 @@ Y.extend(Deferred, Y.EventTarget, {
 	always: function () {
 		var self = this;
 		YArray.each(Y.Array(arguments), function (callback) {
-			self.on('complete', callback);
+			self._on('complete', callback);
 		});
 		return this;
 	},
@@ -84,7 +100,9 @@ Y.extend(Deferred, Y.EventTarget, {
 	 * @chainable
 	 */
 	resolve: function () {
-		return this.fire.apply(this, ['success'].concat(Y.Array(arguments)));
+		var args = Y.Array(arguments);
+		this._fire.apply(this, ['success'].concat(args));
+		return this._fire.apply(this, ['complete'].concat(args));
 	},
 	
 	/**
@@ -94,7 +112,9 @@ Y.extend(Deferred, Y.EventTarget, {
 	 * @chainable
 	 */
 	reject: function () {
-		return this.fire.apply(this, ['failure'].concat(Y.Array(arguments)));
+		var args = Y.Array(arguments);
+		this._fire.apply(this, ['failure'].concat(args));
+		return this._fire.apply(this, ['complete'].concat(args));
 	},
 	
 	/**
@@ -115,7 +135,9 @@ Y.extend(Deferred, Y.EventTarget, {
 		return promise;
 	}
 	
-}, {
+});
+
+Y.mix(Deferred, {
 	/*
 	 * Turns a value into an array with the value as its first element, or takes an array and spreads
 	 * each array element into elements of the parent array
