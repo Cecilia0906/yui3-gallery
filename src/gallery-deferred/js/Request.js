@@ -7,10 +7,11 @@
 	 */
 	function Request() {
 		Request.superclass.constructor.apply(this, arguments);
+		var et = this._et;
 		var eventConfig = { emitFacade: true };
-		this.publish('success', eventConfig);
-		this.publish('failure', eventConfig);
-		this.publish('complete', eventConfig);
+		et.publish('success', eventConfig);
+		et.publish('failure', eventConfig);
+		et.publish('complete', eventConfig);
 	}
 	Y.extend(Request, Y.Deferred, null, {
 		NAME: 'io-request'
@@ -50,12 +51,19 @@
 			 */
 			_defer: function (uri, config) {
 				config = Y.io._normalizeConfig(config);
-				var transaction = new Y.io.Request();
+				var request = new Y.io.Request();
 				
-				if (config.on) {
-					transaction.on(config.on);
+				function relayEvent(eventName) {
+					return function (id, response) {
+						var args = { responseXML: response.responseXML, responseText: response.responseText };
+						request._fire(eventName, args);
+					}
 				}
 					
+				if (config.on) {
+					request._on(config.on);
+				}
+				
 				config.on = {
 					success: function (id, response) {
 						var args = { responseXML: response.responseXML, responseText: response.responseText };
@@ -63,21 +71,17 @@
 							try {
 								args.data = config.parser(response.responseText);
 							} catch (e) {
-								transaction.fire('failure', response);
+								request._fire('failure', response);
 								return;
 							}
 						}
-						transaction.fire('success', args);
-						transaction.fire('complete', args);
+						request._fire('success', args);
 					},
-					failure: function (id, response) {
-						var args = { responseXML: response.responseXML, responseText: response.responseText };
-						transaction.fire('failure', args);
-						transaction.fire('complete', args);
-					}
+					failure: relayEvent('failure'),
+					complete: relayEvent('complete')
 				};
 				
-				return Y.mix(transaction, Y.io(uri, config));
+				return Y.mix(request, Y.io(uri, config));
 			},
 			
 	        /**
@@ -111,9 +115,9 @@
 	
 		Y.io.addMethods({
 			/**
-			 * Makes a new GET HTTP transaction
+			 * Makes a new GET HTTP request
 			 * @method get
-			 * @param {String} uri Path to the transaction resource
+			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -126,9 +130,9 @@
 			},
 			
 			/**
-			 * Makes a new POST HTTP transaction
+			 * Makes a new POST HTTP request
 			 * @method get
-			 * @param {String} uri Path to the transaction resource
+			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -142,10 +146,10 @@
 			},
 			
 			/**
-			 * Makes a new POST HTTP transaction sending the content of a form
+			 * Makes a new POST HTTP request sending the content of a form
 			 * @method get
-			 * @param {String} uri Path to the transaction resource
-			 * @param {String} id The id of the form to serialize and send in the transaction
+			 * @param {String} uri Path to the request resource
+			 * @param {String} id The id of the form to serialize and send in the request
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -161,9 +165,9 @@
 		
 		if (Y.JSON) {
 			/**
-			 * Makes a new GET HTTP transaction and parses the result as JSON data
+			 * Makes a new GET HTTP request and parses the result as JSON data
 			 * @method getJSON
-			 * @param {String} uri Path to the transaction resource
+			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -179,7 +183,7 @@
 
 		if (Y.jsonp) {
 			/**
-			 * Makes a new JSONP transaction
+			 * Makes a new JSONP request
 			 * @method jsonp
 			 * @param {String} uri Path to the jsonp service
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
@@ -192,13 +196,13 @@
 				var request = new Y.io.Request();
 				
 				if (config.on) {
-					request.on(config.on);
+					request._on(config.on);
 				}
 				
 				config.on = {};
 				Y.Array.each(['success', 'failure', 'complete'], function (eventName) {
 					config.on[eventName] = function (data) {
-						request.fire(eventName, { data: data });
+						request._fire(eventName, { data: data });
 					};
 				});
 				

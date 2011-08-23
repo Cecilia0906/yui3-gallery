@@ -21,7 +21,8 @@
 		YUI({
 			modules: {
 				'gallery-deferred': {
-					fullpath: 'http://juandopazo.github.com/yui3-gallery/build/gallery-deferred/gallery-deferred.js'
+					fullpath: '../build_tmp/gallery-deferred.js',
+					requires: ['event-custom']
 				}
 			}
 		}).use('node', 'node-load', 'transition', 'plugin', 'gallery-deferred', function (Y) {
