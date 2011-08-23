@@ -1,32 +1,44 @@
 YUI.add('gallery-deferred', function(Y) {
 
+/*
+ * Copyright (c) 2011, Juan Ignacio Dopazo. All rights reserved.
+ * Code licensed under the BSD License
+ * http://yuilibrary.com/gallery/show/deferred
+ */
 var Lang = Y.Lang,
 	YArray = Y.Array,
 	AP = Array.prototype;
 	
 /**
  * A promise keeps two lists of callbacks, one for the success scenario and another for the failure case.
- * It runs these callbacks once a call to resolve() or reject() is made
+ * It runs these callbacks once a call to resolve() or reject() is made. Use it as an extension or inherit from it
  * @class Deferred
  * @constructor
  * @param {Function|Array} doneCallbacks A function or array of functions to run when the promise is resolved
  * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
  */
 function Deferred(config) {
-	Deferred.superclass.constructor.apply(this, arguments);
-	
 	this._config = config || {};
+	
+	var et = this._et = new Y.EventTarget();
 	
 	var eventConf = {
 		emitFacade: false,
 		fireOnce: true,
 		preventable: false
 	};
-	this.publish('success', eventConf);
-	this.publish('failure', eventConf);
-	this.publish('complete', eventConf);
+	et.publish('success', eventConf);
+	et.publish('failure', eventConf);
+	et.publish('complete', eventConf);
 }
-Y.extend(Deferred, Y.EventTarget, {
+Y.mix(Deferred.prototype, {
+	_on: function () {
+		return this._et.on.apply(this._et, arguments);
+	},
+	_fire: function () {
+		this._et.fire.apply(this._et, arguments);
+		return this;
+	},
 	/**
 	 * @method then
 	 * @description Adds callbacks to the list of callbacks tracked by the promise
@@ -37,10 +49,10 @@ Y.extend(Deferred, Y.EventTarget, {
 	then: function (doneCallbacks, failCallbacks) {
 		var self = this;
 		YArray.each(Deferred._flatten(doneCallbacks), function (callback) {
-			self.on('success', callback);
+			self._on('success', callback);
 		});
 		YArray.each(Deferred._flatten(failCallbacks), function (callback) {
-			self.on('failure', callback);
+			self._on('failure', callback);
 		});
 		return this;
 	},
@@ -74,7 +86,7 @@ Y.extend(Deferred, Y.EventTarget, {
 	always: function () {
 		var self = this;
 		YArray.each(Y.Array(arguments), function (callback) {
-			self.on('complete', callback);
+			self._on('complete', callback);
 		});
 		return this;
 	},
@@ -86,7 +98,9 @@ Y.extend(Deferred, Y.EventTarget, {
 	 * @chainable
 	 */
 	resolve: function () {
-		return this.fire.apply(this, ['success'].concat(Y.Array(arguments)));
+		var args = Y.Array(arguments);
+		this._fire.apply(this, ['success'].concat(args));
+		return this._fire.apply(this, ['complete'].concat(args));
 	},
 	
 	/**
@@ -96,7 +110,9 @@ Y.extend(Deferred, Y.EventTarget, {
 	 * @chainable
 	 */
 	reject: function () {
-		return this.fire.apply(this, ['failure'].concat(Y.Array(arguments)));
+		var args = Y.Array(arguments);
+		this._fire.apply(this, ['failure'].concat(args));
+		return this._fire.apply(this, ['complete'].concat(args));
 	},
 	
 	/**
@@ -117,7 +133,9 @@ Y.extend(Deferred, Y.EventTarget, {
 		return promise;
 	}
 	
-}, {
+});
+
+Y.mix(Deferred, {
 	/*
 	 * Turns a value into an array with the value as its first element, or takes an array and spreads
 	 * each array element into elements of the parent array
@@ -217,10 +235,11 @@ Y.when = function () {
 	 */
 	function Request() {
 		Request.superclass.constructor.apply(this, arguments);
+		var et = this._et;
 		var eventConfig = { emitFacade: true };
-		this.publish('success', eventConfig);
-		this.publish('failure', eventConfig);
-		this.publish('complete', eventConfig);
+		et.publish('success', eventConfig);
+		et.publish('failure', eventConfig);
+		et.publish('complete', eventConfig);
 	}
 	Y.extend(Request, Y.Deferred, null, {
 		NAME: 'io-request'
@@ -260,12 +279,19 @@ Y.when = function () {
 			 */
 			_defer: function (uri, config) {
 				config = Y.io._normalizeConfig(config);
-				var transaction = new Y.io.Request();
+				var request = new Y.io.Request();
 				
-				if (config.on) {
-					transaction.on(config.on);
+				function relayEvent(eventName) {
+					return function (id, response) {
+						var args = { responseXML: response.responseXML, responseText: response.responseText };
+						request._fire(eventName, args);
+					}
 				}
 					
+				if (config.on) {
+					request._on(config.on);
+				}
+				
 				config.on = {
 					success: function (id, response) {
 						var args = { responseXML: response.responseXML, responseText: response.responseText };
@@ -273,21 +299,17 @@ Y.when = function () {
 							try {
 								args.data = config.parser(response.responseText);
 							} catch (e) {
-								transaction.fire('failure', response);
+								request._fire('failure', response);
 								return;
 							}
 						}
-						transaction.fire('success', args);
-						transaction.fire('complete', args);
+						request._fire('success', args);
 					},
-					failure: function (id, response) {
-						var args = { responseXML: response.responseXML, responseText: response.responseText };
-						transaction.fire('failure', args);
-						transaction.fire('complete', args);
-					}
+					failure: relayEvent('failure'),
+					complete: relayEvent('complete')
 				};
 				
-				return Y.mix(transaction, Y.io(uri, config));
+				return Y.mix(request, Y.io(uri, config));
 			},
 			
 	        /**
@@ -321,9 +343,9 @@ Y.when = function () {
 	
 		Y.io.addMethods({
 			/**
-			 * Makes a new GET HTTP transaction
+			 * Makes a new GET HTTP request
 			 * @method get
-			 * @param {String} uri Path to the transaction resource
+			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -336,9 +358,9 @@ Y.when = function () {
 			},
 			
 			/**
-			 * Makes a new POST HTTP transaction
+			 * Makes a new POST HTTP request
 			 * @method get
-			 * @param {String} uri Path to the transaction resource
+			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -352,10 +374,10 @@ Y.when = function () {
 			},
 			
 			/**
-			 * Makes a new POST HTTP transaction sending the content of a form
+			 * Makes a new POST HTTP request sending the content of a form
 			 * @method get
-			 * @param {String} uri Path to the transaction resource
-			 * @param {String} id The id of the form to serialize and send in the transaction
+			 * @param {String} uri Path to the request resource
+			 * @param {String} id The id of the form to serialize and send in the request
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -371,9 +393,9 @@ Y.when = function () {
 		
 		if (Y.JSON) {
 			/**
-			 * Makes a new GET HTTP transaction and parses the result as JSON data
+			 * Makes a new GET HTTP request and parses the result as JSON data
 			 * @method getJSON
-			 * @param {String} uri Path to the transaction resource
+			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
 			 * @for io
@@ -389,7 +411,7 @@ Y.when = function () {
 
 		if (Y.jsonp) {
 			/**
-			 * Makes a new JSONP transaction
+			 * Makes a new JSONP request
 			 * @method jsonp
 			 * @param {String} uri Path to the jsonp service
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
@@ -402,13 +424,13 @@ Y.when = function () {
 				var request = new Y.io.Request();
 				
 				if (config.on) {
-					request.on(config.on);
+					request._on(config.on);
 				}
 				
 				config.on = {};
 				Y.Array.each(['success', 'failure', 'complete'], function (eventName) {
 					config.on[eventName] = function (data) {
-						request.fire(eventName, { data: data });
+						request._fire(eventName, { data: data });
 					};
 				});
 				
@@ -478,7 +500,7 @@ Y.when = function () {
 			}
 		});
 		
-		Y.Array.each(['hide', 'load', 'show', 'transition'], NodeDeferred.importMethod);
+		Y.Array.each(['hide', 'load', 'show', 'transition', 'once', 'onceAfter'], NodeDeferred.importMethod);
 		
 		Y.Node.Deferred = NodeDeferred;
 	}
