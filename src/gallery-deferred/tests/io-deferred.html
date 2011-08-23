@@ -3,24 +3,60 @@
 <head>
 	<title>Y.io.defer test</title>
 </head>
-<body>
-	<script src="http://yui.yahooapis.com/combo?3.3.0/build/yui/yui.js&3.3.0/build/loader/loader.js"></script>
+<body class="yui3-skin-sam">
+	<script src="http://yui.yahooapis.com/3.4.0/build/yui/yui.js"></script>
 	<script>
 		YUI({
 			filter: 'raw',
 			modules: {
 				'gallery-deferred': {
-//					fullpath: 'http://github.com/juandopazo/yui3-gallery-dev/raw/master/src/gallery-deferred/build_tmp/gallery-deferred.js'
-					fullpath: 'http://localhost/yui3-gallery-dev/src/gallery-deferred/build_tmp/gallery-deferred.js',
-					requires: ['array-extras']
+					fullpath: 'http://raw.github.com/juandopazo/yui3-gallery/master/build/gallery-deferred/gallery-deferred.js',
+					requires: ['event-custom']
 				}
+			},
+			logInclude: {
+				TestRunner: true
 			}
-		}).use('io', 'gallery-deferred', function (Y) {
+		}).use('io', 'gallery-deferred', 'test', 'console', function (Y) {
 			
-			Y.when(Y.io.defer('node-deferred.html'), Y.io.defer('node-deferred-content.html')).end(function (a, b) {
-				console.log(a[1], b[1]);
+			var testCase = new Y.Test.Case({
+				name: 'Deferred IO',
+				
+				testDeferredIO: function () {
+					Y.log('Testing if Y.io.get works with a single callback as an event handler for the "complete" event');
+					
+					var test = this;
+					
+					Y.io.get('io-content1.html', function (e) {
+						test.resume(function () {
+							Y.Assert.isTrue(Y.instanceOf(e, Y.EventFacade), 'First argument should be an EventFacade');
+							Y.Assert.areEqual(e.responseText, '<div>hello</div>', 'e.responseText should be equal to "<div>hello</div>"');
+						});
+					});
+					
+					this.wait(3000);
+				},
+				
+				testWhen: function () {
+					Y.log('Testing if Y.when waits for all deferred actions to complete');
+					
+					var test = this;
+					
+					Y.when(Y.io.get('io-content1.html'), Y.io.get('io-content2.html')).then(function (a, b) {
+						test.resume(function () {
+							Y.Assert.isTrue(Y.Lang.isArray(a) && Y.Lang.isArray(b), 'arguments of a .then() callback after Y.when are arrays of arguments themselves');
+							Y.Assert.areEqual(a[0].responseText, '<div>hello</div>', 'First response should be equal to "<div>hello</div>"');
+							Y.Assert.areEqual(b[0].responseText, '<div>world</div>', 'Second response should be equal to "<div>world</div>"');
+						});
+					});
+					
+					this.wait(3000);
+				}
 			});
 			
+			new Y.Console().render();
+			Y.Test.Runner.add(testCase);
+			Y.Test.Runner.run();
 		});
 	</script>
 </body>
