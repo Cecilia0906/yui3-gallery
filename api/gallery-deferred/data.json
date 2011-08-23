@@ -1,5 +1,10 @@
 {
-    "project": {},
+    "project": {
+        "name": "YUI3 Gallery",
+        "description": "Gallery module for working with asynchronous calls",
+        "version": "3.4.0",
+        "url": "http://github.com/juandopazo/yui3-gallery/"
+    },
     "files": {
         "js/Deferred.js": {
             "name": "js/Deferred.js",
