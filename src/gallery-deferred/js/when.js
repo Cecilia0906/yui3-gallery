@@ -9,7 +9,7 @@
  * Returns a promise for a (possibly) asynchronous call.
  * Calls a given function that receives the new promise as parameter and must call resolve()
  * or reject() at a certain point
- * @method defer
+ * @method Y.defer
  * @param {Function} fn A function that encloses an async call.
  * @return {Deferred} a promise
  */
@@ -20,7 +20,7 @@ Y.defer = function (fn, context) {
 };
 
 /**
- * @method when
+ * @method Y.when
  * @description Waits for a series of asynchronous calls to be completed
  * @param {Deferred|Array|Function} deferred Any number of Deferred instances or arrays of instances. If a function is provided, it is executed at once
  * @return {Deferred} a promise

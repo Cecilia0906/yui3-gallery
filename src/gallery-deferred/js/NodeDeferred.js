@@ -15,7 +15,8 @@
 		Y.extend(NodeDeferred, Y.Deferred, null, {
 			/**
 			 * Plugin namespace
-			 * @property {String} NS 'deferred'
+			 * @property {String} NS
+			 * @default 'deferred'
 			 * @static
 			 */
 			NS: 'deferred',
@@ -24,6 +25,7 @@
 			 * Imports a method from Y.Node so that they return instances of this same plugin representing promises
 			 * @method importMethod
 			 * @param {String} method Name of the method to import from Y.Node
+			 * @static
 			 */
 			importMethod: function (method) {
 				NodeDeferred.prototype[method] = function () {

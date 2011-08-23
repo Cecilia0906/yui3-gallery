@@ -16,7 +16,42 @@
 	Y.extend(Request, Y.Deferred, null, {
 		NAME: 'io-request'
 	});
-	
+	/**
+	 * Makes a new GET HTTP request
+	 * @method get
+	 * @param {String} uri Path to the request resource
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new POST HTTP request
+	 * @method post
+	 * @param {String} uri Path to the request resource
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new POST HTTP request sending the content of a form
+	 * @method postForm
+	 * @param {String} uri Path to the request resource
+	 * @param {String} id The id of the form to serialize and send in the request
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new GET HTTP request and parses the result as JSON data
+	 * @method getJSON
+	 * @param {String} uri Path to the request resource
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new JSONP request
+	 * @method jsonp
+	 * @param {String} uri Path to the jsonp service
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
 	if (Y.io) {
 		Y.mix(Y.io, {
 			
@@ -27,7 +62,7 @@
 			 * If a function is providad instead of a configuration object, the function is used
 			 * as a 'complete' event handler.
 			 * @method _normalizeConfig
-			 * @for io
+			 * @for Y.io
 			 * @private
 			 * @static
 			 */
@@ -45,7 +80,7 @@
 			 * Makes an IO request and returns a new io.Request object for it.
 			 * It also normalizes callbacks as event handlers with an EventFacade
 			 * @method _defer
-			 * @for io
+			 * @for Y.io
 			 * @private
 			 * @static
 			 */
@@ -120,7 +155,7 @@
 			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
-			 * @for io
+			 * @for Y.io
 			 * @static
 			 */
 			get: function (uri, config) {
@@ -131,11 +166,11 @@
 			
 			/**
 			 * Makes a new POST HTTP request
-			 * @method get
+			 * @method post
 			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
-			 * @for io
+			 * @for Y.io
 			 * @static
 			 */
 			post: function (uri, data, config) {
@@ -147,12 +182,12 @@
 			
 			/**
 			 * Makes a new POST HTTP request sending the content of a form
-			 * @method get
+			 * @method postForm
 			 * @param {String} uri Path to the request resource
 			 * @param {String} id The id of the form to serialize and send in the request
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
-			 * @for io
+			 * @for Y.io
 			 * @static
 			 */
 			postForm: function (uri, id, config) {
@@ -170,7 +205,7 @@
 			 * @param {String} uri Path to the request resource
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
-			 * @for io
+			 * @for Y.io
 			 * @static
 			 */
 			Y.io.addMethod('getJSON', function (uri, config) {
@@ -188,7 +223,7 @@
 			 * @param {String} uri Path to the jsonp service
 			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 			 * @return io.Request
-			 * @for io
+			 * @for Y.io
 			 * @static
 			 */
 			Y.io.addMethod('jsonp', function (uri, config) {

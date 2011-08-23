@@ -3,17 +3,21 @@
  * Code licensed under the BSD License
  * http://yuilibrary.com/gallery/show/deferred
  */
+/**
+ * @module gallery-deferred
+ * @requires event-custom
+ */
 var Lang = Y.Lang,
 	YArray = Y.Array,
 	AP = Array.prototype;
 	
 /**
- * A promise keeps two lists of callbacks, one for the success scenario and another for the failure case.
- * It runs these callbacks once a call to resolve() or reject() is made. Use it as an extension or inherit from it
+ * A deferred keeps two lists of callbacks, one for the success scenario and another for the failure case.
+ * It runs these callbacks once a call to resolve() or reject() is made.
+ * 
+ * This class is designed to augment others
  * @class Deferred
  * @constructor
- * @param {Function|Array} doneCallbacks A function or array of functions to run when the promise is resolved
- * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
  */
 function Deferred(config) {
 	this._config = config || {};
