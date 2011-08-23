@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssgrids/grids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <script src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            <h1><a href="../index.html"><img src="../assets/css/logo.png"></a></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div class="yui3-g">
+
+        <div id="sidebar" class="yui3-u">
+            <div id="modules" class="sidebox">
+    <div class="hd">
+        <h2 class="no-toc">Modules</h2>
+    </div>
+    <div class="bd">
+        <ul>
+            
+                <li><a href="../modules/gallery-deferred.html">gallery-deferred</a>
+                
+                    <ul>
+                        
+                    </ul>
+                
+                </li>
+            
+        </ul>
+    </div>
+</div>
+
+<div id="classes" class="sidebox">
+    <div class="hd">
+        <h2 class="no-toc">Classes</h2>
+    </div>
+    <div class="bd">
+        <ul>
+            
+                <li><a href="../classes/Deferred.html">Deferred</a></li>
+            
+                <li><a href="../classes/io.Request.html">io.Request</a></li>
+            
+                <li><a href="../classes/Node.Deferred.html">Node.Deferred</a></li>
+            
+                <li><a href="../classes/Y.io.html">Y.io</a></li>
+            
+                <li><a href="../classes/YUI~deferred.html">YUI~deferred</a></li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="fileTree" class="sidebox">
+    <div class="hd">
+        <h2 class="no-toc">Files</h2>
+    </div>
+    <div class="bd">
+        <ul><li>js/<ul><li><a href="../files/js_Deferred.js.html">Deferred.js</a></li><li><a href="../files/js_NodeDeferred.js.html">NodeDeferred.js</a></li><li><a href="../files/js_Request.js.html">Request.js</a></li><li><a href="../files/js_when.js.html">when.js</a></li></ul></li></ul>
+    </div>
+</div>
+
+
+
+        </div>
+
+        <div id="main" class="yui3-u">
+            <div class="content"><h4>js/Deferred.js</h4>
+
+<pre class="code prettyprint linenums">
+/*
+ * Copyright (c) 2011, Juan Ignacio Dopazo. All rights reserved.
+ * Code licensed under the BSD License
+ * http://yuilibrary.com/gallery/show/deferred
+ */
+/**
+ * @module gallery-deferred
+ * @requires event-custom
+ */
+var Lang = Y.Lang,
+	YArray = Y.Array,
+	AP = Array.prototype;
+	
+/**
+ * A deferred keeps two lists of callbacks, one for the success scenario and another for the failure case.
+ * It runs these callbacks once a call to resolve() or reject() is made.
+ * 
+ * This class is designed to augment others
+ * @class Deferred
+ * @constructor
+ */
+function Deferred(config) {
+	this._config = config || {};
+	
+	var et = this._et = new Y.EventTarget();
+	
+	var eventConf = {
+		emitFacade: false,
+		fireOnce: true,
+		preventable: false
+	};
+	et.publish('success', eventConf);
+	et.publish('failure', eventConf);
+	et.publish('complete', eventConf);
+}
+Y.mix(Deferred.prototype, {
+	_on: function () {
+		return this._et.on.apply(this._et, arguments);
+	},
+	_fire: function () {
+		this._et.fire.apply(this._et, arguments);
+		return this;
+	},
+	/**
+	 * @method then
+	 * @description Adds callbacks to the list of callbacks tracked by the promise
+	 * @param {Function|Array} doneCallbacks A function or array of functions to run when the promise is resolved
+	 * @param {Function|Array} failCallbacks A function or array of functions to run when the promise is rejected
+	 * @chainable
+	 */
+	then: function (doneCallbacks, failCallbacks) {
+		var self = this;
+		YArray.each(Deferred._flatten(doneCallbacks), function (callback) {
+			self._on('success', callback);
+		});
+		YArray.each(Deferred._flatten(failCallbacks), function (callback) {
+			self._on('failure', callback);
+		});
+		return this;
+	},
+	
+	/**
+	 * @method done
+	 * @description Listens to the 'success' event
+	 * @param {Function|Array} doneCallbacks Takes any number of functions or arrays of functions to run when the promise is resolved
+	 * @chainable 
+	 */
+	done: function () {
+		return this.then(Y.Array(arguments));
+	},
+	
+	/**
+	 * @method fail
+	 * @description Listens to the 'failure' event
+	 * @param {Function|Array} failCallbacks Takes any number of functions or arrays of functions to run when the promise is rejected
+	 * @chainable 
+	 */
+	fail: function () {
+		return this.then(null, Y.Array(arguments));
+	},
+	
+	/**
+	 * @method always
+	 * @description Listens to the 'complete' event
+	 * @param {Function|Array} callbacks Takes any number of functions or arrays of functions to run when the promise is rejected or resolved
+	 * @chainable 
+	 */
+	always: function () {
+		var self = this;
+		YArray.each(Y.Array(arguments), function (callback) {
+			self._on('complete', callback);
+		});
+		return this;
+	},
+	
+	/**
+	 * @method resolve
+	 * @description Resolves the promise and notifies all callbacks
+	 * @param {Object} o Any number of arguments that will be passed to the success callbacks
+	 * @chainable
+	 */
+	resolve: function () {
+		var args = Y.Array(arguments);
+		this._fire.apply(this, ['success'].concat(args));
+		return this._fire.apply(this, ['complete'].concat(args));
+	},
+	
+	/**
+	 * @method reject
+	 * @description Rejects the promise and notifies all callbacks
+	 * @param {Object} o Any number of arguments that will be passed to the failure callbacks
+	 * @chainable
+	 */
+	reject: function () {
+		var args = Y.Array(arguments);
+		this._fire.apply(this, ['failure'].concat(args));
+		return this._fire.apply(this, ['complete'].concat(args));
+	},
+	
+	/**
+	 * @method defer
+	 * @description Returns a new promise. This method will be mostly used by implementors that extend this class to create
+	 * additional asynchronous functionalityu. For example:
+	 * &lt;pre&gt;&lt;code&gt;
+	 * wait: function (delay) {
+	 *		return this.defer(function (promise) {
+	 *		Y.later(delay || 0, promise, promise.resolve);
+	 * });
+	 * }&lt;/code&gt;&lt;/pre&gt;
+	 * @return {Deferred}
+	 */
+	defer: function (callback, context) {
+		var promise = new this.constructor(this._config);
+		this.then(Y.bind(callback, context || this, promise));
+		return promise;
+	}
+	
+});
+
+Y.mix(Deferred, {
+	/*
+	 * Turns a value into an array with the value as its first element, or takes an array and spreads
+	 * each array element into elements of the parent array
+	 * @method _flatten
+	 * @param {Object|Array} args The value or array to spread
+	 * @return Array
+	 * @private
+	 * @static
+	 */
+	_flatten: function (arr) {
+		var i = 0;
+		arr = YArray(arr).concat();
+		while (i &lt; arr.length) {
+			if (Y.Lang.isArray(arr[i])) {
+				Array.prototype.splice.apply(arr, [i, 1].concat(arr[i]));
+			} else {
+				i++;
+			}
+		}
+		return arr;
+	}
+});
+
+Y.Deferred = Deferred;
+</pre>
+
+</div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/js/tabs.js"></script>
+</body>
+</html>

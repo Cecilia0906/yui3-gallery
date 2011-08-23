@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.3.0/build/cssgrids/grids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <script src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            <h1><a href="../index.html"><img src="../assets/css/logo.png"></a></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div class="yui3-g">
+
+        <div id="sidebar" class="yui3-u">
+            <div id="modules" class="sidebox">
+    <div class="hd">
+        <h2 class="no-toc">Modules</h2>
+    </div>
+    <div class="bd">
+        <ul>
+            
+                <li><a href="../modules/gallery-deferred.html">gallery-deferred</a>
+                
+                    <ul>
+                        
+                    </ul>
+                
+                </li>
+            
+        </ul>
+    </div>
+</div>
+
+<div id="classes" class="sidebox">
+    <div class="hd">
+        <h2 class="no-toc">Classes</h2>
+    </div>
+    <div class="bd">
+        <ul>
+            
+                <li><a href="../classes/Deferred.html">Deferred</a></li>
+            
+                <li><a href="../classes/io.Request.html">io.Request</a></li>
+            
+                <li><a href="../classes/Node.Deferred.html">Node.Deferred</a></li>
+            
+                <li><a href="../classes/Y.io.html">Y.io</a></li>
+            
+                <li><a href="../classes/YUI~deferred.html">YUI~deferred</a></li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="fileTree" class="sidebox">
+    <div class="hd">
+        <h2 class="no-toc">Files</h2>
+    </div>
+    <div class="bd">
+        <ul><li>js/<ul><li><a href="../files/js_Deferred.js.html">Deferred.js</a></li><li><a href="../files/js_NodeDeferred.js.html">NodeDeferred.js</a></li><li><a href="../files/js_Request.js.html">Request.js</a></li><li><a href="../files/js_when.js.html">when.js</a></li></ul></li></ul>
+    </div>
+</div>
+
+
+
+        </div>
+
+        <div id="main" class="yui3-u">
+            <div class="content"><h4>js/Request.js</h4>
+
+<pre class="code prettyprint linenums">
+
+	/**
+	 * Represents the promise of an IO request being completed
+	 * @class io.Request
+	 * @constructor
+	 * @extends Deferred
+	 */
+	function Request() {
+		Request.superclass.constructor.apply(this, arguments);
+		var et = this._et;
+		var eventConfig = { emitFacade: true };
+		et.publish('success', eventConfig);
+		et.publish('failure', eventConfig);
+		et.publish('complete', eventConfig);
+	}
+	Y.extend(Request, Y.Deferred, null, {
+		NAME: 'io-request'
+	});
+	/**
+	 * Makes a new GET HTTP request
+	 * @method get
+	 * @param {String} uri Path to the request resource
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new POST HTTP request
+	 * @method post
+	 * @param {String} uri Path to the request resource
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new POST HTTP request sending the content of a form
+	 * @method postForm
+	 * @param {String} uri Path to the request resource
+	 * @param {String} id The id of the form to serialize and send in the request
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new GET HTTP request and parses the result as JSON data
+	 * @method getJSON
+	 * @param {String} uri Path to the request resource
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	/**
+	 * Makes a new JSONP request
+	 * @method jsonp
+	 * @param {String} uri Path to the jsonp service
+	 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+	 * @chainable
+	 */
+	if (Y.io) {
+		Y.mix(Y.io, {
+			
+			Request: Request,
+			
+			/**
+			 * Utility function for normalizing an IO configuration object.
+			 * If a function is providad instead of a configuration object, the function is used
+			 * as a 'complete' event handler.
+			 * @method _normalizeConfig
+			 * @for Y.io
+			 * @private
+			 * @static
+			 */
+			_normalizeConfig: function (config, args) {
+				if (Y.Lang.isFunction(config)) {
+					config = { on: { complete: config } };
+				} else {
+					config = config || {};
+					config.on = config.on || {};
+				}
+				return Y.mix(config, args, true);
+			},
+			
+			/**
+			 * Makes an IO request and returns a new io.Request object for it.
+			 * It also normalizes callbacks as event handlers with an EventFacade
+			 * @method _defer
+			 * @for Y.io
+			 * @private
+			 * @static
+			 */
+			_defer: function (uri, config) {
+				config = Y.io._normalizeConfig(config);
+				var request = new Y.io.Request();
+				
+				function relayEvent(eventName) {
+					return function (id, response) {
+						var args = { responseXML: response.responseXML, responseText: response.responseText };
+						request._fire(eventName, args);
+					}
+				}
+					
+				if (config.on) {
+					request._on(config.on);
+				}
+				
+				config.on = {
+					success: function (id, response) {
+						var args = { responseXML: response.responseXML, responseText: response.responseText };
+						if (config.parser) {
+							try {
+								args.data = config.parser(response.responseText);
+							} catch (e) {
+								request._fire('failure', response);
+								return;
+							}
+						}
+						request._fire('success', args);
+					},
+					failure: relayEvent('failure'),
+					complete: relayEvent('complete')
+				};
+				
+				return Y.mix(request, Y.io(uri, config));
+			},
+			
+	        /**
+	         * Add a deferred function to Y.io and add it as a method of Y.Request
+	         * @method addMethod
+	         * @for Y.io
+	         * @static
+	         * @param {String} name Name of the method
+	         * @param {Function} fn Method
+	         */
+			addMethod: function (name, fn) {
+				Y.io[name] = fn;
+				Request.prototype[name] = function () {
+					return Y.io[name].apply(Y.io, arguments);
+				};
+			},
+			
+			/**
+			 * Adds multiple methods to Y.io and Y.Request from an object
+			 * @method addMethods
+			 * @for Y.io
+			 * @static
+			 * @param {Obejct} methods Key/value pairs of names and functions
+			 */
+			addMethods: function (methods) {
+				Y.Object.each(methods, function (fn, name) {
+					Y.io.addMethod(name, fn);
+				});
+			}
+		});
+	
+		Y.io.addMethods({
+			/**
+			 * Makes a new GET HTTP request
+			 * @method get
+			 * @param {String} uri Path to the request resource
+			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+			 * @return io.Request
+			 * @for Y.io
+			 * @static
+			 */
+			get: function (uri, config) {
+				return Y.io._defer(uri, Y.io._normalizeConfig(config, {
+					method: 'GET'
+				}));
+			},
+			
+			/**
+			 * Makes a new POST HTTP request
+			 * @method post
+			 * @param {String} uri Path to the request resource
+			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+			 * @return io.Request
+			 * @for Y.io
+			 * @static
+			 */
+			post: function (uri, data, config) {
+				return Y.io._defer(uri, Y.io._normalizeConfig(config, {
+					method: 'POST',
+					data: data
+				}));
+			},
+			
+			/**
+			 * Makes a new POST HTTP request sending the content of a form
+			 * @method postForm
+			 * @param {String} uri Path to the request resource
+			 * @param {String} id The id of the form to serialize and send in the request
+			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+			 * @return io.Request
+			 * @for Y.io
+			 * @static
+			 */
+			postForm: function (uri, id, config) {
+				return Y.io._defer(uri, Y.io._normalizeConfig(config, {
+					method: 'POST',
+					form: { id: id }
+				}));
+			}
+		});
+		
+		if (Y.JSON) {
+			/**
+			 * Makes a new GET HTTP request and parses the result as JSON data
+			 * @method getJSON
+			 * @param {String} uri Path to the request resource
+			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+			 * @return io.Request
+			 * @for Y.io
+			 * @static
+			 */
+			Y.io.addMethod('getJSON', function (uri, config) {
+				config = Y.io._normalizeConfig(config);
+				config.parser = Y.JSON.parse;
+				
+				return Y.io._defer(uri, config);
+			});
+		}
+
+		if (Y.jsonp) {
+			/**
+			 * Makes a new JSONP request
+			 * @method jsonp
+			 * @param {String} uri Path to the jsonp service
+			 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+			 * @return io.Request
+			 * @for Y.io
+			 * @static
+			 */
+			Y.io.addMethod('jsonp', function (uri, config) {
+				config = Y.io._normalizeConfig(config);
+				var request = new Y.io.Request();
+				
+				if (config.on) {
+					request._on(config.on);
+				}
+				
+				config.on = {};
+				Y.Array.each(['success', 'failure', 'complete'], function (eventName) {
+					config.on[eventName] = function (data) {
+						request._fire(eventName, { data: data });
+					};
+				});
+				
+				Y.jsonp(uri, config);
+				
+				return request;
+			});
+		}
+	}
+
+</pre>
+
+</div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/js/tabs.js"></script>
+</body>
+</html>
