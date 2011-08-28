@@ -37,15 +37,20 @@
 					
 					if (this.host[method]) {
 						var args = Y.Array(arguments),
+							deferred,
 							callback;
 							
 						if (Y.Lang.isFunction(args[args.length - 1])) {
 							callback = args.pop();
 						}
 						
-						return this.defer(function (promise) {
+						deferred = this.defer(function (promise) {
 							this.host[method].apply(this.host, args.concat([Y.bind(promise.resolve, promise)]));
-						}).done(callback);
+						});
+						if (callback) {
+							deferred.done(callback);
+						}
+						return deferred;
 						
 					} else {
 						if (Y.instanceOf(this.host, Y.NodeList) && method == 'load') {
@@ -59,7 +64,7 @@
 			}
 		});
 		
-		Y.Array.each(['hide', 'load', 'show', 'transition', 'once', 'onceAfter'], NodeDeferred.importMethod);
+		Y.each(['hide', 'load', 'show', 'transition', 'once', 'onceAfter'], NodeDeferred.importMethod);
 		
 		Y.Node.Deferred = NodeDeferred;
 	}
