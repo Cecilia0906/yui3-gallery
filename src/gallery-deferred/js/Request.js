@@ -7,11 +7,6 @@
 	 */
 	function Request() {
 		Request.superclass.constructor.apply(this, arguments);
-		var et = this._et;
-		var eventConfig = { emitFacade: true };
-		et.publish('success', eventConfig);
-		et.publish('failure', eventConfig);
-		et.publish('complete', eventConfig);
 	}
 	Y.extend(Request, Y.Deferred, null, {
 		NAME: 'io-request'
@@ -76,6 +71,18 @@
 				return Y.mix(config, args, true);
 			},
 			
+			_eventsToCallbacks: function (request, events) {
+				Y.each(events, function (callback, eventName) {
+					if (eventName === 'success') {
+						request.done(callback);
+					} else if (eventName === 'failure') {
+						request.fail(callback);
+					} else {
+						request.always(callback);
+					}
+				});
+			},
+			
 			/**
 			 * Makes an IO request and returns a new io.Request object for it.
 			 * It also normalizes callbacks as event handlers with an EventFacade
@@ -88,32 +95,23 @@
 				config = Y.io._normalizeConfig(config);
 				var request = new Y.io.Request();
 				
-				function relayEvent(eventName) {
-					return function (id, response) {
-						var args = { responseXML: response.responseXML, responseText: response.responseText };
-						request._fire(eventName, args);
-					}
-				}
-					
 				if (config.on) {
-					request._on(config.on);
+					Y.io._eventsToCallbacks(request, config.on);
 				}
 				
 				config.on = {
 					success: function (id, response) {
-						var args = { responseXML: response.responseXML, responseText: response.responseText };
 						if (config.parser) {
 							try {
 								args.data = config.parser(response.responseText);
 							} catch (e) {
-								request._fire('failure', response);
+								request.reject.apply(request, arguments);
 								return;
 							}
 						}
-						request._fire('success', args);
+						request.resolve.apply(request, arguments);
 					},
-					failure: relayEvent('failure'),
-					complete: relayEvent('complete')
+					failure: Y.bind(request.reject, request)
 				};
 				
 				return Y.mix(request, Y.io(uri, config));
@@ -142,7 +140,7 @@
 			 * @param {Obejct} methods Key/value pairs of names and functions
 			 */
 			addMethods: function (methods) {
-				Y.Object.each(methods, function (fn, name) {
+				Y.each(methods, function (fn, name) {
 					Y.io.addMethod(name, fn);
 				});
 			}
@@ -231,15 +229,13 @@
 				var request = new Y.io.Request();
 				
 				if (config.on) {
-					request._on(config.on);
+					Y.io._eventsToCallbacks(request, config.on);
 				}
 				
-				config.on = {};
-				Y.Array.each(['success', 'failure', 'complete'], function (eventName) {
-					config.on[eventName] = function (data) {
-						request._fire(eventName, { data: data });
-					};
-				});
+				config.on = {
+					success: Y.bind(request.resolve, request),
+					failure: Y.bind(request.reject, request)
+				};
 				
 				Y.jsonp(uri, config);
 				

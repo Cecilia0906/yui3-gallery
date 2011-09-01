@@ -10,7 +10,10 @@
 var Lang = Y.Lang,
 	YArray = Y.Array,
 	AP = Array.prototype,
-	PUSH = AP.push;
+	PUSH = AP.push,
+	
+	RESOLVED = 1,
+	REJECTED = 2;
 	
 /**
  * A deferred keeps two lists of callbacks, one for the success scenario and another for the failure case.
@@ -25,8 +28,7 @@ function Deferred(config) {
 	this._done = [];
 	this._fail = [];
 	this._args = [];
-	this.resolved = false;
-	this.rejected = false;
+	this.status = 0;
 }
 Y.mix(Deferred.prototype, {
 	/**
@@ -39,7 +41,7 @@ Y.mix(Deferred.prototype, {
 	then: function (doneCallbacks, failCallbacks) {
 		if (doneCallbacks) {
 			doneCallbacks = Deferred._flatten(doneCallbacks)
-			if (this.resolved) {
+			if (this.status === RESOLVED) {
 				YArray.each(doneCallbacks, function (callback) {
 					callback.apply(this, this._args);
 				}, this);
@@ -49,7 +51,7 @@ Y.mix(Deferred.prototype, {
 		}
 		if (failCallbacks) {
 			failCallbacks = Deferred._flatten(failCallbacks)
-			if (this.rejected) {
+			if (this.status === REJECTED) {
 				YArray.each(failCallbacks, function (callback) {
 					callback.apply(this, this._args);
 				}, this);
@@ -98,6 +100,7 @@ Y.mix(Deferred.prototype, {
 	 * @chainable
 	 */
 	resolve: function () {
+		this.status = RESOLVED;
 		return this._notify(YArray(arguments));
 	},
 	
@@ -108,16 +111,24 @@ Y.mix(Deferred.prototype, {
 	 * @chainable
 	 */
 	reject: function () {
+		this.status = REJECTED;
 		return this._notify(YArray(arguments));
 	},
 	
 	_notify: function (args) {
-		var callbacks = [];
-		if (this.resolved) {
+		var callbacks = [],
+			self = this;
+		if (this.status === RESOLVED) {
 			callbacks = this._done;
-		} else if (this.rejected){
+			this._done = [];
+		} else if (this.status === REJECTED){
 			callbacks = this._fail;
+			this._fail = [];
 		}
+		Y.Array.each(callbacks, function (callback) {
+			callback.apply(self, args);
+		});
+		return this;
 	},
 	
 	/**
