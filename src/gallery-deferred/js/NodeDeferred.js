@@ -23,11 +23,11 @@
 			
 			/**
 			 * Imports a method from Y.Node so that they return instances of this same plugin representing promises
-			 * @method importMethod
+			 * @method deferMethod
 			 * @param {String} method Name of the method to import from Y.Node
 			 * @static
 			 */
-			importMethod: function (method) {
+			deferMethod: function (method) {
 				NodeDeferred.prototype[method] = function () {
 					// this.host[NS] === this means this is the first time the plugin is instanciated and plugged
 					// in that case it should be resolved, because it doesn't represent any promises yet
@@ -56,10 +56,26 @@
 					}
 					return this;
 				};
+			},
+			/**
+			 * Imports a method from Y.Node making it chainable but not returning promises
+			 * @method importMethod
+			 * @param {String} method Name of the method to import from Y.Node
+			 * @static
+			 */
+			importMethod: function(method) {
+				NodeDeferred.prototype[method] = function () {
+					this.host[method].apply(this.host, arguments);
+					return this;
+				};
 			}
 		});
 		
-		Y.Array.each(['hide', 'load', 'show', 'transition', 'once', 'onceAfter'], NodeDeferred.importMethod);
+		Y.each(['hide', 'load', 'show', 'transition', 'once', 'onceAfter'], NodeDeferred.deferMethod);
+		Y.each(['addClass', 'append', 'appendTo', 'blur', 'clearData', 'destroy', 'empty', 'focus', 'insert',
+				'insertBefore', 'plug', 'prepend', 'remove', 'removeAttribute', 'removeChild', 'removeClass', 'replaceChild',
+				'replaceClass', 'select', 'set', 'setAttrs', 'setContent', 'setData', 'setStyle', 'setStyles', 
+				'setX', 'setXY', 'setY', 'simulate', 'swapXY', 'toggleClass', 'unplug', 'wrap', 'unwrap'], NodeDeferred.importMethod);
 		
 		Y.Node.Deferred = NodeDeferred;
 	}
