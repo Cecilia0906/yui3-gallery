@@ -3,12 +3,12 @@
 	 * Represents the promise of an IO request being completed
 	 * @class io.Request
 	 * @constructor
-	 * @extends Deferred
+	 * @extends Promise
 	 */
 	function Request() {
 		Request.superclass.constructor.apply(this, arguments);
 	}
-	Y.extend(Request, Y.Deferred, null, {
+	Y.extend(Request, Y.Promise, null, {
 		NAME: 'io-request'
 	});
 	/**

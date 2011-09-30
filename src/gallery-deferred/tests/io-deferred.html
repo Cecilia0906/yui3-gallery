@@ -4,7 +4,7 @@
 	<title>Deferred IO test</title>
 </head>
 <body class="yui3-skin-sam">
-	<script src="http://yui.yahooapis.com/3.4.0/build/yui/yui.js"></script>
+	<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script>
 	<script>
 		YUI({
 			filter: 'raw',
@@ -54,7 +54,8 @@
 			});
 			
 			new Y.Console({
-				height: 550
+				height: 550,
+				width: '90%'
 			}).render();
 			Y.Test.Runner.add(testCase);
 			Y.Test.Runner.run();

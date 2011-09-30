@@ -16,9 +16,10 @@
 </head>
 <body>
 	<div id="test"></div>
-	<script src="http://yui.yahooapis.com/3.4.0/build/yui/yui-min.js"></script>
+	<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script>
 	<script>
 		YUI({
+			filter: 'raw',
 			modules: {
 				'gallery-deferred': {
 					fullpath: '../build_tmp/gallery-deferred.js',
@@ -27,7 +28,7 @@
 			}
 		}).use('node', 'node-load', 'transition', 'plugin', 'gallery-deferred', function (Y) {
 			
-			var node = Y.one('#test').plug(Y.Node.Deferred);
+			var node = Y.one('#test').plug(Y.Plugin.NodeDeferred);
 			
 			node.deferred.transition({ left: '300px' })
 						.transition({ top: '300px' })

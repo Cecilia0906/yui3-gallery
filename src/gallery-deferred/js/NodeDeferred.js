@@ -1,18 +1,18 @@
 
-	/**
-	 * A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()
-	 * @class Node.Deferred
-	 * @constructor
-	 * @extends Deferred
-	 * @param {Object} config An object literal containing plugin configuration
-	 */
-	function NodeDeferred(config) {
-		NodeDeferred.superclass.constructor.apply(this, arguments);
-		this.host = config.host;
-	}
-	
 	if (Y.Node && Y.Plugin) {
-		Y.extend(NodeDeferred, Y.Deferred, null, {
+		/**
+		 * A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()
+		 * @class Node.Promise
+		 * @constructor
+		 * @extends Promise
+		 * @param {Object} config An object literal containing plugin configuration
+		 */
+		function NodeDeferred(config) {
+			NodeDeferred.superclass.constructor.apply(this, arguments);
+			this.host = config.host;
+		}
+
+		Y.extend(NodeDeferred, Y.Promise, null, {
 			/**
 			 * Plugin namespace
 			 * @property {String} NS
