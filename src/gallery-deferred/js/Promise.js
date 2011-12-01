@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
  * Copyright (c) 2011, Juan Ignacio Dopazo. All rights reserved.

@@ -1,4 +1,4 @@
-
+'use strict';
 /**
  * @description <p>Creates an Image Cropper control.</p>
  * @requires widget, resize, gallery-event-arrow
@@ -18,7 +18,7 @@ var Lang = Y.Lang,
 		cropMask: getClassName(IMAGE_CROPPER, MASK),
 		resizeKnob: getClassName(IMAGE_CROPPER, RESIZE, KNOB),
 		resizeMask: getClassName(IMAGE_CROPPER, RESIZE, MASK)
-	},
+	};
 
 /**
  * @constructor
@@ -37,7 +37,7 @@ var Lang = Y.Lang,
  * @protected
  * @static
  */
-ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
+Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
@@ -104,15 +104,15 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	},
 	
 	_defCropMaskValueFn: function () {
-		return Y.Node.create(ImageCropper.CROP_MASK_TEMPLATE);
+		return Y.Node.create(Y.ImageCropper.CROP_MASK_TEMPLATE);
 	},
 
 	_defResizeKnobValueFn: function () {
-		return Y.Node.create(ImageCropper.RESIZE_KNOB_TEMPLATE);
+		return Y.Node.create(Y.ImageCropper.RESIZE_KNOB_TEMPLATE);
 	},
 
 	_defResizeMaskValueFn: function () {
-		return Y.Node.create(ImageCropper.RESIZE_MASK_TEMPLATE);
+		return Y.Node.create(Y.ImageCropper.RESIZE_MASK_TEMPLATE);
 	},
 
 	_renderCropMask: function (boundingBox) {
@@ -272,7 +272,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			* </dl>
 			* @type {CustomEvent}
 			*/
-			this.fire('crop:' + (eventType == ns ? 'crop' : eventType), o);
+			this.fire('crop:' + (eventType === ns ? 'crop' : eventType), o);
 			
 		}, this);
 	},
@@ -298,7 +298,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 			minWidth: this.get('minWidth'),
 			preserveRatio: this.get('preserveRatio')
 		});
-		YArray.each(ImageCropper.RESIZE_EVENTS, Y.bind(this._icEventProxy, this, resize, 'resize'));
+		YArray.each(Y.ImageCropper.RESIZE_EVENTS, Y.bind(this._icEventProxy, this, resize, 'resize'));
 	},
 	
 	_bindDrag: function (resizeKnob, contentBox) {
@@ -310,7 +310,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		drag.plug(Y.Plugin.DDConstrained, {
 			constrain2node: contentBox
 		});
-		YArray.each(ImageCropper.DRAG_EVENTS, Y.bind(this._icEventProxy, this, drag, 'drag'));
+		YArray.each(Y.ImageCropper.DRAG_EVENTS, Y.bind(this._icEventProxy, this, drag, 'drag'));
 	},
 	
 	initializer: function () {
@@ -323,7 +323,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		
 		this._icHandlers = [];
 		
-		YArray.each(ImageCropper.RESIZE_ATTRS, function (attr) {
+		YArray.each(Y.ImageCropper.RESIZE_ATTRS, function (attr) {
 			this.after(attr + 'Change', this._syncResizeAttr);
 		}, this);
 	},
@@ -699,5 +699,3 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	}
 	
 });
-
-Y.ImageCropper = ImageCropper;
