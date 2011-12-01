@@ -15,7 +15,7 @@
  */
 Y.defer = function (fn, context) {
 	var promise = new Y.Promise();
-	fn(promise);
+	fn.call(context, promise);
 	return promise;
 };
 
