@@ -103,16 +103,56 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		this._syncResizeMask();
 	},
 	
+	_defCropMaskSetter: function (node) {
+		node = Y.one(node);
+		if (node) {
+			node.addClass(_classNames.cropMask);
+		}
+		return node;
+	},
+	
 	_defCropMaskValueFn: function () {
 		return Y.Node.create(Y.ImageCropper.CROP_MASK_TEMPLATE);
+	},
+	
+	_defResizeKnobSetter: function (node) {
+		node = Y.one(node);
+		if (node) {
+			node.addClass(_classNames.resizeKnob);
+		}
+		return node;
 	},
 
 	_defResizeKnobValueFn: function () {
 		return Y.Node.create(Y.ImageCropper.RESIZE_KNOB_TEMPLATE);
 	},
+	
+	_defResizeMaskSetter: function (node) {
+		node = Y.one(node);
+		if (node) {
+			node.addClass(_classNames.resizeMask);
+		}
+		return node;
+	},
 
 	_defResizeMaskValueFn: function () {
 		return Y.Node.create(Y.ImageCropper.RESIZE_MASK_TEMPLATE);
+	},
+	
+	_defStatusGetter: function () {
+		var resizing = this._resize ? this._resize.get('resizing') : false,
+			drag = this._drag ? this._drag.get('dragging') : false;
+		return resizing || drag;
+	},
+	
+	_defInitHeightSetter: function (value) {
+		var minHeight = this.get('minHeight');
+		return value < minHeight ? minHeight : value;
+	},
+	
+	_defInitWidthSetter: function (value) {
+		var minWidth = this.get('minWidth');
+		return value < minWidth ? minWidth : value;
 	},
 
 	_renderCropMask: function (boundingBox) {
@@ -520,14 +560,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 * @type {Node}
 		 */
 		resizeMask: {
-			setter: function (node) {
-				node = Y.one(node);
-				if (node) {
-					node.addClass(_classNames.resizeMask);
-				}
-				return node;
-			},
-
+			setter: '_defResizeMaskSetter',
 			valueFn: '_defResizeMaskValueFn'
 		},
 		
@@ -538,14 +571,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 * @type {Node}
 		 */
 		resizeKnob: {
-			setter: function (node) {
-				node = Y.one(node);
-				if (node) {
-					node.addClass(_classNames.resizeKnob);
-				}
-				return node;
-			},
-
+			setter: '_defResizeKnobSetter',
 			valueFn: '_defResizeKnobValueFn'
 		},
 		
@@ -556,14 +582,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 * @type {Node}
 		 */
 		cropMask: {
-			setter: function (node) {
-				node = Y.one(node);
-				if (node) {
-					node.addClass(_classNames.cropMask);
-				}
-				return node;
-			},
-
+			setter: '_defCropMaskSetter',
 			valueFn: '_defCropMaskValueFn'
 		},
 		
@@ -623,11 +642,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 */
 		status: {
 			readOnly: true,
-			getter: function () {
-				var resizing = this._resize ? this._resize.get('resizing') : false,
-					drag = this._drag ? this._drag.get('dragging') : false;
-				return resizing || drag;
-			}
+			getter: '_defStatusGetter'
 		},
 		
 		/**
@@ -675,10 +690,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		initHeight: {
 			value: 0,
 			validator: isNumber,
-			setter: function (value) {
-				var minHeight = this.get('minHeight');
-				return value < minHeight ? minHeight : value;
-			}
+			setter: '_defInitHeightSetter'
 		},
 		
 		/**
@@ -690,10 +702,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		initWidth: {
 			value: 0,
 			validator: isNumber,
-			setter: function (value) {
-				var minWidth = this.get('minWidth');
-				return value < minWidth ? minWidth : value;
-			}
+			setter: '_defInitWidthSetter'
 		}
 		
 	}
