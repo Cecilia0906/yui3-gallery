@@ -1,5 +1,3 @@
-'use strict';
-
 /*
  * Copyright (c) 2011, Juan Ignacio Dopazo. All rights reserved.
  * Code licensed under the BSD License
@@ -68,7 +66,7 @@ Y.mix(Promise.prototype, {
 	 * @method done
 	 * @description Listens to the 'success' event
 	 * @param {Function|Array} doneCallbacks Takes any number of functions or arrays of functions to run when the promise is resolved
-	 * @chainable
+	 * @chainable 
 	 */
 	done: function () {
 		return this.then(YArray(arguments));
@@ -88,7 +86,7 @@ Y.mix(Promise.prototype, {
 	 * @method always
 	 * @description Listens to the 'complete' event
 	 * @param {Function|Array} callbacks Takes any number of functions or arrays of functions to run when the promise is rejected or resolved
-	 * @chainable
+	 * @chainable 
 	 */
 	always: function () {
 		var args = YArray(arguments);
@@ -123,7 +121,7 @@ Y.mix(Promise.prototype, {
 		if (this.status === RESOLVED) {
 			callbacks = this._done;
 			this._done = [];
-		} else if (this.status === REJECTED) {
+		} else if (this.status === REJECTED){
 			callbacks = this._fail;
 			this._fail = [];
 		}

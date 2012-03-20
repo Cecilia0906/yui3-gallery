@@ -15,7 +15,7 @@
  */
 Y.defer = function (fn, context) {
 	var promise = new Y.Promise();
-	fn.call(context, promise);
+	fn(promise);
 	return promise;
 };
 
@@ -42,7 +42,7 @@ Y.when = function () {
 				}
 			}
 		}
-			
+		
 		function done() {
 			resolved++;
 			notify(arguments);
