@@ -145,14 +145,12 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		return resizing || drag;
 	},
 	
-	_defInitHeightSetter: function (value) {
-		var minHeight = this.get('minHeight');
-		return value < minHeight ? minHeight : value;
+	_defInitHeightValidator: function (value) {
+		return isNumber(value) && value >= this.get('minHeight');
 	},
 	
-	_defInitWidthSetter: function (value) {
-		var minWidth = this.get('minWidth');
-		return value < minWidth ? minWidth : value;
+	_defInitWidthValidator: function (value) {
+		return isNumber(value) && value >= this.get('minWidth');
 	},
 
 	_renderCropMask: function (boundingBox) {
@@ -689,8 +687,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 */
 		initHeight: {
 			value: 0,
-			validator: isNumber,
-			setter: '_defInitHeightSetter'
+			validator: '_defInitHeightValidator'
 		},
 		
 		/**
@@ -701,8 +698,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 		 */
 		initWidth: {
 			value: 0,
-			validator: isNumber,
-			setter: '_defInitWidthSetter'
+			validator: '_defInitWidthValidator'
 		}
 		
 	}
