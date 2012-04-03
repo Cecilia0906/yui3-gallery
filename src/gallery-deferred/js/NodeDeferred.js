@@ -1,7 +1,7 @@
 
 /**
  * A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()
- * @class Node.Promise
+ * @class Plugin.NodeDeferred
  * @constructor
  * @extends Promise
  * @param {Object} config An object literal containing plugin configuration
@@ -78,11 +78,201 @@ if (Y.Node && Y.Plugin) {
 		}
 	});
 	
+	/**
+	 * Deferred version of the Node method
+	 * @method hide
+	 * @return {NodeDeferred}
+	 */
+	/**
+	 * Deferred version of the Node method
+	 * @method load
+	 * @return {NodeDeferred}
+	 */
+	/**
+	 * Deferred version of the Node method
+	 * @method show
+	 * @return {NodeDeferred}
+	 */
+	/**
+	 * Deferred version of the Node method
+	 * @method transition
+	 * @return {NodeDeferred}
+	 */
+	/**
+	 * Deferred version of the Node method
+	 * @method once
+	 * @return {NodeDeferred}
+	 */
+	/**
+	 * Deferred version of the Node method
+	 * @method onceAfter
+	 * @return {NodeDeferred}
+	 */
 	Y.each(['hide', 'load', 'show', 'transition', 'once', 'onceAfter'], NodeDeferred.deferMethod);
+	/**
+	 * Same as the Node method 
+	 * @method addClass
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method append
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method appendTo
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method blur
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method clearData
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method destroy
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method empty
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method focus
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method insert
+	 * @chainable
+	 */
 	Y.each(['addClass', 'append', 'appendTo', 'blur', 'clearData', 'destroy', 'empty', 'focus', 'insert',
-			'insertBefore', 'plug', 'prepend', 'remove', 'removeAttribute', 'removeChild', 'removeClass', 'replaceChild',
+	/**
+	 * Same as the Node method 
+	 * @method insertBefore
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method prepend
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method remove
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method removeAttribute
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method removeChild
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method removeClass
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method replaceChild
+	 * @chainable
+	 */
+			'insertBefore', 'prepend', 'remove', 'removeAttribute', 'removeChild', 'removeClass', 'replaceChild',
+	/**
+	 * Same as the Node method 
+	 * @method replaceClass
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method select
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method set
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method setAttrs
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method setContent
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method setData
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method setStyle
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method setStyles
+	 * @chainable
+	 */
 			'replaceClass', 'select', 'set', 'setAttrs', 'setContent', 'setData', 'setStyle', 'setStyles', 
-			'setX', 'setXY', 'setY', 'simulate', 'swapXY', 'toggleClass', 'unplug', 'wrap', 'unwrap'], NodeDeferred.importMethod);
+	/**
+	 * Same as the Node method 
+	 * @method setX
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method setXY
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method setY
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method simulate
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method swapXY
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method toggleClass
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method wrap
+	 * @chainable
+	 */
+	/**
+	 * Same as the Node method 
+	 * @method unwrap
+	 * @chainable
+	 */
+			'setX', 'setXY', 'setY', 'simulate', 'swapXY', 'toggleClass', 'wrap', 'unwrap'], NodeDeferred.importMethod);
 	
 	Y.Plugin.NodeDeferred = NodeDeferred;
 }

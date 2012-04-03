@@ -57,7 +57,7 @@ if (Y.io) {
 		 * If a function is providad instead of a configuration object, the function is used
 		 * as a 'complete' event handler.
 		 * @method _normalizeConfig
-		 * @for Y.io
+		 * @for io
 		 * @private
 		 * @static
 		 */
@@ -87,7 +87,7 @@ if (Y.io) {
 		 * Makes an IO request and returns a new io.Request object for it.
 		 * It also normalizes callbacks as event handlers with an EventFacade
 		 * @method _defer
-		 * @for Y.io
+		 * @for io
 		 * @private
 		 * @static
 		 */
@@ -120,7 +120,7 @@ if (Y.io) {
         /**
          * Add a deferred function to Y.io and add it as a method of Y.Request
          * @method addMethod
-         * @for Y.io
+         * @for io
          * @static
          * @param {String} name Name of the method
          * @param {Function} fn Method
@@ -135,7 +135,7 @@ if (Y.io) {
 		/**
 		 * Adds multiple methods to Y.io and Y.Request from an object
 		 * @method addMethods
-		 * @for Y.io
+		 * @for io
 		 * @static
 		 * @param {Obejct} methods Key/value pairs of names and functions
 		 */
@@ -152,8 +152,8 @@ if (Y.io) {
 		 * @method get
 		 * @param {String} uri Path to the request resource
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Request
-		 * @for Y.io
+		 * @return {io.Request}
+		 * @for io
 		 * @static
 		 */
 		get: function (uri, config) {
@@ -167,8 +167,8 @@ if (Y.io) {
 		 * @method post
 		 * @param {String} uri Path to the request resource
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Request
-		 * @for Y.io
+		 * @return {io.Request}
+		 * @for io
 		 * @static
 		 */
 		post: function (uri, data, config) {
@@ -184,8 +184,8 @@ if (Y.io) {
 		 * @param {String} uri Path to the request resource
 		 * @param {String} id The id of the form to serialize and send in the request
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Request
-		 * @for Y.io
+		 * @return {io.Request}
+		 * @for io
 		 * @static
 		 */
 		postForm: function (uri, id, config) {
@@ -202,8 +202,8 @@ if (Y.io) {
 		 * @method getJSON
 		 * @param {String} uri Path to the request resource
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Request
-		 * @for Y.io
+		 * @return {io.Request}
+		 * @for io
 		 * @static
 		 */
 		Y.io.addMethod('getJSON', function (uri, config) {
@@ -220,8 +220,8 @@ if (Y.io) {
 		 * @method jsonp
 		 * @param {String} uri Path to the jsonp service
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
-		 * @return io.Request
-		 * @for Y.io
+		 * @return {io.Request}
+		 * @for io
 		 * @static
 		 */
 		Y.io.addMethod('jsonp', function (uri, config) {
