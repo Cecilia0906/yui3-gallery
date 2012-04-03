@@ -1,10 +1,10 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
-        "Plugin.NodeDeferred",
-        "Promise",
-        "YUI",
-        "io",
+        "Deferred",
+        "Node.Deferred",
+        "Y.io",
+        "YUI~deferred",
         "io.Request"
     ],
     "modules": [

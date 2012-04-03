@@ -1,0 +1,494 @@
+{
+    "project": {},
+    "files": {
+        "js\\ImageCropper.js": {
+            "name": "js\\ImageCropper.js",
+            "modules": {
+                "gallery-imagecropper": 1
+            },
+            "classes": {
+                "ImageCropper": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "gallery-imagecropper": {
+            "name": "gallery-imagecropper",
+            "submodules": {},
+            "classes": {
+                "ImageCropper": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "js\\ImageCropper.js",
+            "line": 2,
+            "description": "<p>Creates an Image Cropper control.</p>",
+            "requires": [
+                "widget, resize, gallery-event-arrow"
+            ]
+        }
+    },
+    "classes": {
+        "ImageCropper": {
+            "name": "ImageCropper",
+            "shortname": "ImageCropper",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "gallery-imagecropper",
+            "namespace": "",
+            "file": "js\\ImageCropper.js",
+            "line": 23,
+            "is_constructor": 1,
+            "description": "<p>Creates an Image Cropper control.</p>",
+            "extends": "Widget",
+            "params": [
+                {
+                    "name": "config",
+                    "description": "Object literal containing configuration parameters.",
+                    "type": "Object"
+                }
+            ]
+        }
+    },
+    "classitems": [
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 30,
+            "description": "The identity of the widget.",
+            "itemtype": "property",
+            "name": "ImageCropper.NAME",
+            "type": "String",
+            "default": "'imagecropper'",
+            "readonly": "",
+            "access": "protected",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 181,
+            "itemtype": "event",
+            "name": "resize:start",
+            "description": "Relay of the Resize utility event.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 190,
+            "itemtype": "event",
+            "name": "resize:resize",
+            "description": "Relay of the Resize utility event.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 199,
+            "itemtype": "event",
+            "name": "resize:end",
+            "description": "Relay of the Resize utility event.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>resizeEvent</dt><dd>The Event Facade object provided by the Resize utility.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 208,
+            "itemtype": "event",
+            "name": "drag:start",
+            "description": "Relay of the Drag utility event.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 217,
+            "itemtype": "event",
+            "name": "drag:resize",
+            "description": "Relay of the Drag utility event.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 226,
+            "itemtype": "event",
+            "name": "drag:end",
+            "description": "Relay of the Drag utility event.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>drag</dt><dd>The Event Facade object provided by the Drag utility.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 239,
+            "itemtype": "event",
+            "name": "crop:start",
+            "description": "Fires at the start of a crop operation. Unifies drag:start and and resize:start.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>left</dt><dd>The current X position of the crop area relative to the base image.</dd>\n<dt>top</dt><dd>The current Y position of the crop area relative to the base image.</dd>\n<dt>width</dt><dd>The new width of the crop area.</dd>\n<dt>height</dt><dd>The new height of the crop area.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 251,
+            "itemtype": "event",
+            "name": "crop:crop",
+            "description": "Fires every time the crop area changes. Unifies drag:drag and resize:resize.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>left</dt><dd>The current X position of the crop area relative to the base image.</dd>\n<dt>top</dt><dd>The current Y position of the crop area relative to the base image.</dd>\n<dt>width</dt><dd>The new width of the crop area.</dd>\n<dt>height</dt><dd>The new height of the crop area.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 263,
+            "itemtype": "event",
+            "name": "crop:end",
+            "description": "Fires at the end of a crop operation. Unifies drag:end and resize:end.",
+            "params": [
+                {
+                    "name": "event",
+                    "description": "An Event Facade object with the following specific property added:\n<dl>\n<dt>left</dt><dd>The current X position of the crop area relative to the base image.</dd>\n<dt>top</dt><dd>The current Y position of the crop area relative to the base image.</dd>\n<dt>width</dt><dd>The new width of the crop area.</dd>\n<dt>height</dt><dd>The new height of the crop area.</dd>\n</dl>",
+                    "type": "EventFacade"
+                }
+            ],
+            "type": "{CustomEvent}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 362,
+            "description": "Returns the coordinates needed to crop the image",
+            "itemtype": "method",
+            "name": "getCropCoords",
+            "return": {
+                "description": "The top, left, height, width and image url of the image being cropped",
+                "type": "Object"
+            },
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 393,
+            "description": "Resets the crop element back to it's original position",
+            "itemtype": "method",
+            "name": "reset",
+            "chainable": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 426,
+            "description": "Template that will contain the ImageCropper's mask.",
+            "itemtype": "property",
+            "name": "ImageCropper.CROP_MASK_TEMPLATE",
+            "type": "{HTML}",
+            "default": "&lt;div class=\"[...-mask]\">&lt;/div>",
+            "access": "protected",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 436,
+            "description": "Template that will contain the ImageCropper's resize node.",
+            "itemtype": "property",
+            "name": "ImageCropper.RESIZE_KNOB_TEMPLATE",
+            "type": "{HTML}",
+            "default": "&lt;div class=\"[...-resize-knob]\" tabindex=\"0\">&lt;/div>",
+            "access": "protected",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 446,
+            "description": "Template that will contain the ImageCropper's resize mask.",
+            "itemtype": "property",
+            "name": "ImageCropper.RESIZE_MASK_TEMPLATE",
+            "type": "{HTML}",
+            "default": "&lt;div class=\"[...-resize-mask]\">&lt;/div>",
+            "access": "protected",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 457,
+            "description": "Array of events to relay from the Resize utility to the ImageCropper",
+            "itemtype": "property",
+            "name": "ImageCropper.RESIZE_EVENTS",
+            "type": "{Array}",
+            "access": "private",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 466,
+            "description": "Array of attributes to relay from the ImageCropper to the Resize utility",
+            "itemtype": "property",
+            "name": "ImageCropper.RESIZE_ATTRS",
+            "type": "{Array}",
+            "access": "private",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 475,
+            "description": "Array of events to relay from the Drag utility to the ImageCropper",
+            "itemtype": "property",
+            "name": "ImageCropper.DRAG_EVENTS",
+            "type": "{Array}",
+            "access": "private",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 497,
+            "description": "Static property used to define the default attribute configuration of\nthe Widget.",
+            "itemtype": "property",
+            "name": "ImageCropper.ATTRS",
+            "type": "{Object}",
+            "access": "protected",
+            "tagname": "",
+            "static": 1,
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 508,
+            "description": "The source attribute of the image we are cropping",
+            "itemtype": "attribute",
+            "name": "source",
+            "type": "{String}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 516,
+            "description": "The resize mask used to highlight the crop area",
+            "itemtype": "attribute",
+            "name": "resizeMask",
+            "type": "{Node}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 534,
+            "description": "The resized element",
+            "itemtype": "attribute",
+            "name": "resizeKnob",
+            "type": "{Node}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 552,
+            "description": "Element used to shadow the part of the image we're not cropping",
+            "itemtype": "attribute",
+            "name": "cropMask",
+            "type": "{Node}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 570,
+            "description": "Array of the XY position that we need to set the crop element to when we build it",
+            "itemtype": "attribute",
+            "name": "initialXY",
+            "type": "{Array}",
+            "default": "[10, 10]",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 581,
+            "description": "The pixel tick for the arrow keys",
+            "itemtype": "attribute",
+            "name": "keyTick",
+            "type": "{Number}",
+            "default": "1",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 593,
+            "description": "The pixel tick for shift + the arrow keys",
+            "itemtype": "attribute",
+            "name": "shiftKeyTick",
+            "type": "{Number}",
+            "default": "10",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 605,
+            "description": "Should we use the Arrow keys to position the crop element",
+            "itemtype": "attribute",
+            "name": "useKeys",
+            "type": "{Boolean}",
+            "default": "true",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 617,
+            "description": "Show the Resize and Drag utilities status",
+            "itemtype": "attribute",
+            "name": "status",
+            "type": "{Boolean}",
+            "readonly": "",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 633,
+            "description": "MinHeight of the crop area",
+            "itemtype": "attribute",
+            "name": "minHeight",
+            "type": "{Number}",
+            "default": "50",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 645,
+            "description": "MinWidth of the crop area",
+            "itemtype": "attribute",
+            "name": "minWidth",
+            "type": "{Number}",
+            "default": "50",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 657,
+            "description": "Set the preserveRatio config option of the Resize Utlility",
+            "itemtype": "attribute",
+            "name": "preserveRatio",
+            "type": "{Boolean}",
+            "default": "false",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 669,
+            "description": "Set the initlal height of the crop area, defaults to minHeight",
+            "itemtype": "attribute",
+            "name": "initHeight",
+            "type": "{Number}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        },
+        {
+            "file": "js\\ImageCropper.js",
+            "line": 684,
+            "description": "Set the initlal width of the crop area, defaults to minWidth",
+            "itemtype": "attribute",
+            "name": "initWidth",
+            "type": "{Number}",
+            "class": "ImageCropper",
+            "module": "gallery-imagecropper"
+        }
+    ]
+}

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>js\when.js</title>
+    <title>gallery-imagecropper</title>
     <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.5.0pr4&#x2F;build&#x2F;cssgrids&#x2F;cssgrids-min.css">
     <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
@@ -40,21 +40,13 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
-                <li><a href="..&#x2F;classes/io.html">io</a></li>
-            
-                <li><a href="..&#x2F;classes/io.Request.html">io.Request</a></li>
-            
-                <li><a href="..&#x2F;classes/Plugin.NodeDeferred.html">Plugin.NodeDeferred</a></li>
-            
-                <li><a href="..&#x2F;classes/Promise.html">Promise</a></li>
-            
-                <li><a href="..&#x2F;classes/YUI.html">YUI</a></li>
+                <li><a href="..&#x2F;classes/ImageCropper.html">ImageCropper</a></li>
             
             </ul>
 
             <ul id="api-modules" class="apis modules">
             
-                <li><a href="..&#x2F;modules/gallery-deferred.html">gallery-deferred</a></li>
+                <li><a href="..&#x2F;modules/gallery-imagecropper.html">gallery-imagecropper</a></li>
             
             </ul>
         </div>
@@ -86,73 +78,45 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1 class="file-heading">File: js\when.js</h1>
+                        <h1>gallery-imagecropper Module</h1>
+<div class="box clearfix meta">
+    
 
-<div class="file">
-    <pre class="code prettyprint linenums">
+    
+        <div class="foundat">
+            Defined in: <a href="..&#x2F;files&#x2F;js_ImageCropper.js.html#l2"><code>js\ImageCropper.js:2</code></a>
+        </div>
+    
 
-&#x2F;**
- * Returns a promise for a (possibly) asynchronous call.
- * Calls a given function that receives the new promise as parameter and must call resolve()
- * or reject() at a certain point
- * @method defer
- * @param {Function} fn A function that encloses an async call.
- * @return {Promise} a promise
- * @static
- * @for YUI
- *&#x2F;
-Y.defer = function (fn, context) {
-	var promise = new Y.Promise();
-	fn(promise);
-	return promise;
-};
+    
+</div>
 
-&#x2F;**
- * Waits for a series of asynchronous calls to be completed
- * @method when
- * @param {Promise|Array|Function} deferred Any number of Promise instances or arrays of instances. If a function is provided, it is executed at once
- * @return {Promise} a promise
- * @static
- * @for YUI
- *&#x2F;
-Y.when = function () {
-	var deferreds = Y.Promise._flatten(YArray(arguments)),
-		args = [],
-		resolved = 0,
-		rejected = 0;
-			
-	return Y.defer(function (promise) {
-		function notify(_args) {
-			args.push(YArray(_args));
-			if (resolved + rejected === deferreds.length) {
-				if (rejected &gt; 0) {
-					promise.reject.apply(promise, args);
-				} else {
-					promise.resolve.apply(promise, args);
-				}
-			}
-		}
-		
-		function done() {
-			resolved++;
-			notify(arguments);
-		}
-		
-		function fail() {
-			rejected++;
-			notify(arguments);
-		}
 
-		YArray.each(deferreds, function (deferred) {
-			if (Y.Lang.isFunction(deferred)) {
-				done(deferred());
-			} else {
-				deferred.then(done, fail);
-			}
-		});
-	});
-};
-    </pre>
+
+<div class="box intro">
+    <p>Creates an Image Cropper control.</p>
+</div>
+
+<div class="yui3-g">
+    <div class="yui3-u-1-2">
+        
+            <p>This module provides the following classes:</p>
+
+            <ul class="module-classes">
+            
+                <li class="module-class">
+                    <a href="..&#x2F;classes/ImageCropper.html">
+                        ImageCropper
+                    </a>
+                </li>
+            
+            </ul>
+        
+    </div>
+
+    <div class="yui3-u-1-2">
+        
+    </div>
 </div>
 
                     </div>

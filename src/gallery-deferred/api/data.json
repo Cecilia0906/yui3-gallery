@@ -1,22 +1,22 @@
 {
     "project": {},
     "files": {
-        "js\\NodeDeferred.js": {
-            "name": "js\\NodeDeferred.js",
-            "modules": {},
-            "classes": {
-                "Plugin.NodeDeferred": 1
-            },
-            "fors": {},
-            "namespaces": {}
-        },
-        "js\\Promise.js": {
-            "name": "js\\Promise.js",
+        "js\\Deferred.js": {
+            "name": "js\\Deferred.js",
             "modules": {
                 "gallery-deferred": 1
             },
             "classes": {
-                "Promise": 1
+                "Deferred": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "js\\NodeDeferred.js": {
+            "name": "js\\NodeDeferred.js",
+            "modules": {},
+            "classes": {
+                "Node.Deferred": 1
             },
             "fors": {},
             "namespaces": {}
@@ -28,17 +28,17 @@
                 "io.Request": 1
             },
             "fors": {
-                "io": 1
+                "Y.io": 1
             },
             "namespaces": {}
         },
         "js\\when.js": {
             "name": "js\\when.js",
             "modules": {},
-            "classes": {},
-            "fors": {
-                "YUI": 1
+            "classes": {
+                "YUI~deferred": 1
             },
+            "fors": {},
             "namespaces": {}
         }
     },
@@ -47,19 +47,18 @@
             "name": "gallery-deferred",
             "submodules": {},
             "classes": {
-                "Plugin.NodeDeferred": 1,
-                "Promise": 1,
+                "Deferred": 1,
+                "Node.Deferred": 1,
                 "io.Request": 1,
-                "io": 1,
-                "YUI": 1
+                "Y.io": 1,
+                "YUI~deferred": 1
             },
             "fors": {
-                "io": 1,
-                "YUI": 1
+                "Y.io": 1
             },
             "namespaces": {},
             "tag": "module",
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 6,
             "requires": [
                 "event-custom"
@@ -67,31 +66,9 @@
         }
     },
     "classes": {
-        "Plugin.NodeDeferred": {
-            "name": "Plugin.NodeDeferred",
-            "shortname": "Plugin.NodeDeferred",
-            "classitems": [],
-            "plugins": [],
-            "extensions": [],
-            "plugin_for": [],
-            "extension_for": [],
-            "module": "gallery-deferred",
-            "file": "js\\NodeDeferred.js",
-            "line": 2,
-            "description": "A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()",
-            "is_constructor": 1,
-            "extends": "Promise",
-            "params": [
-                {
-                    "name": "config",
-                    "description": "An object literal containing plugin configuration",
-                    "type": "Object"
-                }
-            ]
-        },
-        "Promise": {
-            "name": "Promise",
-            "shortname": "Promise",
+        "Deferred": {
+            "name": "Deferred",
+            "shortname": "Deferred",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -99,10 +76,33 @@
             "extension_for": [],
             "module": "gallery-deferred",
             "namespace": "",
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 18,
             "description": "A deferred keeps two lists of callbacks, one for the success scenario and another for the failure case.\nIt runs these callbacks once a call to resolve() or reject() is made.\n\nThis class is designed to augment others",
             "is_constructor": 1
+        },
+        "Node.Deferred": {
+            "name": "Node.Deferred",
+            "shortname": "Node.Deferred",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "gallery-deferred",
+            "namespace": "",
+            "file": "js\\NodeDeferred.js",
+            "line": 2,
+            "description": "A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()",
+            "is_constructor": 1,
+            "extends": "Deferred",
+            "params": [
+                {
+                    "name": "config",
+                    "description": "An object literal containing plugin configuration",
+                    "type": "Object"
+                }
+            ]
         },
         "io.Request": {
             "name": "io.Request",
@@ -118,11 +118,11 @@
             "line": 2,
             "description": "Represents the promise of an IO request being completed",
             "is_constructor": 1,
-            "extends": "Promise"
+            "extends": "Deferred"
         },
-        "io": {
-            "name": "io",
-            "shortname": "io",
+        "Y.io": {
+            "name": "Y.io",
+            "shortname": "Y.io",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -131,424 +131,25 @@
             "module": "gallery-deferred",
             "namespace": ""
         },
-        "YUI": {
-            "name": "YUI",
-            "shortname": "YUI",
+        "YUI~deferred": {
+            "name": "YUI~deferred",
+            "shortname": "YUI~deferred",
             "classitems": [],
             "plugins": [],
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
             "module": "gallery-deferred",
-            "namespace": ""
+            "namespace": "",
+            "file": "js\\when.js",
+            "line": 2,
+            "description": "Methods for working with asynchronous calls",
+            "static": 1
         }
     },
     "classitems": [
         {
-            "file": "js\\NodeDeferred.js",
-            "line": 17,
-            "description": "Plugin namespace",
-            "itemtype": "property",
-            "name": "NS",
-            "type": "String",
-            "default": "'deferred'",
-            "static": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 25,
-            "description": "Imports a method from Y.Node so that they return instances of this same plugin representing promises",
-            "itemtype": "method",
-            "name": "deferMethod",
-            "params": [
-                {
-                    "name": "method",
-                    "description": "Name of the method to import from Y.Node",
-                    "type": "String"
-                }
-            ],
-            "static": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 67,
-            "description": "Imports a method from Y.Node making it chainable but not returning promises",
-            "itemtype": "method",
-            "name": "importMethod",
-            "params": [
-                {
-                    "name": "method",
-                    "description": "Name of the method to import from Y.Node",
-                    "type": "String"
-                }
-            ],
-            "static": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 81,
-            "description": "Deferred version of the Node method",
-            "itemtype": "method",
-            "name": "hide",
-            "return": {
-                "description": "",
-                "type": "NodeDeferred"
-            },
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 86,
-            "description": "Deferred version of the Node method",
-            "itemtype": "method",
-            "name": "load",
-            "return": {
-                "description": "",
-                "type": "NodeDeferred"
-            },
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 91,
-            "description": "Deferred version of the Node method",
-            "itemtype": "method",
-            "name": "show",
-            "return": {
-                "description": "",
-                "type": "NodeDeferred"
-            },
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 96,
-            "description": "Deferred version of the Node method",
-            "itemtype": "method",
-            "name": "transition",
-            "return": {
-                "description": "",
-                "type": "NodeDeferred"
-            },
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 101,
-            "description": "Deferred version of the Node method",
-            "itemtype": "method",
-            "name": "once",
-            "return": {
-                "description": "",
-                "type": "NodeDeferred"
-            },
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 106,
-            "description": "Deferred version of the Node method",
-            "itemtype": "method",
-            "name": "onceAfter",
-            "return": {
-                "description": "",
-                "type": "NodeDeferred"
-            },
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 112,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "addClass",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 117,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "append",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 122,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "appendTo",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 127,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "blur",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 132,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "clearData",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 137,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "destroy",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 142,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "empty",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 147,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "focus",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 152,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "insert",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 158,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "insertBefore",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 163,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "prepend",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 168,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "remove",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 173,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "removeAttribute",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 178,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "removeChild",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 183,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "removeClass",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 188,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "replaceChild",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 194,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "replaceClass",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 199,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "select",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 204,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "set",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 209,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setAttrs",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 214,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setContent",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 219,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setData",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 224,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setStyle",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 229,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setStyles",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 235,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setX",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 240,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setXY",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 245,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "setY",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 250,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "simulate",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 255,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "swapXY",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 260,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "toggleClass",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 265,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "wrap",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\NodeDeferred.js",
-            "line": 270,
-            "description": "Same as the Node method",
-            "itemtype": "method",
-            "name": "unwrap",
-            "chainable": 1,
-            "class": "Plugin.NodeDeferred"
-        },
-        {
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 34,
             "itemtype": "method",
             "name": "then",
@@ -566,11 +167,11 @@
                 }
             ],
             "chainable": 1,
-            "class": "Promise",
+            "class": "Deferred",
             "module": "gallery-deferred"
         },
         {
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 65,
             "itemtype": "method",
             "name": "done",
@@ -583,11 +184,11 @@
                 }
             ],
             "chainable": 1,
-            "class": "Promise",
+            "class": "Deferred",
             "module": "gallery-deferred"
         },
         {
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 75,
             "itemtype": "method",
             "name": "fail",
@@ -600,11 +201,11 @@
                 }
             ],
             "chainable": 1,
-            "class": "Promise",
+            "class": "Deferred",
             "module": "gallery-deferred"
         },
         {
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 85,
             "itemtype": "method",
             "name": "always",
@@ -617,11 +218,11 @@
                 }
             ],
             "chainable": 1,
-            "class": "Promise",
+            "class": "Deferred",
             "module": "gallery-deferred"
         },
         {
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 96,
             "itemtype": "method",
             "name": "resolve",
@@ -634,11 +235,11 @@
                 }
             ],
             "chainable": 1,
-            "class": "Promise",
+            "class": "Deferred",
             "module": "gallery-deferred"
         },
         {
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 107,
             "itemtype": "method",
             "name": "reject",
@@ -651,20 +252,49 @@
                 }
             ],
             "chainable": 1,
-            "class": "Promise",
+            "class": "Deferred",
             "module": "gallery-deferred"
         },
         {
-            "file": "js\\Promise.js",
+            "file": "js\\Deferred.js",
             "line": 134,
             "itemtype": "method",
             "name": "defer",
             "description": "Returns a new promise. This method will be mostly used by implementors that extend this class to create\nadditional asynchronous functionalityu. For example:\n<pre><code>\nwait: function (delay) {\n\t\treturn this.defer(function (promise) {\n\t\tY.later(delay || 0, promise, promise.resolve);\n});\n}</code></pre>",
             "return": {
                 "description": "",
-                "type": "Promise"
+                "type": "Deferred"
             },
-            "class": "Promise",
+            "class": "Deferred",
+            "module": "gallery-deferred"
+        },
+        {
+            "file": "js\\NodeDeferred.js",
+            "line": 16,
+            "description": "Plugin namespace",
+            "itemtype": "property",
+            "name": "NS",
+            "type": "String",
+            "default": "'deferred'",
+            "static": 1,
+            "class": "Node.Deferred",
+            "module": "gallery-deferred"
+        },
+        {
+            "file": "js\\NodeDeferred.js",
+            "line": 24,
+            "description": "Imports a method from Y.Node so that they return instances of this same plugin representing promises",
+            "itemtype": "method",
+            "name": "importMethod",
+            "params": [
+                {
+                    "name": "method",
+                    "description": "Name of the method to import from Y.Node",
+                    "type": "String"
+                }
+            ],
+            "static": 1,
+            "class": "Node.Deferred",
             "module": "gallery-deferred"
         },
         {
@@ -791,7 +421,7 @@
             "access": "private",
             "tagname": "",
             "static": 1,
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -803,7 +433,7 @@
             "access": "private",
             "tagname": "",
             "static": 1,
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -825,7 +455,7 @@
                     "type": "Function"
                 }
             ],
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -842,7 +472,7 @@
                     "type": "Obejct"
                 }
             ],
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -864,11 +494,10 @@
                 }
             ],
             "return": {
-                "description": "",
-                "type": "Io.Request"
+                "description": "io.Request"
             },
             "static": 1,
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -890,11 +519,10 @@
                 }
             ],
             "return": {
-                "description": "",
-                "type": "Io.Request"
+                "description": "io.Request"
             },
             "static": 1,
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -921,11 +549,10 @@
                 }
             ],
             "return": {
-                "description": "",
-                "type": "Io.Request"
+                "description": "io.Request"
             },
             "static": 1,
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -947,11 +574,10 @@
                 }
             ],
             "return": {
-                "description": "",
-                "type": "Io.Request"
+                "description": "io.Request"
             },
             "static": 1,
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
@@ -973,19 +599,18 @@
                 }
             ],
             "return": {
-                "description": "",
-                "type": "Io.Request"
+                "description": "io.Request"
             },
             "static": 1,
-            "class": "io",
+            "class": "Y.io",
             "module": "gallery-deferred"
         },
         {
             "file": "js\\when.js",
-            "line": 2,
+            "line": 8,
             "description": "Returns a promise for a (possibly) asynchronous call.\nCalls a given function that receives the new promise as parameter and must call resolve()\nor reject() at a certain point",
             "itemtype": "method",
-            "name": "defer",
+            "name": "Y.defer",
             "params": [
                 {
                     "name": "fn",
@@ -995,31 +620,29 @@
             ],
             "return": {
                 "description": "a promise",
-                "type": "Promise"
+                "type": "Deferred"
             },
-            "static": 1,
-            "class": "YUI",
+            "class": "YUI~deferred",
             "module": "gallery-deferred"
         },
         {
             "file": "js\\when.js",
-            "line": 18,
-            "description": "Waits for a series of asynchronous calls to be completed",
+            "line": 22,
             "itemtype": "method",
-            "name": "when",
+            "name": "Y.when",
+            "description": "Waits for a series of asynchronous calls to be completed",
             "params": [
                 {
                     "name": "deferred",
-                    "description": "Any number of Promise instances or arrays of instances. If a function is provided, it is executed at once",
-                    "type": "Promise|Array|Function"
+                    "description": "Any number of Deferred instances or arrays of instances. If a function is provided, it is executed at once",
+                    "type": "Deferred|Array|Function"
                 }
             ],
             "return": {
                 "description": "a promise",
-                "type": "Promise"
+                "type": "Deferred"
             },
-            "static": 1,
-            "class": "YUI",
+            "class": "YUI~deferred",
             "module": "gallery-deferred"
         }
     ]
