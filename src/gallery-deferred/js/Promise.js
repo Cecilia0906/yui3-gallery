@@ -20,17 +20,17 @@ var Lang = Y.Lang,
  * It runs these callbacks once a call to resolve() or reject() is made.
  * 
  * This class is designed to augment others
- * @class Deferred
+ * @class Promise
  * @constructor
  */
-function Deferred(config) {
+function Promise(config) {
 	this._config = config || {};
 	this._done = [];
 	this._fail = [];
 	this._args = [];
 	this.status = 0;
 }
-Y.mix(Deferred.prototype, {
+Y.mix(Promise.prototype, {
 	/**
 	 * @method then
 	 * @description Adds callbacks to the list of callbacks tracked by the promise
@@ -40,7 +40,7 @@ Y.mix(Deferred.prototype, {
 	 */
 	then: function (doneCallbacks, failCallbacks) {
 		if (doneCallbacks) {
-			doneCallbacks = Deferred._flatten(doneCallbacks)
+			doneCallbacks = Promise._flatten(doneCallbacks);
 			if (this.status === RESOLVED) {
 				YArray.each(doneCallbacks, function (callback) {
 					callback.apply(this, this._args);
@@ -50,7 +50,7 @@ Y.mix(Deferred.prototype, {
 			}
 		}
 		if (failCallbacks) {
-			failCallbacks = Deferred._flatten(failCallbacks)
+			failCallbacks = Promise._flatten(failCallbacks);
 			if (this.status === REJECTED) {
 				YArray.each(failCallbacks, function (callback) {
 					callback.apply(this, this._args);
@@ -125,7 +125,7 @@ Y.mix(Deferred.prototype, {
 			callbacks = this._fail;
 			this._fail = [];
 		}
-		Y.Array.each(callbacks, function (callback) {
+		YArray.each(callbacks, function (callback) {
 			callback.apply(self, args);
 		});
 		return this;
@@ -141,7 +141,7 @@ Y.mix(Deferred.prototype, {
 	 *		Y.later(delay || 0, promise, promise.resolve);
 	 * });
 	 * }</code></pre>
-	 * @return {Deferred}
+	 * @return {Promise}
 	 */
 	defer: function (callback, context) {
 		var promise = new this.constructor(this._config);
@@ -151,28 +151,26 @@ Y.mix(Deferred.prototype, {
 	
 });
 
-Y.mix(Deferred, {
-	/*
-	 * Turns a value into an array with the value as its first element, or takes an array and spreads
-	 * each array element into elements of the parent array
-	 * @method _flatten
-	 * @param {Object|Array} args The value or array to spread
-	 * @return Array
-	 * @private
-	 * @static
-	 */
-	_flatten: function (arr) {
-		var i = 0;
-		arr = YArray(arr).concat();
-		while (i < arr.length) {
-			if (Y.Lang.isArray(arr[i])) {
-				AP.splice.apply(arr, [i, 1].concat(arr[i]));
-			} else {
-				i++;
-			}
+/*
+ * Turns a value into an array with the value as its first element, or takes an array and spreads
+ * each array element into elements of the parent array
+ * @method _flatten
+ * @param {Object|Array} args The value or array to spread
+ * @return Array
+ * @private
+ * @static
+ */
+Promise._flatten = function (arr) {
+	var i = 0;
+	arr = Lang.isArray(arr) ? arr.concat() : [arr];
+	while (i < arr.length) {
+		if (Lang.isArray(arr[i])) {
+			AP.splice.apply(arr, [i, 1].concat(arr[i]));
+		} else {
+			i++;
 		}
-		return arr;
 	}
-});
+	return arr;
+};
 
-Y.Deferred = Deferred;
+Y.Promise = Promise;

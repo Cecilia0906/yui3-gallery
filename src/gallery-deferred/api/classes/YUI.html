@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>YUI~deferred</title>
+    <title>YUI</title>
     <link rel="stylesheet" href="http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.5.0pr4&#x2F;build&#x2F;cssgrids&#x2F;cssgrids-min.css">
     <link rel="stylesheet" href="..&#x2F;assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="..&#x2F;assets/css/main.css" id="site_styles">
@@ -40,15 +40,15 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
-                <li><a href="..&#x2F;classes/Deferred.html">Deferred</a></li>
+                <li><a href="..&#x2F;classes/io.html">io</a></li>
             
                 <li><a href="..&#x2F;classes/io.Request.html">io.Request</a></li>
             
-                <li><a href="..&#x2F;classes/Node.Deferred.html">Node.Deferred</a></li>
+                <li><a href="..&#x2F;classes/Plugin.NodeDeferred.html">Plugin.NodeDeferred</a></li>
             
-                <li><a href="..&#x2F;classes/Y.io.html">Y.io</a></li>
+                <li><a href="..&#x2F;classes/Promise.html">Promise</a></li>
             
-                <li><a href="..&#x2F;classes/YUI~deferred.html">YUI~deferred</a></li>
+                <li><a href="..&#x2F;classes/YUI.html">YUI</a></li>
             
             </ul>
 
@@ -86,16 +86,12 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>YUI~deferred Class</h1>
+                        <h1>YUI Class</h1>
 <div class="box meta">
     
 
     
 
-    
-        <div class="foundat">
-            Defined in: <a href="..&#x2F;files&#x2F;js_when.js.html#l2"><code>js\when.js:2</code></a>
-        </div>
     
 
     
@@ -104,7 +100,7 @@
 
 
 <div class="box intro">
-    <p>Methods for working with asynchronous calls</p>
+    
 </div>
 
 
@@ -132,14 +128,18 @@
                     <ul class="index-list methods">
                         
                             <li class="index-item method">
-                                <a href="#method_Y.defer">Y.defer</a>
+                                <a href="#method_defer">defer</a>
 
+                                
+                                    <span class="flag static">static</span>
                                 
                             </li>
                         
                             <li class="index-item method">
-                                <a href="#method_Y.when">Y.when</a>
+                                <a href="#method_when">when</a>
 
+                                
+                                    <span class="flag static">static</span>
                                 
                             </li>
                         
@@ -159,8 +159,8 @@
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_Y.defer" class="method item">
-    <h3 class="name"><code>Y.defer</code></h3>
+                    <div id="method_defer" class="method item">
+    <h3 class="name"><code>defer</code></h3>
 
     
         <div class="args">
@@ -178,7 +178,7 @@
 
     
         <span class="returns-inline">
-            <span class="type"><a href="..\classes\Deferred.html" class="crosslink">Deferred</a></span>
+            <span class="type"><a href="..\classes\Promise.html" class="crosslink">Promise</a></span>
         </span>
     
 
@@ -188,6 +188,8 @@
 
     
 
+    
+        <span class="flag static">static</span>
     
 
     
@@ -203,7 +205,7 @@
             
         
         
-        <a href="..&#x2F;files&#x2F;js_when.js.html#l8"><code>js\when.js:8</code></a>
+        <a href="..&#x2F;files&#x2F;js_when.js.html#l2"><code>js\when.js:2</code></a>
         
         </p>
 
@@ -251,7 +253,7 @@ or reject() at a certain point</p>
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="..\classes\Deferred.html" class="crosslink">Deferred</a></span>:
+                        <span class="type"><a href="..\classes\Promise.html" class="crosslink">Promise</a></span>:
                     
                     a promise
                 
@@ -263,8 +265,8 @@ or reject() at a certain point</p>
 </div>
 
                 
-                    <div id="method_Y.when" class="method item">
-    <h3 class="name"><code>Y.when</code></h3>
+                    <div id="method_when" class="method item">
+    <h3 class="name"><code>when</code></h3>
 
     
         <div class="args">
@@ -282,7 +284,7 @@ or reject() at a certain point</p>
 
     
         <span class="returns-inline">
-            <span class="type"><a href="..\classes\Deferred.html" class="crosslink">Deferred</a></span>
+            <span class="type"><a href="..\classes\Promise.html" class="crosslink">Promise</a></span>
         </span>
     
 
@@ -292,6 +294,8 @@ or reject() at a certain point</p>
 
     
 
+    
+        <span class="flag static">static</span>
     
 
     
@@ -307,7 +311,7 @@ or reject() at a certain point</p>
             
         
         
-        <a href="..&#x2F;files&#x2F;js_when.js.html#l22"><code>js\when.js:22</code></a>
+        <a href="..&#x2F;files&#x2F;js_when.js.html#l18"><code>js\when.js:18</code></a>
         
         </p>
 
@@ -330,13 +334,13 @@ or reject() at a certain point</p>
                 <li class="param">
                     
                         <code class="param-name">deferred</code>
-                        <span class="type"><a href="..\classes\Deferred.html" class="crosslink">Deferred</a> | Array | Function</span>
+                        <span class="type"><a href="..\classes\Promise.html" class="crosslink">Promise</a> | Array | Function</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Any number of Deferred instances or arrays of instances. If a function is provided, it is executed at once</p>
+                        <p>Any number of Promise instances or arrays of instances. If a function is provided, it is executed at once</p>
                     </div>
 
                     
@@ -353,7 +357,7 @@ or reject() at a certain point</p>
             <div class="returns-description">
                 
                     
-                        <span class="type"><a href="..\classes\Deferred.html" class="crosslink">Deferred</a></span>:
+                        <span class="type"><a href="..\classes\Promise.html" class="crosslink">Promise</a></span>:
                     
                     a promise
                 

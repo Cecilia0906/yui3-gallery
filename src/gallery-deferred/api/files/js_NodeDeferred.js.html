@@ -40,15 +40,15 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
-                <li><a href="..&#x2F;classes/Deferred.html">Deferred</a></li>
+                <li><a href="..&#x2F;classes/io.html">io</a></li>
             
                 <li><a href="..&#x2F;classes/io.Request.html">io.Request</a></li>
             
-                <li><a href="..&#x2F;classes/Node.Deferred.html">Node.Deferred</a></li>
+                <li><a href="..&#x2F;classes/Plugin.NodeDeferred.html">Plugin.NodeDeferred</a></li>
             
-                <li><a href="..&#x2F;classes/Y.io.html">Y.io</a></li>
+                <li><a href="..&#x2F;classes/Promise.html">Promise</a></li>
             
-                <li><a href="..&#x2F;classes/YUI~deferred.html">YUI~deferred</a></li>
+                <li><a href="..&#x2F;classes/YUI.html">YUI</a></li>
             
             </ul>
 
@@ -91,75 +91,283 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 
-	&#x2F;**
-	 * A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()
-	 * @class Node.Deferred
-	 * @constructor
-	 * @extends Deferred
-	 * @param {Object} config An object literal containing plugin configuration
-	 *&#x2F;
-	function NodeDeferred(config) {
-		NodeDeferred.superclass.constructor.apply(this, arguments);
-		this.host = config.host;
-	}
+&#x2F;**
+ * A deferred plugin for Node that has methods for dealing with asynchronous calls such as transition()
+ * @class Plugin.NodeDeferred
+ * @constructor
+ * @extends Promise
+ * @param {Object} config An object literal containing plugin configuration
+ *&#x2F;
+function NodeDeferred(config) {
+	NodeDeferred.superclass.constructor.apply(this, arguments);
+	this.host = config.host;
+}
+
+if (Y.Node &amp;&amp; Y.Plugin) {
 	
-	if (Y.Node &amp;&amp; Y.Plugin) {
-		Y.extend(NodeDeferred, Y.Deferred, null, {
-			&#x2F;**
-			 * Plugin namespace
-			 * @property {String} NS
-			 * @default &#x27;deferred&#x27;
-			 * @static
-			 *&#x2F;
-			NS: &#x27;deferred&#x27;,
-			
-			&#x2F;**
-			 * Imports a method from Y.Node so that they return instances of this same plugin representing promises
-			 * @method importMethod
-			 * @param {String} method Name of the method to import from Y.Node
-			 * @static
-			 *&#x2F;
-			importMethod: function (method) {
-				NodeDeferred.prototype[method] = function () {
-					&#x2F;&#x2F; this.host[NS] === this means this is the first time the plugin is instanciated and plugged
-					&#x2F;&#x2F; in that case it should be resolved, because it doesn&#x27;t represent any promises yet
-					if (this.host.deferred === this) {
-						this.resolve();
+	Y.extend(NodeDeferred, Y.Promise, null, {
+		&#x2F;**
+		 * Plugin namespace
+		 * @property {String} NS
+		 * @default &#x27;deferred&#x27;
+		 * @static
+		 *&#x2F;
+		NS: &#x27;deferred&#x27;,
+		
+		&#x2F;**
+		 * Imports a method from Y.Node so that they return instances of this same plugin representing promises
+		 * @method deferMethod
+		 * @param {String} method Name of the method to import from Y.Node
+		 * @static
+		 *&#x2F;
+		deferMethod: function (method) {
+			NodeDeferred.prototype[method] = function () {
+				var args,
+					deferred,
+					callback;
+				&#x2F;&#x2F; this.host[NS] === this means this is the first time the plugin is instanciated and plugged
+				&#x2F;&#x2F; in that case it should be resolved, because it doesn&#x27;t represent any promises yet
+				if (this.host.deferred === this) {
+					this.resolve();
+				}
+				
+				if (this.host[method]) {
+					args = YArray(arguments);
+					
+					if (Lang.isFunction(args[args.length - 1])) {
+						callback = args.pop();
 					}
 					
-					if (this.host[method]) {
-						var args = Y.Array(arguments),
-							deferred,
-							callback;
-							
-						if (Y.Lang.isFunction(args[args.length - 1])) {
-							callback = args.pop();
-						}
-						
-						deferred = this.defer(function (promise) {
-							this.host[method].apply(this.host, args.concat([Y.bind(promise.resolve, promise)]));
-						});
-						if (callback) {
-							deferred.done(callback);
-						}
-						return deferred;
-						
-					} else {
-						if (Y.instanceOf(this.host, Y.NodeList) &amp;&amp; method == &#x27;load&#x27;) {
-							Y.error(&#x27;NodeList doesn\&#x27;t have a &#x27; + method + &#x27;() method&#x27;);
-						} else {
-							Y.error(&#x27;Missing required module for &#x27; + method);
-						}
+					deferred = this.defer(function (promise) {
+						this.host[method].apply(this.host, args.concat([Y.bind(promise.resolve, promise)]));
+					});
+					if (callback) {
+						deferred.done(callback);
 					}
-					return this;
-				};
-			}
-		});
-		
-		Y.each([&#x27;hide&#x27;, &#x27;load&#x27;, &#x27;show&#x27;, &#x27;transition&#x27;, &#x27;once&#x27;, &#x27;onceAfter&#x27;], NodeDeferred.importMethod);
-		
-		Y.Node.Deferred = NodeDeferred;
-	}
+					return deferred;
+					
+				} else {
+					if (Y.instanceOf(this.host, Y.NodeList) &amp;&amp; method == &#x27;load&#x27;) {
+						Y.error(&#x27;NodeList doesn\&#x27;t have a &#x27; + method + &#x27;() method&#x27;);
+					} else {
+						Y.error(&#x27;Missing required module for &#x27; + method);
+					}
+				}
+				return this;
+			};
+		},
+		&#x2F;**
+		 * Imports a method from Y.Node making it chainable but not returning promises
+		 * @method importMethod
+		 * @param {String} method Name of the method to import from Y.Node
+		 * @static
+		 *&#x2F;
+		importMethod: function(method) {
+			NodeDeferred.prototype[method] = function () {
+				this.host[method].apply(this.host, arguments);
+				return this;
+			};
+		}
+	});
+	
+	&#x2F;**
+	 * Deferred version of the Node method
+	 * @method hide
+	 * @return {NodeDeferred}
+	 *&#x2F;
+	&#x2F;**
+	 * Deferred version of the Node method
+	 * @method load
+	 * @return {NodeDeferred}
+	 *&#x2F;
+	&#x2F;**
+	 * Deferred version of the Node method
+	 * @method show
+	 * @return {NodeDeferred}
+	 *&#x2F;
+	&#x2F;**
+	 * Deferred version of the Node method
+	 * @method transition
+	 * @return {NodeDeferred}
+	 *&#x2F;
+	&#x2F;**
+	 * Deferred version of the Node method
+	 * @method once
+	 * @return {NodeDeferred}
+	 *&#x2F;
+	&#x2F;**
+	 * Deferred version of the Node method
+	 * @method onceAfter
+	 * @return {NodeDeferred}
+	 *&#x2F;
+	Y.each([&#x27;hide&#x27;, &#x27;load&#x27;, &#x27;show&#x27;, &#x27;transition&#x27;, &#x27;once&#x27;, &#x27;onceAfter&#x27;], NodeDeferred.deferMethod);
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method addClass
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method append
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method appendTo
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method blur
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method clearData
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method destroy
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method empty
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method focus
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method insert
+	 * @chainable
+	 *&#x2F;
+	Y.each([&#x27;addClass&#x27;, &#x27;append&#x27;, &#x27;appendTo&#x27;, &#x27;blur&#x27;, &#x27;clearData&#x27;, &#x27;destroy&#x27;, &#x27;empty&#x27;, &#x27;focus&#x27;, &#x27;insert&#x27;,
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method insertBefore
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method prepend
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method remove
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method removeAttribute
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method removeChild
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method removeClass
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method replaceChild
+	 * @chainable
+	 *&#x2F;
+			&#x27;insertBefore&#x27;, &#x27;prepend&#x27;, &#x27;remove&#x27;, &#x27;removeAttribute&#x27;, &#x27;removeChild&#x27;, &#x27;removeClass&#x27;, &#x27;replaceChild&#x27;,
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method replaceClass
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method select
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method set
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setAttrs
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setContent
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setData
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setStyle
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setStyles
+	 * @chainable
+	 *&#x2F;
+			&#x27;replaceClass&#x27;, &#x27;select&#x27;, &#x27;set&#x27;, &#x27;setAttrs&#x27;, &#x27;setContent&#x27;, &#x27;setData&#x27;, &#x27;setStyle&#x27;, &#x27;setStyles&#x27;, 
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setX
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setXY
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method setY
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method simulate
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method swapXY
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method toggleClass
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method wrap
+	 * @chainable
+	 *&#x2F;
+	&#x2F;**
+	 * Same as the Node method 
+	 * @method unwrap
+	 * @chainable
+	 *&#x2F;
+			&#x27;setX&#x27;, &#x27;setXY&#x27;, &#x27;setY&#x27;, &#x27;simulate&#x27;, &#x27;swapXY&#x27;, &#x27;toggleClass&#x27;, &#x27;wrap&#x27;, &#x27;unwrap&#x27;], NodeDeferred.importMethod);
+	
+	Y.Plugin.NodeDeferred = NodeDeferred;
+}
 
     </pre>
 </div>

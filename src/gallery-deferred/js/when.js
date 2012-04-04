@@ -1,32 +1,30 @@
 
 /**
- * Methods for working with asynchronous calls
- * @class YUI~deferred
- * @static
- */
-
-/**
  * Returns a promise for a (possibly) asynchronous call.
  * Calls a given function that receives the new promise as parameter and must call resolve()
  * or reject() at a certain point
- * @method Y.defer
+ * @method defer
  * @param {Function} fn A function that encloses an async call.
- * @return {Deferred} a promise
+ * @return {Promise} a promise
+ * @static
+ * @for YUI
  */
 Y.defer = function (fn, context) {
-	var promise = new Y.Deferred();
+	var promise = new Y.Promise();
 	fn(promise);
 	return promise;
 };
 
 /**
- * @method Y.when
- * @description Waits for a series of asynchronous calls to be completed
- * @param {Deferred|Array|Function} deferred Any number of Deferred instances or arrays of instances. If a function is provided, it is executed at once
- * @return {Deferred} a promise
+ * Waits for a series of asynchronous calls to be completed
+ * @method when
+ * @param {Promise|Array|Function} deferred Any number of Promise instances or arrays of instances. If a function is provided, it is executed at once
+ * @return {Promise} a promise
+ * @static
+ * @for YUI
  */
 Y.when = function () {
-	var deferreds = Y.Deferred._flatten(arguments),
+	var deferreds = Y.Promise._flatten(YArray(arguments)),
 		args = [],
 		resolved = 0,
 		rejected = 0;
@@ -42,7 +40,7 @@ Y.when = function () {
 				}
 			}
 		}
-			
+		
 		function done() {
 			resolved++;
 			notify(arguments);
