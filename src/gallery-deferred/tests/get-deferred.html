@@ -44,7 +44,23 @@
 					
 					Y.io.css('some-sheet.css', function () {
 						test.resume(function () {
-							Y.Assert.areEqual(Y.one('#test').getComputedStyle('height'), '100px', 'Y_GET_LOADED_SCRIPT should be declared');
+							Y.Assert.areEqual(Y.one('#test').getComputedStyle('height'), '100px', 'height of control node should be set to 100px');
+						});
+					});
+					
+					this.wait(3000);
+				},
+				
+				testPromiseChaining: function () {
+					Y.log('Testing if several Y.io methods can be chained and executed one after the other');
+					
+					var test = this;
+					
+					Y.io.css('some-sheet2.css').script('some-script2.js').get('io-content1.html').then(function (id, xhr) {
+						test.resume(function () {
+							Y.Assert.areEqual(Y.one('#test').getComputedStyle('width'), '100px', 'width of control node should be set to 100px');
+							Y.Assert.areEqual(window.Y_GET_LOADED_SCRIPT_2, true, 'Y_GET_LOADED_SCRIPT_2 should be declared');
+							Y.Assert.areEqual(xhr.responseText, '<div>hello</div>', 'response should be equal to "<div>hello</div>"');
 						});
 					});
 					

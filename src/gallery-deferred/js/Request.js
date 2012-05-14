@@ -70,7 +70,16 @@ if (Y.io) {
 			}
 			return Y.mix(config, args, true);
 		},
-		
+		/**
+		 * Takes an object with "success" and "failure" properties, such as one
+		 * from a IO configuration, and registers those callbacks as promise handlers
+		 * @method _eventsToCallbacks
+		 * @for io
+		 * @private
+		 * @static  
+		 * @param {io.Request} request
+		 * @param {Object} Object with "success" and/or "failure" properties
+		 */
 		_eventsToCallbacks: function (request, events) {
 			Y.each(events, function (callback, eventName) {
 				if (eventName === 'success') {
@@ -82,66 +91,17 @@ if (Y.io) {
 				}
 			});
 		},
-		
 		/**
-		 * Makes an IO request and returns a new io.Request object for it.
-		 * It also normalizes callbacks as event handlers with an EventFacade
-		 * @method _defer
+		 * Creates an IO promise instead of a plain promise like Y.defer
+		 * @method defer
 		 * @for io
-		 * @private
 		 * @static
+		 * @param {Function} function to make into a deferred
+		 * @return {io.Request} request
 		 */
-		_defer: function (uri, config, method) {
-			method = method || Y.io;
-			config = Y.io._normalizeConfig(config);
+		defer: function (fn) {
 			var request = new Y.io.Request();
-			
-			if (config.on) {
-				Y.io._eventsToCallbacks(request, config.on);
-			}
-			
-			config.on = {
-				success: function (id, response) {
-					if (config.parser) {
-						try {
-							args.data = config.parser(response.responseText);
-						} catch (e) {
-							request.reject.apply(request, arguments);
-							return;
-						}
-					}
-					request.resolve.apply(request, arguments);
-				},
-				failure: Y.bind(request.reject, request)
-			};
-			
-			return Y.mix(request, method(uri, config));
-		},
-		/**
-		 * Normalizes the Y.Get API so that it looks the same to the Y.io methods
-		 * @param {String} 
-		 * @for io
-		 * @private
-		 * @static
-		 */
-		_deferGet: function (method, uri, config) {
-			if (arguments.length === 2) {
-				callback = config;
-				config = {};
-			}
-			var request = new Y.io.Request();
-			if (config.on) {
-				config.onSuccess = config.on.success;
-				config.onFailure = config.on.failure;
-				config.on = null;
-			}
-			Y.Get[method](uri, config, function (err) {
-				if (err) {
-					request.reject(err);
-				} else {
-					request.resolve();
-				}
-			});
+			fn.call(this, request);
 			return request;
 		},
 		
@@ -155,9 +115,7 @@ if (Y.io) {
          */
 		addMethod: function (name, fn) {
 			Y.io[name] = fn;
-			Request.prototype[name] = function () {
-				return Y.io[name].apply(Y.io, arguments);
-			};
+			Request.prototype[name] = fn;
 		},
 		
 		/**
@@ -176,6 +134,74 @@ if (Y.io) {
 
 	Y.io.addMethods({
 		/**
+		 * Makes an IO request and returns a new io.Request object for it.
+		 * It also normalizes callbacks as event handlers with an EventFacade
+		 * @method _deferIO
+		 * @for io
+		 * @private
+		 * @static
+		 */
+		_deferIO: function (uri, config) {
+			config = Y.io._normalizeConfig(config);
+			
+			return this.defer(function (request) {
+				if (config.on) {
+					Y.io._eventsToCallbacks(request, config.on);
+				}
+				
+				config.on = {
+					success: function (id, response) {
+						if (config.parser) {
+							try {
+								args.data = config.parser(response.responseText);
+							} catch (e) {
+								request.reject.apply(request, arguments);
+								return;
+							}
+						}
+						request.resolve.apply(request, arguments);
+					},
+					failure: Y.bind(request.reject, request)
+				};
+				
+				Y.mix(request, Y.io(uri, config));
+			});
+		},
+		/**
+		 * Normalizes the Y.Get API so that it looks the same to the Y.io methods
+		 * @method _deferGet
+		 * @param {String} 
+		 * @for io
+		 * @private
+		 * @static
+		 */
+		_deferGet: function (method, uri, config, callback) {
+			if (Y.Lang.isFunction(config)) {
+				callback = config;
+				config = {};
+			}
+			if (!config) {
+				config = {};
+			}
+			return this.defer(function (request) {
+				if (callback) {
+					request.then(callback);
+				}
+				if (config.on) {
+					Y.io._eventsToCallbacks(request, config.on);
+					config.on = null;
+				}
+				Y.Get[method](uri, config, function (err) {
+					if (err) {
+						request.reject(err);
+					} else {
+						request.resolve();
+					}
+				});
+			});
+		},
+		
+		/**
 		 * Makes a new GET HTTP request
 		 * @method get
 		 * @param {String} uri Path to the request resource
@@ -185,7 +211,7 @@ if (Y.io) {
 		 * @static
 		 */
 		get: function (uri, config) {
-			return this._defer(uri, Y.io._normalizeConfig(config, {
+			return this._deferIO(uri, Y.io._normalizeConfig(config, {
 				method: 'GET'
 			}));
 		},
@@ -200,7 +226,7 @@ if (Y.io) {
 		 * @static
 		 */
 		post: function (uri, data, config) {
-			return this._defer(uri, Y.io._normalizeConfig(config, {
+			return this._deferIO(uri, Y.io._normalizeConfig(config, {
 				method: 'POST',
 				data: data
 			}));
@@ -209,21 +235,22 @@ if (Y.io) {
 		/**
 		 * Makes a new POST HTTP request sending the content of a form
 		 * @method postForm
+		 * @for io
+		 * @static
 		 * @param {String} uri Path to the request resource
 		 * @param {String} id The id of the form to serialize and send in the request
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 		 * @return {io.Request}
-		 * @for io
-		 * @static
 		 */
 		postForm: function (uri, id, config) {
-			return this._defer(uri, Y.io._normalizeConfig(config, {
+			return this._deferIO(uri, Y.io._normalizeConfig(config, {
 				method: 'POST',
 				form: { id: id }
 			}));
 		},
 		/**
 		 * Alias for Y.io.js
+		 * @method script
 		 * @for io
 		 * @static
 		 */
@@ -234,25 +261,29 @@ if (Y.io) {
 		 * Loads a script through Y.Get.script
 		 * All its options persist, but it also accepts an "on" object
 		 * with "success" and "failure" properties like the rest of the Y.io methods
-		 * @param {String} uri Path to the request resource
-		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+		 * @method js
 		 * @for io
 		 * @static
+		 * @param {String} uri Path to the request resource
+		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+		 * @return {io.Request}
 		 */
-		js: function (uri, config) {
-			return this._deferGet('js', uri, config);
+		js: function (uri, config, callback) {
+			return this._deferGet('js', uri, config, callback);
 		},
 		/**
 		 * Loads a stylesheet through Y.Get.css
 		 * All its options persist, but it also accepts an "on" object
 		 * with "success" and "failure" properties like the rest of the Y.io methods
-		 * @param {String} uri Path to the request resource
-		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+		 * @method css
 		 * @for io
 		 * @static
+		 * @param {String} uri Path to the request resource
+		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+		 * @return {io.Request}
 		 */
 		css: function (uri, config, callback) {
-			return this._deferGet('css', uri, config);
+			return this._deferGet('css', uri, config, callback);
 		}
 	});
 	
@@ -260,17 +291,17 @@ if (Y.io) {
 		/**
 		 * Makes a new GET HTTP request and parses the result as JSON data
 		 * @method getJSON
+		 * @for io
+		 * @static
 		 * @param {String} uri Path to the request resource
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 		 * @return {io.Request}
-		 * @for io
-		 * @static
 		 */
 		Y.io.addMethod('getJSON', function (uri, config) {
 			config = Y.io._normalizeConfig(config);
 			config.parser = Y.JSON.parse;
 			
-			return this._defer(uri, config);
+			return this._deferIO(uri, config);
 		});
 	}
 
@@ -278,28 +309,27 @@ if (Y.io) {
 		/**
 		 * Makes a new JSONP request
 		 * @method jsonp
+		 * @for io
+		 * @static
 		 * @param {String} uri Path to the jsonp service
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 		 * @return {io.Request}
-		 * @for io
-		 * @static
 		 */
 		Y.io.addMethod('jsonp', function (uri, config) {
 			config = Y.io._normalizeConfig(config);
-			var request = new Y.io.Request();
 			
-			if (config.on) {
-				Y.io._eventsToCallbacks(request, config.on);
-			}
-			
-			config.on = {
-				success: Y.bind(request.resolve, request),
-				failure: Y.bind(request.reject, request)
-			};
-			
-			Y.jsonp(uri, config);
-			
-			return request;
+			return this.defer(function (request) {
+				if (config.on) {
+					Y.io._eventsToCallbacks(request, config.on);
+				}
+				
+				config.on = {
+					success: Y.bind(request.resolve, request),
+					failure: Y.bind(request.reject, request)
+				};
+				
+				Y.jsonp(uri, config);
+			});
 		});
 	}
 }
