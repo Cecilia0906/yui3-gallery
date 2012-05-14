@@ -175,7 +175,8 @@ if (Y.io) {
 		 * @private
 		 * @static
 		 */
-		_deferGet: function (method, uri, config, callback) {
+		_deferGet: function (method, uri, config) {
+			var callback;
 			if (Y.Lang.isFunction(config)) {
 				callback = config;
 				config = {};
@@ -268,8 +269,8 @@ if (Y.io) {
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 		 * @return {io.Request}
 		 */
-		js: function (uri, config, callback) {
-			return this._deferGet('js', uri, config, callback);
+		js: function (uri, config) {
+			return this._deferGet('js', uri, config);
 		},
 		/**
 		 * Loads a stylesheet through Y.Get.css
@@ -282,8 +283,8 @@ if (Y.io) {
 		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
 		 * @return {io.Request}
 		 */
-		css: function (uri, config, callback) {
-			return this._deferGet('css', uri, config, callback);
+		css: function (uri, config) {
+			return this._deferGet('css', uri, config);
 		}
 	});
 	
