@@ -30,8 +30,8 @@ Y.when = function () {
 		rejected = 0;
 			
 	return Y.defer(function (promise) {
-		function notify(_args) {
-			args.push(YArray(_args));
+		function notify(i, _args) {
+			args[i] = YArray(_args);
 			if (resolved + rejected === deferreds.length) {
 				if (rejected > 0) {
 					promise.reject.apply(promise, args);
@@ -43,15 +43,18 @@ Y.when = function () {
 		
 		function done() {
 			resolved++;
-			notify(arguments);
+			notify(this._index, arguments);
 		}
 		
 		function fail() {
 			rejected++;
-			notify(arguments);
+			notify(this._index, arguments);
 		}
 
-		YArray.each(deferreds, function (deferred) {
+		YArray.each(deferreds, function (deferred, i) {
+			// Quick hackish fix
+			// TODO make it more elegant
+			deferred._index = i;
 			if (Y.Lang.isFunction(deferred)) {
 				done(deferred());
 			} else {

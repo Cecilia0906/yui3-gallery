@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Deferred IO test</title>
+</head>
+<body class="yui3-skin-sam">
+	<div id="test"></div>
+	<script src="http://yui.yahooapis.com/3.5.1/build/yui/yui.js"></script>
+	<script>
+		YUI({
+			filter: 'raw',
+			modules: {
+				'gallery-deferred': {
+					fullpath: '../build_tmp/gallery-deferred.js',
+					requires: ['event-custom']
+				}
+			},
+			logInclude: {
+				TestRunner: true
+			}
+		}).use('io', 'gallery-deferred', 'test', 'console', function (Y) {
+			
+			var testCase = new Y.Test.Case({
+				name: 'Deferred Get',
+				
+				testDeferredScript: function () {
+					Y.log('Testing if Y.io.js works with a single callback as an event handler for the "success" event');
+					
+					var test = this;
+					
+					Y.io.js('some-script.js', function () {
+						test.resume(function () {
+							Y.Assert.areEqual(window.Y_GET_LOADED_SCRIPT, true, 'Y_GET_LOADED_SCRIPT should be declared');
+						});
+					});
+					
+					this.wait(3000);
+				},
+				
+				testDeferredCSS: function () {
+					Y.log('Testing if Y.io.css works with a single callback as an event handler for the "success" event');
+					
+					var test = this;
+					
+					Y.io.css('some-sheet.css', function () {
+						test.resume(function () {
+							Y.Assert.areEqual(Y.one('#test').getComputedStyle('height'), '100px', 'Y_GET_LOADED_SCRIPT should be declared');
+						});
+					});
+					
+					this.wait(3000);
+				}
+			});
+			
+			new Y.Console({
+				height: 550,
+				width: '90%'
+			}).render();
+			Y.Test.Runner.add(testCase);
+			Y.Test.Runner.run();
+		});
+	</script>
+</body>
+</html>

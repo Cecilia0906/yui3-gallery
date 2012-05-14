@@ -43,6 +43,7 @@
 					
 					Y.when(Y.io.get('io-content1.html'), Y.io.get('io-content2.html')).then(function (a, b) {
 						test.resume(function () {
+							console.log(a[1].responseText, b[1].responseText)
 							Y.Assert.isTrue(Y.Lang.isArray(a) && Y.Lang.isArray(b), 'arguments of a .then() callback after Y.when are arrays of arguments themselves');
 							Y.Assert.areEqual(a[1].responseText, '<div>hello</div>', 'First response should be equal to "<div>hello</div>"');
 							Y.Assert.areEqual(b[1].responseText, '<div>world</div>', 'Second response should be equal to "<div>world</div>"');

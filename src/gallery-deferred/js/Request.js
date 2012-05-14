@@ -91,7 +91,8 @@ if (Y.io) {
 		 * @private
 		 * @static
 		 */
-		_defer: function (uri, config) {
+		_defer: function (uri, config, method) {
+			method = method || Y.io;
 			config = Y.io._normalizeConfig(config);
 			var request = new Y.io.Request();
 			
@@ -114,7 +115,34 @@ if (Y.io) {
 				failure: Y.bind(request.reject, request)
 			};
 			
-			return Y.mix(request, Y.io(uri, config));
+			return Y.mix(request, method(uri, config));
+		},
+		/**
+		 * Normalizes the Y.Get API so that it looks the same to the Y.io methods
+		 * @param {String} 
+		 * @for io
+		 * @private
+		 * @static
+		 */
+		_deferGet: function (method, uri, config) {
+			if (arguments.length === 2) {
+				callback = config;
+				config = {};
+			}
+			var request = new Y.io.Request();
+			if (config.on) {
+				config.onSuccess = config.on.success;
+				config.onFailure = config.on.failure;
+				config.on = null;
+			}
+			Y.Get[method](uri, config, function (err) {
+				if (err) {
+					request.reject(err);
+				} else {
+					request.resolve();
+				}
+			});
+			return request;
 		},
 		
         /**
@@ -157,7 +185,7 @@ if (Y.io) {
 		 * @static
 		 */
 		get: function (uri, config) {
-			return Y.io._defer(uri, Y.io._normalizeConfig(config, {
+			return this._defer(uri, Y.io._normalizeConfig(config, {
 				method: 'GET'
 			}));
 		},
@@ -172,7 +200,7 @@ if (Y.io) {
 		 * @static
 		 */
 		post: function (uri, data, config) {
-			return Y.io._defer(uri, Y.io._normalizeConfig(config, {
+			return this._defer(uri, Y.io._normalizeConfig(config, {
 				method: 'POST',
 				data: data
 			}));
@@ -189,10 +217,42 @@ if (Y.io) {
 		 * @static
 		 */
 		postForm: function (uri, id, config) {
-			return Y.io._defer(uri, Y.io._normalizeConfig(config, {
+			return this._defer(uri, Y.io._normalizeConfig(config, {
 				method: 'POST',
 				form: { id: id }
 			}));
+		},
+		/**
+		 * Alias for Y.io.js
+		 * @for io
+		 * @static
+		 */
+		script: function () {
+			return this.js.apply(this, arguments);
+		},
+		/**
+		 * Loads a script through Y.Get.script
+		 * All its options persist, but it also accepts an "on" object
+		 * with "success" and "failure" properties like the rest of the Y.io methods
+		 * @param {String} uri Path to the request resource
+		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+		 * @for io
+		 * @static
+		 */
+		js: function (uri, config) {
+			return this._deferGet('js', uri, config);
+		},
+		/**
+		 * Loads a stylesheet through Y.Get.css
+		 * All its options persist, but it also accepts an "on" object
+		 * with "success" and "failure" properties like the rest of the Y.io methods
+		 * @param {String} uri Path to the request resource
+		 * @param {Function|Object} config Either a callback for the complete event or a full configuration option
+		 * @for io
+		 * @static
+		 */
+		css: function (uri, config, callback) {
+			return this._deferGet('css', uri, config);
 		}
 	});
 	
@@ -210,7 +270,7 @@ if (Y.io) {
 			config = Y.io._normalizeConfig(config);
 			config.parser = Y.JSON.parse;
 			
-			return Y.io._defer(uri, config);
+			return this._defer(uri, config);
 		});
 	}
 
