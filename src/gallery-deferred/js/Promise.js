@@ -10,6 +10,7 @@
 var Lang = Y.Lang,
 	YArray = Y.Array,
 	AP = Array.prototype,
+	SLICE = AP.slice,
 	PUSH = AP.push,
 	
 	RESOLVED = 1,

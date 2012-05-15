@@ -31,7 +31,7 @@ Y.when = function () {
 			
 	return Y.defer(function (promise) {
 		function notify(i, _args) {
-			args[i] = YArray(_args);
+			args[i] = _args;
 			if (resolved + rejected === deferreds.length) {
 				if (rejected > 0) {
 					promise.reject.apply(promise, args);
@@ -41,24 +41,21 @@ Y.when = function () {
 			}
 		}
 		
-		function done() {
+		function done(index) {
 			resolved++;
-			notify(this._index, arguments);
+			notify(index, SLICE.call(arguments, 1));
 		}
 		
-		function fail() {
+		function fail(index) {
 			rejected++;
-			notify(this._index, arguments);
+			notify(index, SLICE.call(arguments, 1));
 		}
 
 		YArray.each(deferreds, function (deferred, i) {
-			// Quick hackish fix
-			// TODO make it more elegant
-			deferred._index = i;
 			if (Y.Lang.isFunction(deferred)) {
-				done(deferred());
+				done(i, deferred());
 			} else {
-				deferred.then(done, fail);
+				deferred.then(Y.bind(done, deferred, i), Y.bind(fail, deferred, i));
 			}
 		});
 	});

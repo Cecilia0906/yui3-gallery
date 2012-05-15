@@ -55,7 +55,7 @@ if (Y.Node && Y.Plugin) {
 					return deferred;
 					
 				} else {
-					if (Y.instanceOf(this.host, Y.NodeList) && method == 'load') {
+					if (method == 'load' && Y.instanceOf(this.host, Y.NodeList)) {
 						Y.error('NodeList doesn\'t have a ' + method + '() method');
 					} else {
 						Y.error('Missing required module for ' + method);
@@ -72,8 +72,10 @@ if (Y.Node && Y.Plugin) {
 		 */
 		importMethod: function(method) {
 			NodeDeferred.prototype[method] = function () {
-				this.host[method].apply(this.host, arguments);
-				return this;
+				var args = arguments;
+				return this.done(function () {
+					this.host[method].apply(this.host, args);
+				});
 			};
 		}
 	});
