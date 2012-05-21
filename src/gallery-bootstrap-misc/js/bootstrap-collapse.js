@@ -2,7 +2,7 @@
 A Plugin which provides Expandable behaviors on a Node with compatible syntax
 and markup from Twitter's Bootstrap project.
 
-@module gallery-bootstrap-expandable
+@module gallery-bootstrap-collapsed
 **/
 
 /**
@@ -24,14 +24,14 @@ However, it can be manually plugged into any node or node list.
 @class Bootstrap.Collapse
 **/
 
-function ExpandablePlugin(config) {
-    ExpandablePlugin.superclass.constructor.apply(this, arguments);
+function CollapsiblePlugin(config) {
+    CollapsiblePlugin.superclass.constructor.apply(this, arguments);
 }
 
-ExpandablePlugin.NAME = 'Bootstrap.Collapse';
-ExpandablePlugin.NS   = 'collapse';
+CollapsiblePlugin.NAME = 'Bootstrap.Collapse';
+CollapsiblePlugin.NS   = 'expandable';
 
-Y.extend(ExpandablePlugin, Y.Plugin.Base, {
+Y.extend(CollapsiblePlugin, Y.Plugin.Base, {
     defaults : {
         duration  : 0.25,
         easing    : 'ease-in',
@@ -48,10 +48,8 @@ Y.extend(ExpandablePlugin, Y.Plugin.Base, {
 
         this.config = Y.mix( config, this.defaults );
 
-        this.publish('show', { preventable : true, defaultFn : this.show });
-        this.publish('hide', { preventable : true, defaultFn : this.hide });
-
-        this._node.on('click', this.toggle, this);
+		this.after('collapsedChange', this._syncExpandedState);
+        this._node.on('click', this._uiOnHostClicked, this);
     },
 
     _getTarget: function() {
@@ -69,76 +67,26 @@ Y.extend(ExpandablePlugin, Y.Plugin.Base, {
         }
         return container;
     },
-
-    /**
-    * @method hide
-    * @description Hide the collapsible target, specified by the host's
-    * <code>data-target</code> or <code>href</code> attribute.
-    */
-    hide: function() {
-        var showClass = this.config.showClass,
-            hideClass = this.config.hideClass,
-            node      = this._getTarget();
-
-        if ( this.transitioning ) {
-            return;
-        }
-
-        if ( node ) {
-            this._hideElement(node);
-        }
+    
+    _uiOnHostClicked: function (e) {
+    	e.preventDefault();
+    	if (!this.transition) {
+	    	this.toggle();
+    	}
     },
-
-    /**
-    * @method show
-    * @description Show the collapsible target, specified by the host's
-    * <code>data-target</code> or <code>href</code> attribute.
-    */
+    
     show: function() {
-        var showClass = this.config.showClass,
-            hideClass = this.config.hideClass,
-            node      = this._getTarget(),
-            host      = this._node,
-            self      = this,
-            parent,
-            group_selector = this.config.groupSelector;
-
-        if ( this.transitioning ) {
-            return;
-        }
-
-        if ( host.getData('parent') ) {
-            Y.log('fetching parent: ' + host.getData('parent'), 'debug', 'Bootstrap.Collapse');
-            parent = Y.one( host.getData('parent') );
-            if ( parent ) {
-                Y.log('Using selector ' + group_selector, 'debug', 'Bootstrap.Collapse');
-                parent.all(group_selector).each( function(el) {
-                    Y.log('Hiding element: ' + el, 'debug', 'Bootstrap.Collapse');
-                    self._hideElement(el);
-                });
-            }
-        }
-        this._showElement(node);
+    	return this.set('collapsed', false);
     },
-
-    /**
-    @method toggle
-    @description Toggle the state of the collapsible target, specified
-    by the host's <code>data-target</code> or <code>href</code>
-    attribute. Calls the <code>show</code> or <code>hide</code> method.
-    **/
-    toggle : function(e) {
-        if ( e && Y.Lang.isFunction(e.preventDefault) ) {
-            e.preventDefault();
-        }
-
-        var target = this._getTarget();
-
-        if ( target.hasClass( this.config.showClass ) ) {
-            this.fire('hide');
-        } else {
-            this.fire('show');
-        }
+    hide: function() {
+    	return this.set('collapsed', true);
+    },
+    toggle: function(collapsed) {
+    	return this.set('collapsed', Y.Lang.isBoolean(collapsed) ? collapsed : !this.get('collapsed'));
+    },
+    
+    _syncExpandedState: function(e) {
+    	this._transition(this._getTarget(), e.newVal);
     },
 
     /**
@@ -146,26 +94,25 @@ Y.extend(ExpandablePlugin, Y.Plugin.Base, {
     @description Handles the transition between showing and hiding.
     @protected
     @param node {Node} node to apply transitions to
-    @param method {String} 'hide' or 'show'
+    @param collapsed {Boolean} new state
     **/
-    _transition : function(node, method) {
+    _transition : function(node, collapsed) {
         var self        = this,
             config      = this.config,
             duration    = config.duration,
             easing      = config.easing,
             // If we are hiding, then remove the show class.
-            removeClass = method === 'hide' ? config.showClass : config.hideClass,
+            removeClass = collapsed ? config.showClass : config.hideClass,
             // And if we are hiding, add the hide class.
-            addClass    = method === 'hide' ? config.hideClass : config.showClass,
+            addClass    = collapsed ? config.hideClass : config.showClass,
 
-            to_height   = method === 'hide' ? 0 : null,
-            event       = method === 'hide' ? 'hidden' : 'shown',
+            to_height   = collapsed ? 0 : null,
+            event       = collapsed ? 'hidden' : 'shown',
 
             complete = function() {
-                node.removeClass(removeClass);
-                node.addClass(addClass);
+                node.removeClass(removeClass).addClass(addClass);
                 self.transitioning = false;
-                this.fire( event );
+                self.fire( event );
             };
 
         if ( to_height === null ) {
@@ -175,6 +122,7 @@ Y.extend(ExpandablePlugin, Y.Plugin.Base, {
             });
         }
 
+		// Ideally we'd do node.stop() instead of this
         this.transitioning = true;
 
         node.transition({
@@ -182,41 +130,16 @@ Y.extend(ExpandablePlugin, Y.Plugin.Base, {
             duration : duration,
             easing   : easing
         }, complete);
-    },
-
-    /**
-    @method _hideElement
-    @description Calls the <code>_transition</code> method to hide a node.
-    @protected
-    @param node {Node} node to hide.
-    **/
-    _hideElement : function(node) {
-        this._transition(node, 'hide');
-/*
-        var showClass = this.showClass,
-            hideClass = this.hideClass;
-
-        node.removeClass(showClass);
-        node.addClass(hideClass);
-*/
-    },
-
-    /**
-    @method _showElement
-    @description Calls the <code>_transition</code> method to show a node.
-    @protected
-    @param node {Node} node to show.
-    **/
-    _showElement : function(node) {
-        this._transition(node, 'show');
-/*
-        var showClass = this.showClass,
-            hideClass = this.hideClass;
-        node.removeClass(hideClass);
-        node.addClass(showClass);
-*/
     }
+
+}, {
+	ATTRS: {
+		collapsed: {
+			valueFn: function () {
+				return this._getTarget().hasClass(this.config.hideClass);
+			}
+		}
+	}
 });
 
-NS.Collapse = ExpandablePlugin;
-
+NS.Collapse = CollapsiblePlugin;
