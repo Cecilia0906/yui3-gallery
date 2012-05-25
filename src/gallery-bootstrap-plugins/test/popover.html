@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Popover test</title>
+    <link href="bootstrap.css" rel="stylesheet">
+    <link href="bootstrap-responsive.css" rel="stylesheet">
+</title>
+<body>
+	<div class="well" style="margin-top: 200px">
+    	<a href="#" class="btn btn-danger" rel="popover" data-content="And here's some amazing content. It's very engaging. right?" data-original-title="A Title">hover for popover</a>
+	</div>
+	<script src="http://yui.yahooapis.com/3.5.1/build/yui/yui.js"></script>
+	<script>
+YUI({
+	filter: 'raw',
+	modules: {
+		'gallery-container': {
+			fullpath: '../../gallery-container/build_tmp/gallery-container.js',
+			requires: []
+		},
+		'gallery-bootstrap-plugins': {
+			fullpath: '../build_tmp/gallery-bootstrap-plugins.js',
+			requires: ['gallery-container', 'node-pluginhost']
+		}
+	}
+}).use('gallery-bootstrap-plugins', function (Y) {
+
+	var all = Y.all('[rel=popover]');
+	all.plug(Y.Bootstrap.Popover);
+	all.each(function (node) {
+		node.popover.on({
+			shown: function () { console.log('shown') },
+			hidden: function () { console.log('hidden') }
+		})
+	});
+});
+	</script>
