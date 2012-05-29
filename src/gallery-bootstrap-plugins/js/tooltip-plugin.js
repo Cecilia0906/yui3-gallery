@@ -1,27 +1,3 @@
-var CAMEL_VENDOR_PREFIX = '',
-	DOCUMENT = Y.config.doc,
-    DOCUMENT_ELEMENT = 'documentElement',
-    TRANSITION_CAMEL = 'Transition',
-	VENDORS = [
-        'Webkit',
-        'Moz'
-    ],
-    VENDOR_TRANSITION_END = {
-        Webkit: 'webkitTransitionEnd'
-    },
-	TRANSITION_END = 'transitionEnd';
-
-Y.Array.each(VENDORS, function(val) { // then vendor specific
-    var property = val + TRANSITION_CAMEL;
-    if (property in DOCUMENT[DOCUMENT_ELEMENT].style) {
-        CAMEL_VENDOR_PREFIX = val;
-    }
-});
-
-TRANSITION_END = VENDOR_TRANSITION_END[CAMEL_VENDOR_PREFIX] || TRANSITION_END;
-
-Y.Node.DOM_EVENTS[TRANSITION_END] = 1;
-
 function TooltipPlugin(config) {
 	TooltipPlugin.superclass.constructor.apply(this, arguments);
 	this._delay = config.delay;
@@ -52,8 +28,11 @@ Y.extend(TooltipPlugin, Y.Bootstrap.Base, {
 			this.show();
 		}
 	},
+	_notifyVisibility: function (e) {
+		this.fire(e.newVal ? 'shown' : 'hidden');
+	},
 	_transitionEnd: function () {
-		this.fire(this._widget.get('visible') ? 'shown' : 'hidden');
+		this._notifyVisibility({ newVal: this._widget.get('visible') });
 	},
 
 	hide: function () {
@@ -104,10 +83,12 @@ Y.extend(TooltipPlugin, Y.Bootstrap.Base, {
 				node.on('blur', this.hide, this)
 			);
 		}
-		if (config.animation) {
+		if (config.animation && Y.support.transitions) {
 			handles.push(
-				this._widget.get('boundingBox').on(TRANSITION_END, this._transitionEnd, this)
+				this._widget.get('boundingBox').on('transitionend', this._transitionEnd, this)
 			);
+		} else {
+			this._widget.after('visibleChange', this._notifyVisibility, this);
 		}
 	},
 	destructor: function () {
