@@ -3,10 +3,13 @@ YUI.add('gallery-node-optimizations', function(Y) {
 "use strict";
 
 /**
+ * @module gallery-node-optimizations
+ */
+
+/**
  * Optimizations for searching DOM tree.
  *
- * @module node
- * @submodule gallery-node-optimizations
+ * @main gallery-node-optimizations
  * @class Node~optimizations
  */
 
@@ -17,7 +20,8 @@ var tag_name_re       = /^[a-z]+$/i;
 /**
  * Useful when constructing regular expressions that match CSS classes.
  *
- * @property Y.Node.class_re_prefix
+ * @property class_re_prefix
+ * @static
  * @type {String}
  * @value "(?:^|\\s)(?:"
  */
@@ -26,7 +30,8 @@ Y.Node.class_re_prefix = '(?:^|\\s)(?:';
 /**
  * Useful when constructing regular expressions that match CSS classes.
  *
- * @property Y.Node.class_re_suffix
+ * @property class_re_suffix
+ * @static
  * @type {String}
  * @value ")(?:\\s|$)"
  */
@@ -93,7 +98,7 @@ Y.Node.prototype.getAncestorByClassName = function(
 		e = e.parentNode;
 		if (!e || !e.tagName)
 		{
-			return null;	// might be hidden, which is outside <fieldset>
+			return null;
 		}
 	}
 	return Y.one(e);
@@ -125,7 +130,7 @@ Y.Node.prototype.getAncestorByTagName = function(
 		e = e.parentNode;
 		if (!e || !e.tagName)
 		{
-			return null;	// might be hidden, which is outside <fieldset>
+			return null;
 		}
 	}
 	return Y.one(e);
@@ -253,10 +258,11 @@ Y.Node.prototype.getFirstElementByClassName = function(
 		{
 			for (var i=0; i<list1.length; i++)
 			{
-				var root = list1[i];
-				for (var j=0; j<root.children.length; j++)
+				var root     = list1[i],
+					children = root.children || root.childNodes;	// svg elements only have childNodes
+				for (var j=0; j<children.length; j++)
 				{
-					var e = root.children[j];
+					var e = children[j];
 					if (Y.DOM.hasClass(e, class_name))
 					{
 						return Y.one(e);
@@ -288,4 +294,4 @@ Y.Node.prototype.getFirstElementByClassName = function(
 };
 
 
-}, 'gallery-2012.03.28-20-16' ,{requires:['node-base']});
+}, 'gallery-2012.06.27-20-10' ,{requires:['node-base']});

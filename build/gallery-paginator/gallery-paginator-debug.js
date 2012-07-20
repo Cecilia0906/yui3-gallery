@@ -515,7 +515,7 @@ Y.extend(Paginator, Y.Widget,
     /**
      * Get the start and end record indexes of the specified page.
      * @method getPageRecords
-     * @param page {number} (optional) The page (current page if not specified)
+     * @param [page] {number} The page (current page if not specified)
      * @return {Array} [start_index, end_index]
      */
     getPageRecords : function (page) {
@@ -867,6 +867,10 @@ http://developer.yahoo.net/yui/license.txt
 */
 
 /**
+ * @module gallery-paginator
+ */
+
+/**
  * Generates an input field for setting the current page.
  *
  * @class Paginator.ui.CurrentPageInput
@@ -994,6 +998,10 @@ Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
 */
+
+/**
+ * @module gallery-paginator
+ */
 
 /**
  * ui Component to generate the textual report of current pagination status.
@@ -1155,6 +1163,10 @@ Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
 */
+
+/**
+ * @module gallery-paginator
+ */
 
 /**
  * ui Component to generate the link to jump to the first page.
@@ -1329,6 +1341,10 @@ http://developer.yahoo.net/yui/license.txt
 */
 
 /**
+ * @module gallery-paginator
+ */
+
+/**
  * ui Component to display a menu for selecting the range of items to display.
  *
  * @class Paginator.ui.ItemRangeDropdown
@@ -1477,6 +1493,10 @@ Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
 */
+
+/**
+ * @module gallery-paginator
+ */
 
 /**
  * ui Component to generate the link to jump to the last page.
@@ -1682,6 +1702,10 @@ http://developer.yahoo.net/yui/license.txt
 */
 
 /**
+ * @module gallery-paginator
+ */
+
+/**
  * ui Component to generate the link to jump to the next page.
  *
  * @class Paginator.ui.NextPageLink
@@ -1857,6 +1881,10 @@ http://developer.yahoo.net/yui/license.txt
 */
 
 /**
+ * @module gallery-paginator
+ */
+
+/**
  * ui Component to generate the page links
  *
  * @class Paginator.ui.PageLinks
@@ -1941,8 +1969,8 @@ Paginator.ATTRS.pageLabelBuilder =
  * @static
  * @method calculateRange
  * @param {int} currentPage  The current page
- * @param {int} totalPages   (optional) Maximum number of pages
- * @param {int} numPages     (optional) Preferred number of pages in range
+ * @param {int} [totalPages] Maximum number of pages
+ * @param {int} [numPages]   Preferred number of pages in range
  * @return {Array} [start_page_number, end_page_number]
  */
 Paginator.ui.PageLinks.calculateRange = function (currentPage,totalPages,numPages) {
@@ -2114,6 +2142,10 @@ http://developer.yahoo.net/yui/license.txt
 */
 
 /**
+ * @module gallery-paginator
+ */
+
+/**
  * ui Component to generate the link to jump to the previous page.
  *
  * @class Paginator.ui.PreviousPageLink
@@ -2262,6 +2294,10 @@ Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
 */
+
+/**
+ * @module gallery-paginator
+ */
 
 /**
  * ui Component to generate the rows-per-page dropdown
@@ -2460,6 +2496,10 @@ Paginator.ui.RowsPerPageDropdown.prototype = {
         }
     }
 };
+/**
+ * @module gallery-paginator
+ */
+
 /**********************************************************************
  * Adds per-page error notification to Paginator.ui.PageLinks.
  *
@@ -2537,4 +2577,4 @@ Y.extend(Paginator.ui.ValidationPageLinks, Paginator.ui.PageLinks,
 });
 
 
-}, 'gallery-2012.05.09-20-27' ,{requires:['widget','event-key','substitute'], skinnable:true});
+}, 'gallery-2012.05.23-19-56' ,{requires:['widget','event-key','substitute'], skinnable:true});
