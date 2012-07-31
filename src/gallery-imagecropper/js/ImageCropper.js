@@ -177,7 +177,7 @@ Y.ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 
 	_handleSrcChange: function (e) {
 		this.get('contentBox').set('src', e.newVal);
-		this.get('cropResizeMask').setStyle('backgroundImage', 'url(' + e.newVal + ')');
+		this.get('resizeKnob').setStyle('backgroundImage', 'url(' + e.newVal + ')');
 	},
 	
 	_syncResizeKnob: function () {
