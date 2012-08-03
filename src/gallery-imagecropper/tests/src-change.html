@@ -9,9 +9,6 @@
 			margin: 0;
 			padding: 0;
 		}
-		.yui3-imagecropper {
-			background: #666;
-		}
 		.thumbs img {
 			max-width: 150px;
 			border: 4px solid transparent;
@@ -50,9 +47,10 @@ YUI({
 	}
 	CropperAutoSize.NS = 'autosize';
 	CropperAutoSize.prototype.syncSize = function (e) {
-		this.setAttrs({
-			width: e.target.get('width'),
-			height: e.target.get('height')
+
+		this.get('cropMask').setStyles({
+			width: e.target.get('width') + 'px',
+			height: e.target.get('height') + 'px'
 		});
 	};
 	CropperAutoSize.prototype.destroy = function () {
