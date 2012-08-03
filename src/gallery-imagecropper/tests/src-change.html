@@ -1,0 +1,74 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
+	<title>ImageCropper - Gallery</title> 
+	<link rel="stylesheet" href="http://juandopazo.github.com/yui3-gallery/build/gallery-imagecropper/assets/gallery-imagecropper-core.css">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.yui3-imagecropper {
+			background: #666;
+		}
+		.thumbs img {
+			max-width: 150px;
+			border: 4px solid transparent;
+			cursor: pointer;
+		}
+		.thumbs img:hover {
+			border-color: blue;
+		}
+	</style> 
+</head> 
+<body class="yui3-skin-sam">
+	<h1>ImageCropper - Gallery</h1>
+	<div class="thumbs">
+		<img src="http://farm8.staticflickr.com/7277/7688294254_501e8fcfcb.jpg">
+		<img src="http://farm9.staticflickr.com/8155/7669226050_a06b0c63ab.jpg">
+		<img src="http://farm9.staticflickr.com/8009/7697217764_d3a8fe09fe.jpg">
+		<img src="http://farm9.staticflickr.com/8293/7663355854_cd01985e1e.jpg">
+		<img src="http://farm8.staticflickr.com/7280/7692271222_9bf2febff9.jpg">
+	</div>
+	<div id="imagecropper"></div>
+	<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script> 
+	<script> 
+YUI({
+	filter: 'raw',
+	modules: {
+		'gallery-imagecropper': {
+			fullpath: '../build/gallery-imagecropper.js',
+			requires: ['widget','resize','gallery-event-arrow','dd-constrain']
+		}
+	}
+}).use('gallery-imagecropper', function (Y) {
+
+	function CropperAutoSize(config) {
+		var host = this.host = config.host;
+		this._handler = host.get('contentBox').on('load', this.syncSize, this.host);
+	}
+	CropperAutoSize.NS = 'autosize';
+	CropperAutoSize.prototype.syncSize = function (e) {
+		this.setAttrs({
+			width: e.target.get('width'),
+			height: e.target.get('height')
+		});
+	};
+	CropperAutoSize.prototype.destroy = function () {
+		this._handler.detach();
+		this._handler = this.host = null;
+	};
+	
+	var imagecropper = new Y.ImageCropper({
+		source: Y.one('img').get('src')
+	});
+	imagecropper.plug(CropperAutoSize).render('#imagecropper');
+	
+	Y.one('.thumbs').delegate('click', function (e) {
+		imagecropper.set('source', e.target.get('src')).syncUI();
+	}, 'img');
+});
+	</script>
+</body> 
+</html>

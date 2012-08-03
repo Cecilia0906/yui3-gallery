@@ -1,3 +1,5 @@
+YUI.add('gallery-imagecropper', function(Y) {
+
 'use strict';
 /**
  * @description <p>Creates an Image Cropper control.</p>
@@ -701,3 +703,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 });
 
 Y.ImageCropper = ImageCropper;
+
+
+
+}, '@VERSION@' ,{requires:['widget','resize','gallery-event-arrow','dd-constrain'], skinnable:true});
