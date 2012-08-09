@@ -397,7 +397,10 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @chainable
 	 */
 	reset: function () {
-		this.get('resizeKnob').setXY(this.get('initialXY')).setStyles({
+		var initialXY = this.get('initialXY');
+		this.get('resizeKnob').setStyles({
+			left: initialXY[0],
+			top: initialXY[1],
 			width: this.get('initWidth'),
 			height: this.get('initHeight')
 		});
