@@ -1,0 +1,13 @@
+{
+    "name"			: "gallery-yui-treeview",
+    "displayName"	: "TreeView",
+    "description"	: "The ImageCropper widget is a UI component that allows the user to select a portion of an image",
+    "author"		: "juandopazo",
+
+    "tags"	: ["widget", "treeview"],
+    "use"	: ["gallery-yui-treeview"],
+
+    "examples": [
+    	
+    ]
+}

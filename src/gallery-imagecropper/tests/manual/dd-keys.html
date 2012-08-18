@@ -1,0 +1,55 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ImageCropper - Drag Keys</title> 
+	<link rel="stylesheet" href="http://juandopazo.github.com/yui3-gallery/build/gallery-imagecropper/assets/gallery-imagecropper-core.css">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.yui3-imagecropper {
+			background: #666;
+		}
+	</style> 
+</head> 
+<body class="yui3-skin-sam">
+	<h1>ImageCropper - Drag Keys</h1>
+	<div id="imagecropper"></div>
+	<div style="position: absolute; left: 550px; top: 79px;">
+		<div id="result"></div>
+		<p id="coords"></p>
+	</div>
+	<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script> 
+	<script> 
+YUI({
+	filter: 'raw',
+	modules: {
+		'imagecropper': {
+			fullpath: '../../build_tmp/imagecropper.js',
+			requires: [
+				'base-build',
+				'widget',
+				'dd-drag',
+				'dd-constrain',
+				'resize-base',
+				'resize-constrain',
+				'gallery-event-arrow'
+			]
+		}
+	}
+}).use('imagecropper', function (Y) {
+	
+	var imagecropper = new Y.ImageCropper({
+		source: 'http://farm8.staticflickr.com/7016/6748720265_e2f3e82fee.jpg',
+		width: 333,
+		height: 500
+	});
+	imagecropper.render('#imagecropper');
+	imagecropper.drag.plug(Y.Plugin.DDKeys);
+	
+});
+	</script>
+</body> 
+</html>

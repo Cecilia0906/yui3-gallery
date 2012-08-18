@@ -1,0 +1,54 @@
+{
+    "name"			: "gallery-imagecropper",
+    "displayName"	: "ImageCropper",
+    "description"	: "The ImageCropper widget is a UI component that allows the user to select a portion of an image",
+    "author"		: "juandopazo",
+
+    "yuiVersion": "3.6.0",
+    "galleryBuild": "gallery-2012.08.15-20-00",
+
+    "tags"	: ["widget", "gallery-imagecropper"],
+    "use"	: ["gallery-imagecropper"],
+
+    "examples": [
+    	{
+    		"name"			: "imagecropper-basic",
+    		"displayName"	: "Augmenting an image with an ImageCropper",
+    		"description"	: "This example shows how to create an ImageCropper from markup",
+    		"modules"		: ["gallery-imagecropper"],
+    		"tags"			: ["imagecropper"],
+
+    		"hideTableOfContents": true
+    	},
+
+        {
+            "name"          : "imagecropper-events",
+            "displayName"   : "Using the crop event",
+            "description"   : "This example shows how to use ImageCropper events to show a preview of the image being cropped",
+            "modules"       : ["gallery-imagecropper"],
+            "tags"          : ["imagecropper"],
+
+            "hideTableOfContents": true
+        },
+
+    	{
+    		"name"			: "imagecropper-gallery",
+    		"displayName"	: "Cropping images from thumbnails",
+    		"description"	: "This example shows how to select the image to crop from a list of thumbnails",
+    		"modules"		: ["gallery-imagecropper"],
+    		"tags"			: ["imagecropper"],
+
+    		"hideTableOfContents": true
+    	},
+
+        {
+            "name"          : "imagecropper-autosize",
+            "displayName"   : "Writing an ImageCropper AutoSize plugin",
+            "description"   : "This example shows how to develop a Plugin for ImageCropper that resizes the widget automatically based on the size of its image",
+            "modules"       : ["gallery-imagecropper"],
+            "tags"          : ["imagecropper", "plugin"],
+
+            "hideTableOfContents": true
+        }
+    ]
+}

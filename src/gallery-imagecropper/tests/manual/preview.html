@@ -21,14 +21,20 @@
 		<div id="result"></div>
 		<p id="coords"></p>
 	</div>
-	<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script> 
+	<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script> 
 	<script> 
 YUI({
 	filter: 'raw',
 	modules: {
-		'gallery-imagecropper': {
-			fullpath: '../build_tmp/gallery-imagecropper.js',
-			requires: ['widget','resize','gallery-event-arrow','dd-constrain']
+		'imagecropper': {
+			fullpath: '../../build_tmp/gallery-imagecropper.js',
+			requires: [
+				'widget',
+				'dd-drag',
+				'dd-constrain',
+				'resize-base',
+				'resize-constrain'
+			]
 		}
 	}
 }).use('gallery-imagecropper', function (Y) {
@@ -37,10 +43,6 @@ YUI({
 		src: 'http://farm8.staticflickr.com/7016/6748720265_e2f3e82fee.jpg',
 		width: 333,
 		height: 500
-	}, {
-		src: 'http://farm8.staticflickr.com/7026/6748694737_dc0e9cca3a.jpg',
-		width: 500,
-		height: 333
 	}, {
 		src: 'http://farm8.staticflickr.com/7150/6748698581_55aa86028f.jpg',
 		width: 500,
@@ -51,7 +53,7 @@ YUI({
 		height: 500
 	}];
 	
-	Y.random = function (n) {
+	Y.randomInt = function (n) {
 		return Math.floor(Math.random() * n);
 	};
 	
@@ -69,7 +71,7 @@ YUI({
 		});
 	});
 	
-	var photo = images[Y.random(4)],
+	var photo = images[Y.randomInt(3)],
 		coordview = Y.one('#coords'),
 		result = Y.one('#result'),
 		

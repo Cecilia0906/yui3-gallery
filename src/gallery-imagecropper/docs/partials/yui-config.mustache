@@ -1,0 +1,15 @@
+<script>
+YUI_config = {
+  filter: 'raw',
+  modules: {
+    'gallery-imagecropper-styles': {
+      type: 'css',
+      fullpath: '/src/gallery-imagecropper/build_tmp/assets/skins/sam/gallery-imagecropper.css'
+    },
+    'gallery-imagecropper': {
+      fullpath: '/src/gallery-imagecropper/build_tmp/gallery-imagecropper.js',
+      requires: ['widget', 'dd-drag', 'dd-constrain', 'resize-base', 'resize-constrain', 'gallery-imagecropper-styles']
+    }
+  }
+};
+</script>

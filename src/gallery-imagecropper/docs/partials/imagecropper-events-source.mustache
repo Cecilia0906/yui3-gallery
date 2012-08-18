@@ -1,0 +1,52 @@
+<div class="yui3-skin-sam">
+  <div id="imagecropper"></div>
+  <div id="preview">
+    <div id="result"></div>
+    <p id="coords"></p>
+  </div>
+</div>
+
+<script type="text/javascript">
+YUI().use({{{useParams}}}, function(Y) {
+    
+  Y.Node.addMethod('setBackgroundXY', function (node, xy) {
+    xy = xy || [0, 0];
+    Y.Array.each(xy, function (val, i) {
+      if (Y.Lang.isNumber(val)) {
+        xy[i] += 'px';
+      }
+    });
+    this.setStyles({
+      backgroundPosition: xy.join(' '),
+      backgroundPositionX: xy[0],
+      backgroundPositionY: xy[1]
+    });
+  });
+  
+  var imageSource = 'http://farm8.staticflickr.com/7016/6748720265_e2f3e82fee.jpg',
+      coordview = Y.one('#coords'),
+      result = Y.one('#result').setStyle('backgroundImage', 'url(' + imageSource + ')');
+
+  function updatePreview(coords) {
+    coordview.setContent(coords.left + 'x' + coords.top + ' ' + coords.width + 'x' + coords.height);
+
+    result.setBackgroundXY([-coords.left, -coords.top]).setStyles({
+      width: coords.width,
+      height: coords.height
+    });
+  }
+    
+  var imagecropper = new Y.ImageCropper({
+    source: imageSource,
+    width: 333,
+    height: 500
+  });  
+  imagecropper.render('#imagecropper');
+
+  imagecropper.on('crop:crop', function (e) {
+    updatePreview(e);
+  });
+
+  updatePreview(imagecropper.getCropCoords());
+});
+</script>

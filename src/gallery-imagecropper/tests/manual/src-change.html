@@ -38,9 +38,15 @@
 YUI({
 	filter: 'raw',
 	modules: {
-		'gallery-imagecropper': {
-			fullpath: '../build_tmp/gallery-imagecropper.js',
-			requires: ['widget','resize','gallery-event-arrow','dd-constrain']
+		'imagecropper': {
+			fullpath: '../../build_tmp/gallery-imagecropper.js',
+			requires: [
+				'widget',
+				'dd-drag',
+				'dd-constrain',
+				'resize-base',
+				'resize-constrain'
+			]
 		}
 	}
 }).use('gallery-imagecropper', function (Y) {
@@ -60,6 +66,7 @@ YUI({
     height: originalHeight
   });
   imagecropper.render('#imagecropper');
+  imagecropper.plug(Y.Plugin.ImageCropperKeys);
   
   Y.one('.thumbs').delegate('click', function (e) {
     var oWidth = parseInt(e.target.getData('width'), 10),
