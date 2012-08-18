@@ -1,7 +1,7 @@
 'use strict';
 /**
  * @description <p>Creates an Image Cropper control.</p>
- * @requires widget, resize, gallery-event-arrow
+ * @requires widget, dd-drag, dd-constrain, resize-base, resize-constrain, gallery-event-arrow
  * @module gallery-imagecropper
  */
 
@@ -18,7 +18,7 @@ var Lang = Y.Lang,
 		cropMask: getClassName(IMAGE_CROPPER, MASK),
 		resizeKnob: getClassName(IMAGE_CROPPER, RESIZE, KNOB),
 		resizeMask: getClassName(IMAGE_CROPPER, RESIZE, MASK)
-	},
+	};
 
 /**
  * @constructor
@@ -37,7 +37,10 @@ var Lang = Y.Lang,
  * @protected
  * @static
  */
-ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
+function ImageCropper() {
+	ImageCropper.superclass.constructor.apply(this, arguments);
+}
+Y.extend(ImageCropper, Y.Widget, {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
@@ -425,6 +428,8 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	}
 	
 }, {
+
+	NAME: 'imagecropper',
 	
 	/**
 	 * Template that will contain the ImageCropper's mask.
