@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Communication Layer</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Maven+Pro:400,700">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssgrids/grids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+
+<div id="doc">
+    <h1>Communication Layer</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><div class="intro">
+
+<p>
+The CommunicationLayer component provides an abstraction layer on top of
+HTML5's <a
+href="https://developer.mozilla.org/en/DOM/window.postMessage"><code>window.postMessage</code></a>
+method to provide a secure, evented communication API for cross-domain web
+applications.
+</p>
+
+</div>
+
+<h2 id="configuration">Configuration</h2>
+
+<h3 id="buffertimeout-optional">bufferTimeout (optional)</h3>
+
+<p>
+Events fired at the parent may be buffered by the CommunicationLayer
+if the handshake has not yet completed. In order to prevent this buffer
+from causing a memory leak, these subscriptions are expired after a
+default of 10,000 milliseconds.
+
+You can change this timeout by passing in a new configuration value for
+<code>bufferTimeout</code> (in milliseconds).
+</p>
+
+<pre class="code prettyprint">var CL = Y.CommunicationLayer({
+    bufferTimeout: 5000
+});</pre>
+
+
+<h3 id="callbacktimeout-optional">callbackTimeout (optional)</h3>
+
+<p>
+Callbacks can be defined per event when firing events into the
+CommunicationLayer. Since the execution of these callbacks relies on
+the action of the other application, in order to prevent a memory leak,
+these subscriptions are expired after a default of 10,000 milliseconds.
+
+You can change this timeout by passing in a new configuration value for
+<code>callbackTimeout</code> (in milliseconds).
+</p>
+
+<pre class="code prettyprint">var CL = Y.CommunicationLayer({
+    callbackTimeout: 5000
+});</pre>
+
+
+<h3 id="debug">debug</h3>
+
+<p>
+If you need to simulate interaction between an application and its
+parent, you can enable debug mode.
+</p>
+
+<pre class="code prettyprint">var CL = Y.CommunicationLayer({
+    debug: true
+});</pre>
+
+<p>
+This allows interaction with the application through the global YUI object,
+even from the console.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Listens for the &#x27;sd:suggest&#x27; event bubbling up from the appliation
+YUI.CL.on(&#x27;sd:suggest&#x27;, function () {
+    alert(&#x27;&quot;sd:suggest&quot; has been fired by the app!&#x27;);
+});
+
+&#x2F;&#x2F; Simulates a &#x27;query:change&#x27; event fired from the parent
+YUI.CL.fire(&#x27;query:change&#x27;, {
+    p: &#x27;charlize&#x27;
+});</pre>
+
+
+<h2 id="from-the-parent-applications-perspective">From the parent application's perspective</h2>
+
+<h3 id="usage">Usage</h3>
+
+<p>
+The parent application must register a child application before any
+interaction can take place. Once the handshake between the two is
+complete, the parent is provided a proxy object as an argument to a
+registration callback. This proxy is the only way for the parent to
+communicate with the child.
+</p>
+
+<pre class="code prettyprint">CL.register(iframe, function (proxy) {
+    proxy.on(&#x27;navigate&#x27;, navigateHandler);
+
+    Y.one(&#x27;#button&#x27;).on(&#x27;click&#x27;, function (e) {
+        proxy.fire(&#x27;clicked&#x27;, {
+            target: e.target
+        });
+    });
+});</pre>
+
+
+<p>
+This registration process requires the following:
+</p>
+
+<ul>
+    <li>The iframe's <code>src</code> attribute is set</li>
+    <li>The iframe has not been appended to the document yet</li>
+</ul>
+
+<p>
+The iframe's <code>src</code> attribute is required to be set because it is used
+as a registration token during the handshake.
+</p>
+
+<p>
+Once the iframe is appended to the document, its CommunicationLayer
+kicks off the handshake sequence. This sequence allows both sides to
+record the source and origin of the other, which are then referenced
+every time a CL message is dispatched or a CL message is received.
+This allows for the secure communication between the two application
+and addresses the main <a
+href="https://developer.mozilla.org/en/DOM/window.postMessage#Security_concerns">
+security concerns</a> regarding the <code>postMessage</code> API.
+</p>
+
+<h3 id="readiness">Readiness</h3>
+
+<p>
+Although the execution of the registration callback signifies that the
+connection has been established, the child may require additional time
+to set up its application logic. To address this issue, the
+CommunicationLayer allows the parent to subscribe to the application
+ready state of the child, at which point it can start firing
+timing-sensitive events (usually related to the life cycle of the
+application).
+</p>
+
+<pre class="code prettyprint">proxy.ready(function () {
+    proxy.fire(&#x27;init&#x27;, {
+        data: initData
+    });
+});</pre>
+
+
+<p>
+It is the responsibility of the child to signal this application ready
+state.
+</p>
+
+<h3 id="proxy-object-api">Proxy Object API</h3>
+
+The proxy is passed as an argument to the registration handler and
+provides a secure way for the parent application to interact with
+the child application.
+
+<h4 id="iframe">iframe</h4>
+
+<p>
+A reference to the iframe node that this proxy is associated with.
+</p>
+
+<pre class="code prettyprint">proxy.iframe</pre>
+
+
+<h4 id="on-event-handler-context-arg">on (event, handler, [context], [arg*])</h4>
+
+<p>
+Subscribe an event handler to execute in response to a CL event fired by the child.
+</p>
+
+<pre class="code prettyprint">proxy.on(&#x27;refresh&#x27;, refreshHandler);</pre>
+
+
+<p>
+Group subscriptions are also supported.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Objects
+proxy.on({
+    refresh: refreshHandler,
+    close: Y.bind(closeHandler, this)
+});
+
+&#x2F;&#x2F; Arrays
+proxy.on([&#x27;refresh&#x27;, &#x27;close&#x27;], handler, this);</pre>
+
+
+<h4 id="once-event-handler-context-arg">once (event, handler, [context], [arg*])</h4>
+
+Subscribe an event handler to execute once in response to a CL event fired by the child
+
+<pre class="code prettyprint">proxy.once(&#x27;init&#x27;, initHandler);</pre>
+
+
+<h4 id="fire-event-data-callback">fire (event, data, callback)</h4>
+
+<p>
+Fire a CL event at the child along with optional event data. A callback
+can also be defined, but will only execute if the child application
+executes it.
+</p>
+
+<pre class="code prettyprint">proxy.fire(&#x27;init&#x27;, {
+    foo: bar
+});</pre>
+
+<p>
+To prevent memory leaks, the callback expires after <code>callbackTimeout</code>
+milliseconds (default of 10,000). This is configurable in the
+constructor configuration.
+</p>
+
+<h4 id="ready-fn">ready (fn)</h4>
+
+<p>
+Subscribe to the child application's ready state. The ready state is
+defined by the child application.
+</p>
+
+<pre class="code prettyprint">proxy.ready(function () {
+    proxy.fire(&#x27;init&#x27;, {
+        data: initData
+    });
+});</pre>
+
+
+<h4 id="open-name-callback">open (name, callback)</h4>
+
+<pre class="code prettyprint">var connection = proxy.open(&#x27;encode&#x27;, function (encoded) {
+    useEncodedAsset(encoded);
+
+    &#x2F;&#x2F; The application should define when to close the connection
+    if (! encoded) {
+        connection.close();
+    }
+});
+connection.write(imageUri);
+connection.write(imageUri);</pre>
+
+
+<p>
+A connection object is returned when a connection is successfully opened. The
+connection object has the following API:
+</p>
+
+<dl>
+    <dt><code>write</code></dt>
+    <dd>
+        Expects a single argument that can be of any type. This argument will
+        be available to the child under the <code>data</code> property of the
+        event object.
+    </dd>
+    <dt><code>close</code></dt>
+    <dd>
+        Closes the connection. Unlike callbacks to <code>fire</code>, callbacks
+        to connections do not automatically expire so they must be manually
+        closed.
+    </dd>
+</dl>
+
+<p>
+The child application can respond to connection requests sent through its
+parent's proxy object via <code>Y.CL.on</code>.
+</p>
+
+<pre class="code prettyprint">Y.CL.on(&#x27;encode&#x27;, function (e) {
+    if (e.callback) {
+        e.callback(encodeAsset(e.data));
+    }
+});</pre>
+
+
+<h2 id="from-the-child-applications-perspective">From the child application's perspective</h2>
+
+<h3 id="communicationlayer-api">CommunicationLayer API</h3>
+
+<h4 id="on">on</h4>
+
+<p>
+The child can subscribe to parent events in the following manner.
+</p>
+
+<pre class="code prettyprint">Y.CL.on(&#x27;refresh&#x27;, refreshHandler);
+Y.CL.on(&#x27;close&#x27;, this.closeHandler, this);</pre>
+
+
+<p>
+Group subscriptions are also supported.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Objects
+Y.CL.on({
+    refresh: refreshHandler,
+    close: Y.bind(closeHandler, this)
+});
+
+&#x2F;&#x2F; Arrays
+Y.CL.on([&#x27;refresh&#x27;, &#x27;close&#x27;], handler, this);</pre>
+
+
+<h4 id="once">once</h4>
+
+<p>
+The child can subscribe to parent events <em>just once</em> in the following manner.
+</p>
+
+<pre class="code prettyprint">Y.CL.once(&#x27;refresh&#x27;, refreshHandler);
+Y.CL.once(&#x27;close&#x27;, this.closeHandler, this);</pre>
+
+
+<p>
+Group subscriptions are also supported.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Objects
+Y.CL.once({
+    refresh: refreshHandler,
+    close: Y.bind(closeHandler, this)
+});
+
+&#x2F;&#x2F; Arrays
+Y.CL.once([&#x27;refresh&#x27;, &#x27;close&#x27;], handler, this);</pre>
+
+
+<h4 id="fire-event-data-callback2">fire (event, data, callback)</h4>
+
+<p>
+Fire a CL event at the parent along with optional event data. A
+callback can also be defined, but will only execute if the child
+application executes it.
+</p>
+
+<pre class="code prettyprint">Y.CL.fire(&#x27;init&#x27;, {
+    foo: bar
+});</pre>
+
+<p>
+To prevent memory leaks, the callback expires after <code>callbackTimeout</code>
+milliseconds (default of 10,000). This is configurable in the
+constructor configuration.
+</p>
+
+<h4 id="open-name-callback2">open (name, callback)</h4>
+
+<pre class="code prettyprint">var connection = Y.CL.open(&#x27;encode&#x27;, function (encoded) {
+    useEncodedAsset(encoded);
+
+    &#x2F;&#x2F; The application should define when to close the connection
+    if (! encoded) {
+        connection.close();
+    }
+});
+connection.write(imageUri);
+connection.write(imageUri);</pre>
+
+
+<p>
+A connection object is returned when a connection is successfully opened. The
+connection object has the following API:
+</p>
+
+<dl>
+    <dt><code>write</code></dt>
+    <dd>
+        Expects a single argument that can be of any type. This argument will
+        be available to the parent under the <code>data</code> property of the
+        event object.
+    </dd>
+    <dt><code>close</code></dt>
+    <dd>
+        Closes the connection. Unlike callbacks to <code>fire</code>, callbacks
+        to connections do not automatically expire so they must be manually
+        closed.
+    </dd>
+</dl>
+
+<p>
+The parent application can respond to requests coming over the
+connection via <code>proxy.on(..)</code>.
+</p>
+
+<pre class="code prettyprint">proxy.on(&#x27;encode&#x27;, function (e) {
+    if (e.callback) {
+        e.callback(encodeAsset(e.data));
+    }
+});</pre>
+
+
+<h3 id="readiness2">Readiness</h3>
+
+<p>
+The child application can assume that the parent application is always
+ready. In the case where events are fired at the parent before it is
+ready (i.e., before the handshake has completed), these events are
+buffered and flushed when the ready state is reached.
+</p>
+
+<h2 id="known-issues">Known Issues</h2>
+
+<p>None as of 2012-06-24</p>
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+                    <div id="toc" class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Table of Contents</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="toc">
+<li>
+<a href="#configuration">Configuration</a>
+<ul class="toc">
+<li>
+<a href="#buffertimeout-optional">bufferTimeout (optional)</a>
+</li>
+<li>
+<a href="#callbacktimeout-optional">callbackTimeout (optional)</a>
+</li>
+<li>
+<a href="#debug">debug</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#from-the-parent-applications-perspective">From the parent application's perspective</a>
+<ul class="toc">
+<li>
+<a href="#usage">Usage</a>
+</li>
+<li>
+<a href="#readiness">Readiness</a>
+</li>
+<li>
+<a href="#proxy-object-api">Proxy Object API</a>
+<ul class="toc">
+<li>
+<a href="#iframe">iframe</a>
+</li>
+<li>
+<a href="#on-event-handler-context-arg">on (event, handler, [context], [arg*])</a>
+</li>
+<li>
+<a href="#once-event-handler-context-arg">once (event, handler, [context], [arg*])</a>
+</li>
+<li>
+<a href="#fire-event-data-callback">fire (event, data, callback)</a>
+</li>
+<li>
+<a href="#ready-fn">ready (fn)</a>
+</li>
+<li>
+<a href="#open-name-callback">open (name, callback)</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<a href="#from-the-child-applications-perspective">From the child application's perspective</a>
+<ul class="toc">
+<li>
+<a href="#communicationlayer-api">CommunicationLayer API</a>
+<ul class="toc">
+<li>
+<a href="#on">on</a>
+</li>
+<li>
+<a href="#once">once</a>
+</li>
+<li>
+<a href="#fire-event-data-callback2">fire (event, data, callback)</a>
+</li>
+<li>
+<a href="#open-name-callback2">open (name, callback)</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#readiness2">Readiness</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#known-issues">Known Issues</a>
+</li>
+</ul>
+                        </div>
+                    </div>
+                
+
+                
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+
+</body>
+</html>

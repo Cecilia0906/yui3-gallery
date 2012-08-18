@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>TreeView</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Maven+Pro:400,700">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssgrids/grids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+
+<div id="doc">
+    <h1>TreeView</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><div class="intro">
+<h1>YUI TreeView</h1>
+<p>
+<img src="../assets/gallery-yui-treeview/treeview.png" alt="Screenshot of the TreeView widget" style="border: 1px solid #bfbfbf; float:right; height:161px; margin: 0 0 8px 8px; width:272px;">
+<p>The TreeView widget provides a rich, 
+<a href="http://www.w3.org/TR/wai-aria/roles#tree">ARIA-enhanced</a>
+visual representation of hierarchical data.
+Any given "TreeView" is actually a nested structure of YUI widgets
+consisting of:</p>
+
+<ul>
+    <li><code>TreeLeaf</code>, a <code>Widget</code> that mixes in the generic <code>WidgetChild</code> class. 
+    A TreeLeaf has no children.</li>
+    <li><code>TreeView</code>, a <code>Widget</code> that mixes in the <code>WidgetParent</code> <em>and</em> <code>WidgetChild</code> classes.
+    A <code>TreeView</code> may contain zero or more child <code>TreeLeaf</code> or <code>TreeView</code> objects.</li>
+</ul>
+
+<p>YUI 3 <code>TreeView</code> is built for high performance.
+Its rendering mechanism uses 
+<a href="../handlebars/">Y.Handlebars</a>,
+which is fast enough to support even very large sets of DOM nodes. 
+By default, <code>TreeView</code> loads all its nodes on demand, 
+creating and rendering child nodes only when they're actually needed.</p> 
+
+</div>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+To include the source files for TreeView and its dependencies, first load
+the YUI seed file if you haven't already loaded it.
+</p>
+
+<pre class="code prettyprint">&lt;script src=&quot;http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.6.0&#x2F;build&#x2F;yui&#x2F;yui-min.js&quot;&gt;&lt;&#x2F;script&gt;</pre>
+
+
+<p>
+Next, create a new YUI instance for your application and populate it with the
+modules you need by specifying them as arguments to the <code>YUI().use()</code> method.
+YUI will automatically load any dependencies required by the modules you
+specify.
+</p>
+
+<pre class="code prettyprint">&lt;script&gt;
+&#x2F;&#x2F; Create a new YUI instance and populate it with the required modules.
+YUI().use(&#x27;gallery-yui-treeview&#x27;, function (Y) {
+    &#x2F;&#x2F; TreeView is available and ready for use. Add implementation
+    &#x2F;&#x2F; code here.
+});
+&lt;&#x2F;script&gt;</pre>
+
+
+<p>
+For more information on creating YUI instances and on the
+<a href="http://yuilibrary.com/yui/docs/api/classes/YUI.html#method_use"><code>use()</code> method</a>, see the
+documentation for the <a href="../yui/index.html">YUI Global Object</a>.
+</p>
+
+
+<h2 id="using-treeview">Using TreeView</h2>
+<h3 id="quick-start">Quick Start</h3>
+
+<p>
+To create a basic <code>TreeView</code> instance, 
+first create a div to render the tree into,
+with a class of <code>yui3-sam-skin</code>
+(or alternatively, set <code>yui3-sam-skin</code> on 
+the body or some other containing element):</p>
+
+<pre class="code prettyprint">&lt;div id=&quot;toc&quot; class=&quot;yui3-skin-sam&quot;&gt;</pre>
+
+
+<p>Once you have a container div,
+give the tree a label and some child leaves.
+Then render it into the container:</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;treeview&#x27;, function (Y) {
+    var tree = new Y.TreeView({
+            label: &#x27;My Novel&#x27;,
+            children: [
+                { label: &#x27;Chapter One&#x27; },
+                { label: &#x27;Chapter Two&#x27; }
+            ]
+        });
+                
+    tree.render(&#x27;#toc&#x27;);
+});</pre>
+
+
+<h3 id="creating-fancier-nodes">Creating Fancier Nodes</h3>
+
+<p>Labels don't necessarily have to be plain text.
+You can also insert HTML:</p>
+
+<pre class="code prettyprint">var tree = new Y.TreeView({
+        label: &#x27;&lt;b&gt;My Novel&lt;&#x2F;b&gt;&#x27;,
+        children: [
+            { label: &#x27;&lt;a href=&quot;.&#x2F;ch01.html&quot;&gt;Chapter One&lt;&#x2F;a&gt;&#x27; },
+            { label: &#x27;&lt;a href=&quot;.&#x2F;ch02.html&quot;&gt;Chapter Two&lt;&#x2F;a&gt;&#x27; }
+        ]
+    });</pre>
+
+
+<p>You can also supply an <code>id</code> property
+along with the <code>label</code>:</p>
+
+<pre class="code prettyprint">children: [
+    { id: &#x27;ch01&#x27;, label: &#x27;Chapter One&#x27; },
+    { id: &#x27;ch02&#x27;, label: &#x27;Chapter Two&#x27; }
+]</pre>
+
+
+<p>This enables you to provide a known, user-friendly <code>id</code> attribute
+on each <code>&lt;li&gt;</code> that contains the node.
+Otherwise, YUI automatically generates an <code>id</code>
+using <code>Y.guid()</code>.</p>
+
+<p>For more advanced label customization,
+you can override the Handlebars templates 
+that define <code>TreeView</code> and <code>TreeLeaf</code> markup,
+such as <code>TreeView.prototype.TREEVIEWLABEL_TEMPLATE</code>.</p>
+
+<h3 id="creating-subtrees">Creating Subtrees</h3>
+
+A <code>TreeView</code>'s constructor provides a 
+<code>children</code> configuration property that  
+enables you to initially populate the tree with child nodes.
+As shown in the <a href="#quick-start">Quick Start</a>,
+if you add a simple object with just a label,
+the <code>TreeView</code> creates a child <code>TreeLeaf</code> node.
+
+However, if you also supply a <code>type</code> of <code>&quot;TreeView&quot;</code>, 
+the <code>TreeView</code> creates a child <code>TreeView</code> node,
+which can itself have child nodes: 
+
+
+<pre class="code prettyprint">var tree = new Y.TreeView({
+    label : &#x27;Main Tree&#x27;,
+    children: [
+        { label: &#x27;Leaf One&#x27; },
+        { label: &#x27;Leaf Two&#x27; },
+        { type: &#x27;TreeView&#x27;, label: &#x27;Subtree&#x27;, children: [
+            { label: &#x27;Subtree - Leaf One&#x27; },
+            { label: &#x27;Subtree - Leaf Two&#x27; },
+            { label: &#x27;Subtree - Leaf Three&#x27; },
+            { label: &#x27;Subtree - Leaf Four&#x27; }
+        ]}
+    ]
+});
+
+tree.render(&#x27;#demo&#x27;);</pre>
+
+
+It's worth reiterating that 
+a YUI 3 <code>TreeView</code> mixes in the behaviors of both <code>WidgetParent</code> and <code>WidgetChild</code>,
+and thus can serve as either a parent node, a child node, or both.
+As a corollary, in a YUI 3 <code>TreeView</code> 
+there is also nothing terribly special 
+about the top-level <code>TreeView</code> object.
+(There is one minor difference in that 
+the top-level <code>TreeView</code> has an ARIA role of <code>&quot;tree&quot;</code>,
+while lower-level <code>TreeView</code>s have an ARIA role of <code>&quot;group&quot;</code>.)
+This architecture is in contrast with YUI 2 <code>TreeView</code>, 
+which had a master <code>YAHOO.widget.TreeView</code> 
+that contained various objects derived from <code>YAHOO.widget.Node</code>.
+
+
+<h3 id="listening-to-the-trees">Listening to the Trees</h3>
+
+<p>Like all YUI widgets, <code>TreeView</code> offers a suite of custom events, 
+including a suite of <a href="../widget/#uievents">"Default UI" custom events</a> 
+that mirror DOM events that occur within the tree. 
+For example, to detect when a <code>TreeLeaf</code> 
+(but not a <code>TreeView</code>) has been clicked, 
+you can set an event handler on the <code>TreeView</code> instance 
+and listen for the <code>treeleaf:click</code> custom event:</p>
+
+<pre class="code prettyprint">var tree = new Y.TreeView({
+        label: &#x27;Far Out&#x27;,
+        children: [
+            { label: &#x27;Groovy&#x27; },
+            { label: &#x27;Moonflower&#x27; }
+            { label: &#x27;Star Child&#x27; }
+        ]
+    });
+            
+tree.render(&#x27;#gaia&#x27;);
+
+tree.on(&#x27;treeleaf:click&#x27;, function (ev) {
+	Y.log(&#x27;You clicked on: &#x27; + ev.target.get(&#x27;label&#x27;));
+});</pre>
+
+
+<p>Listening for custom UI events has some advantages 
+over listening for DOM events,  
+but sometimes the <em>actual</em> thing you want to listen for
+is an <a href="../attribute/#events">attribute change event</a>.
+For example, every <code>TreeView</code> has a <code>collapsed</code> attribute
+indicating the expand/collapse state of the tree. 
+If you wanted to detect node expansions,
+you could set an event handler for <code>collapsedChange</code> events:</p>
+
+
+<pre class="code prettyprint">&#x2F;&#x2F; Use &#x27;after()&#x27; rather than &#x27;on()&#x27; to listen only for 
+&#x2F;&#x2F; *successful* (i.e. un-prevented) state changes.
+tree.after(&#x27;collapsedChange&#x27;, function (ev) {
+    if (ev.newVal === false) { 
+        Y.log(&#x27;Tree expanded!&#x27;);
+    }
+});</pre>
+
+
+<p>If you specifically care about checking for tree state changes,
+listening for state change events has several advantages
+over listening for DOM events:</p>
+
+<ul>
+    <li>It avoids being confused by repeated clicks on the same node.</li>
+    <li>It avoids depending on the internal DOM structure of the tree.</li>
+    <li>It future-proofs your code against other user actions that might expand the tree, such as touches or keystrokes.</li>
+</ul>
+
+<h3 id="manipulating-tree-state">Manipulating Tree State</h3>
+
+<h4 id="expandingcollapsing-a-tree">Expanding/Collapsing a Tree</h4>
+
+<p>By default, a <code>TreeView</code> node automatically toggles 
+its expand/collapse state in response to user clicks.
+If you need to programatically expand or collapse a tree,
+the <code>TreeView</code> API offers these methods:
+
+<pre class="code prettyprint">&#x2F;&#x2F; Collapses a tree node (non-recursive)
+tree.collapse();
+
+&#x2F;&#x2F; Expands a tree node (non-recursive)
+tree.expand();
+
+&#x2F;&#x2F; Toggles the state; if collapsed, expand (and vice-versa).
+tree.toggleTreeState();</pre>
+
+
+<h4 id="traversing-and-mutating-a-tree-as-an-arraylist">Traversing and Mutating a Tree as an ArrayList</h4>
+
+<p><code>TreeView</code> provides a number of methods and attributes for 
+inspecting and mutating its own contents, 
+nearly all of which inherit from the
+<a href="http://yuilibrary.com/yui/docs/api/WidgetParent.html">WidgetParent API</a>,
+which in turn inherit from or override the 
+<a href="http://yuilibrary.com/yui/docs/api/ArrayList.html">ArrayList API</a>.
+If you are familiar with hierarchical widgets such as 
+<a href="../TabView/">TabView</a>, 
+or even if you've at least used a YUI <code>ArrayList</code> or <code>NodeList</code> before, 
+you probably have most of the 
+<a href="http://yuilibrary.com/yui/docs/api/TreeView.html">TreeView API</a> at your fingertips.</p>
+
+<p>To determine the number of direct children of a tree node:</p>
+<pre class="code prettyprint">var numChildren = tree.size();</pre>
+
+<p>To grab the second child of a tree node:</p>
+
+<pre class="code prettyprint">var secondChild = tree.item(1);</pre>
+
+
+<p>To remove the second child of a tree node:</p>
+
+<pre class="code prettyprint">tree.item(1).remove();
+tree.remove(1);  &#x2F;&#x2F; alternatively</pre>
+
+
+<p>To add a new leaf node dynamically:</p>
+
+<pre class="code prettyprint">tree.add({label: &#x27;&lt;span class=&#x27;new-node&#x27;&gt;New leaf&lt;&#x2F;span&gt;&#x27;});</pre>
+
+<p>To iterate over the tree's children:</p>
+<pre class="code prettyprint">tree.each(function (leaf) {
+    leaf.set(&#x27;label&#x27;, &#x27;CHANGED&#x27;);
+});</pre>
+
+
+<h3 id="configuring-treeview">Configuring TreeView</h3>
+
+<p>
+Except for <code>label</code>, all configuration attributes are optional. This list only contains the most interesting attributes. For a complete list of all attributes, please refer to the <a href="http://yuilibrary.com/yui/docs/api/TreeView.html">API docs</a>.
+</p>
+
+<h4 id="treeview-attributes">TreeView Attributes</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>collapsed</code></td>
+      <td><code>true</code></td>
+      <td>
+        A boolean indicating whether the <code>TreeView</code> is collapsed.
+        <code>true</code> if the tree's children are currently hidden,
+        <code>false</code> if they are currently expanded.
+        To change the tree's expansion state, 
+        call <code>expand()</code> or <code>collapse()</code>.   
+      </td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td>Empty string</td>
+      <td>
+          [<b>Required</b>] A String snippet of text or HTML 
+          to display at the top level of the tree. 
+          Individual <code>TreeLeaf</code> objects have their own <code>label</code> attribute.
+      </td>
+    </tr>
+    <tr>
+      <td><code>lazyLoad</code></td>
+      <td><code>true</code></td>
+      <td>
+          Specifies whether the tree should generate DOM nodes 
+          for its hidden child leaves on demand, 
+          when the user expands that branch of the tree.
+          Setting <code>lazyLoad</code> to <code>false</code> causes the <code>TreeView</code> to
+          generate child DOM nodes ahead of time, 
+          which will likely decrease perceived performance for large trees.
+          You can only change <code>lazyLoad</code> when you first instantiate the tree.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For the full list of attributes <code>TreeView</code> inherits from <code>WidgetParent</code> and <code>WidgetChild</code>, 
+refer to the <a href="http://yuilibrary.com/yui/docs/api/WidgetParent.html">WidgetParent</a>
+and <a href="http://yuilibrary.com/yui/docs/api/WidgetChild.html">WidgetChild API documentation</a>.</p>
+
+<h4 id="treeleaf-attributes">TreeLeaf Attributes</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>label</code></td>
+      <td>Empty string</td>
+      <td>
+          [<b>Required</b>] A String that provides a snippet of text or HTML
+          to display for the leaf.
+      </td>
+    </tr>
+    <tr>
+      <td><code>parent</code></td>
+       <td>null</td>
+       <td>
+            A reference to the <code>TreeLeaf</code>'s parent <code>TreeView</code> object.
+       </td>
+    </tr>
+    <tr>
+      <td><code>depth</code></td>
+      <td>0</td>
+      <td>
+          A Number indicating the depth of this leaf 
+          relative to the root of the tree hierarchy.
+          You cannot change this attribute directly, 
+          but this attribute will correctly reflect the depth
+          if you use <code>add()</code> and <code>remove()</code> to mutate the 
+          tree's structure. 
+      </td>
+    </tr>
+    <tr>
+      <td><code>root</code></td>
+      <td>null</td>
+      <td>
+      	    A reference to the root <code>TreeView</code> object.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For the full list of attributes <code>TreeLeaf</code> inherits from <code>WidgetChild</code>, 
+refer to the <a href="http://yuilibrary.com/yui/docs/api/WidgetChild.html">WidgetChild API documentation</a>.</p>
+
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+                    <div id="toc" class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Table of Contents</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="toc">
+<li>
+<a href="#getting-started">Getting Started</a>
+</li>
+<li>
+<a href="#using-treeview">Using TreeView</a>
+<ul class="toc">
+<li>
+<a href="#quick-start">Quick Start</a>
+</li>
+<li>
+<a href="#creating-fancier-nodes">Creating Fancier Nodes</a>
+</li>
+<li>
+<a href="#creating-subtrees">Creating Subtrees</a>
+</li>
+<li>
+<a href="#listening-to-the-trees">Listening to the Trees</a>
+</li>
+<li>
+<a href="#manipulating-tree-state">Manipulating Tree State</a>
+<ul class="toc">
+<li>
+<a href="#expandingcollapsing-a-tree">Expanding/Collapsing a Tree</a>
+</li>
+<li>
+<a href="#traversing-and-mutating-a-tree-as-an-arraylist">Traversing and Mutating a Tree as an ArrayList</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#configuring-treeview">Configuring TreeView</a>
+<ul class="toc">
+<li>
+<a href="#treeview-attributes">TreeView Attributes</a>
+</li>
+<li>
+<a href="#treeleaf-attributes">TreeLeaf Attributes</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+                        </div>
+                    </div>
+                
+
+                
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+
+</body>
+</html>

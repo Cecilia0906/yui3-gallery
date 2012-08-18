@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ImageCropper</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Maven+Pro:400,700">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssgrids/grids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+
+<div id="doc">
+    <h1>ImageCropper</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><div class="intro yui3-g">
+  <div class="yui3-u-2-3">
+  <p>The ImageCropper widget gives you an interactive interface for getting the dimensions to crop an image. While it doesn't provide a utility for creating a new resize image on the client out of the box, its API returns enough data for you to implement your own client or server resizing solution.</p>
+  <p>Optional keyboard support for accesibility is included as a Plugin.</p>
+  </div>
+  <div class="yui3-u-1-3" style="text-align: right">
+  <img src="../assets/gallery-imagecropper/img/imagecropper.jpg" alt="Screenshot of the ImageCropper widget" style="border: 1px solid #bfbfbf; margin: 8px 0;">
+  </div>
+</div>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>
+To include the source files for ImageCropper and its dependencies, first load
+the YUI seed file if you haven't already loaded it.
+</p>
+
+<pre class="code prettyprint">&lt;script src=&quot;http:&#x2F;&#x2F;yui.yahooapis.com&#x2F;3.6.0&#x2F;build&#x2F;yui&#x2F;yui-min.js&quot;&gt;&lt;&#x2F;script&gt;</pre>
+
+
+<p>
+Next, create a new YUI instance for your application and populate it with the
+modules you need by specifying them as arguments to the <code>YUI().use()</code> method.
+YUI will automatically load any dependencies required by the modules you
+specify.
+</p>
+
+<pre class="code prettyprint">&#x2F;&#x2F; Create a new YUI instance, specify the Gallery build tag you&#x27;ll be using
+&#x2F;&#x2F; and populate it with the required modules.
+YUI({
+    gallery: &#x27;gallery-2012.08.15-20-00&#x27;
+}).use(&#x27;gallery-imagecropper&#x27;, function (Y) {
+    &#x2F;&#x2F; ImageCropper is available and ready for use. Add implementation
+    &#x2F;&#x2F; code here.
+});</pre>
+
+
+<p>
+For more information on creating YUI instances and on the
+<a href="http://yuilibrary.com/yui/docs/api/classes/YUI.html#method_use"><code>use()</code> method</a>, see the
+documentation for the <a href="../yui/index.html">YUI Global object</a>.
+</p>
+
+
+<h2 id="using-imagecropper">Using ImageCropper</h2>
+<h3 id="quick-start">Quick Start</h3>
+
+<p>
+If you're in a hurry, here's how to create an ImageCropper widget in a few lines of code.
+</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;gallery-imagecropper&#x27;, function (Y) {
+
+  &#x2F;&#x2F; Create a new instance of ImageCropper, setting its width 
+  &#x2F;&#x2F; and height, and the URL for the image you want to crop.
+  var imagecropper = new Y.ImageCropper({
+    source: &#x27;path&#x2F;to&#x2F;my&#x2F;image.jpg&#x27;,
+    height: &#x27;200px&#x27;,
+    width: &#x27;600px&#x27;
+  }).render();
+
+  Y.one(&#x27;#submit-button&#x27;).on(&#x27;click&#x27;, function () {
+    &#x2F;&#x2F; Get the coordinates of the area selected by the user
+    &#x2F;&#x2F; This is an object with the following shape:
+    &#x2F;&#x2F; {
+    &#x2F;&#x2F;   &quot;top&quot;    : 000,
+    &#x2F;&#x2F;   &quot;left&quot;   : 000,
+    &#x2F;&#x2F;   &quot;width&quot;  : 000,
+    &#x2F;&#x2F;   &quot;height&quot; : 000,
+    &#x2F;&#x2F;   &quot;image&quot;  : &quot;full&#x2F;path&#x2F;to&#x2F;my&#x2F;image.jpg&quot;
+    &#x2F;&#x2F; }
+    var coords = imagecropper.getCropCoords();
+  });
+
+});</pre>
+
+
+<p>
+This bare bones example should be enough to get you started. For more details on configuration options and how to communicate an ImageCropper with other components, read on.
+</p>
+
+<h3 id="configuring-imagecropper">Configuring ImageCropper</h3>
+
+<p>
+In order to create an ImageCropper instace you must provide either a <code>source</code> attribute or an <code>srcNode</code> attribute pointing to an existing image element. It is usually a good idea to provide the <code>width</code> and <code>height</code> attributes so that the size of the inner elements of the ImageCropper matches the size of the image being cropped. All other configuration attributes are optional. This list only contains the most interesting attributes. For a complete list of all attributes, please refer to the <a href="http://yuilibrary.com/yui/docs/api/ImageCropper.html">API docs</a>.
+</p>
+
+<p>
+The following attributes are provided to fine tune the behavior of each ImageCropper widget.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Attribute</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>source</code></td>
+      <td><code>&#x27;&#x27;</code></td>
+      <td>
+        The source for the image being cropped. <strong>Required</strong> if an <code>srcNode</code> attribute wasn't provided.
+      </td>
+    </tr>
+    <tr>
+      <td><code>minHeight</code></td>
+      <td><code>50</code></td>
+      <td>
+        The minimum height the crop rectangle can be resized to in pixels.
+      </td>
+    </tr>
+    <tr>
+      <td><code>preserveRatio</code></td>
+      <td><code>false</code></td>
+      <td>
+        Whether or not the crop rectangle will forcefully preserve its ratio.
+      </td>
+    </tr>
+    <tr>
+      <td><code>minWidth</code></td>
+      <td><code>50</code></td>
+      <td>
+        The minimum width the crop rectangle can be resized to in pixels.
+      </td>
+    </tr>
+    <tr>
+      <td><code>initHeight</code></td>
+      <td><code>50</code></td>
+      <td>
+        The initial height of the crop rectangle. Defaults to the value of <code>minHeight</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>initWidth</code></td>
+      <td><code>50</code></td>
+      <td>
+        The initial width of the crop rectangle. Defaults to the value of <code>minWidth</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>initialXY</code></td>
+      <td><code>[10, 10]</code></td>
+      <td>
+        An array of two numbers specifying the initial position of the crop rectangle.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="adding-keyboard-support">Adding keyboard support</h3>
+
+<p>
+The Keys plugin adds keyboard support to any Drag instance. Plugging it into the Drag instance used by the ImageCropper will allow the user the move the crop area with the keyboard arrows. Holding down the shift key will move the crop rectangle more rapidly. You can configure how much the rectangle is moved by setting the <code>keyTick</code> and <code>shiftKeyTick</code> configuration options on the Plugin. By default, the crop area is moved 1px and 10px while holding down the shift key.
+</p>
+<pre class="code prettyprint">YUI({...}).use(&#x27;gallery-imagecropper&#x27;, &#x27;gallery-dd-keys&#x27;, function (Y) {
+  
+  var imagecropper = new Y.ImageCropper({
+    srcNode: &#x27;#my-image&#x27;,
+    width: 300,
+    height: 300
+  });
+  imagecropper.render();
+
+  &#x2F;&#x2F; After the widget is rendered the &quot;drag&quot; property is
+  &#x2F;&#x2F; added to the instance. Add the plugin to it
+  imagecropper.drag.plug(Y.Plugin.DDKeys, {
+    keyTick: 5,
+    shiftKeyTick: 20
+  });
+
+});</pre>
+
+
+<h3 id="notes-regarding-widget-and-image-sizes">Notes regarding widget and image sizes</h3>
+<p>The ImageCropper widget contains a <code>&lt;div&gt;</code> element inside its <code>boundingBox</code> (see the <a href="http://yuilibrary.com/yui/docs/widget/#markup">Widget User Guide</a>) that masks the undelying image so it's clear that the crop rectangle is the area being selected. Since this element is a block element, it will try by default to fill all the available area of the widget. This makes it easy for the mask to overflow the image and can be an issue when reusing an ImageCropper instance and changing its <code>source</code> attribute to an image of a different size. For this reason it is recommended that you reconfigure the <code>width</code> and <code>height</code> of the widget to the new size of the image at the same time you change the <code>source</code> attribute.</p>
+<p>Another possibility is to use the HTML5 Image API to obtain the natural size of the image and resize the widget accordingly. You can see more details about this approach in the <a href="#">Writing an AutoSize plugin</a> example</p>
+
+<h2 id="known-issues">Known issues</h2>
+<p>Currently the ImageCropper widget doesn't support scaled images. All images must be used at full scale. If you need support for scaled images or have any other issue with ImageCropper, please <a href="https://github.com/juandopazo/yui3-gallery/issues/new">file an bug report</a></p>
+
+<h2 id="touch-devices-support">Touch devices support</h2>
+<p>Since ImageCropper leverages the <a href="/yui/docs/dd/">Drag and Drop</a> and <a href="/yui/docs/resize/">Resize</a> modules it works on all touch devices supported by YUI.</p>
+
+<hr>
+<p><em>Cat picture by Samotny kotek released under the Creative Commons license.</em></p></div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+                    <div id="toc" class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Table of Contents</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="toc">
+<li>
+<a href="#getting-started">Getting Started</a>
+</li>
+<li>
+<a href="#using-imagecropper">Using ImageCropper</a>
+<ul class="toc">
+<li>
+<a href="#quick-start">Quick Start</a>
+</li>
+<li>
+<a href="#configuring-imagecropper">Configuring ImageCropper</a>
+</li>
+<li>
+<a href="#adding-keyboard-support">Adding keyboard support</a>
+</li>
+<li>
+<a href="#notes-regarding-widget-and-image-sizes">Notes regarding widget and image sizes</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#known-issues">Known issues</a>
+</li>
+<li>
+<a href="#touch-devices-support">Touch devices support</a>
+</li>
+</ul>
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                        <li data-description="This example shows how to create an ImageCropper from markup">
+                                            <a href="imagecropper-basic.html">Augmenting an image with an ImageCropper</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="This example shows how to use ImageCropper events to show a preview of the image being cropped">
+                                            <a href="imagecropper-events.html">Using the crop event</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="This example shows how to select the image to crop from a list of thumbnails">
+                                            <a href="imagecropper-gallery.html">Cropping images from thumbnails</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="This example shows how to develop a Plugin for ImageCropper that resizes the widget automatically based on the size of its image">
+                                            <a href="imagecropper-autosize.html">Writing an ImageCropper AutoSize plugin</a>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+
+</body>
+</html>

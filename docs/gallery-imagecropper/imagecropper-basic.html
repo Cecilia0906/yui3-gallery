@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Augmenting an image with an ImageCropper</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Maven+Pro:400,700">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssgrids/grids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+
+<div id="doc">
+    <h1>Example: Augmenting an image with an ImageCropper</h1>
+
+    
+
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><script>
+YUI_config = {
+  filter: 'raw',
+  modules: {
+    'gallery-imagecropper-styles': {
+      type: 'css',
+      fullpath: '/src/gallery-imagecropper/build_tmp/assets/skins/sam/gallery-imagecropper.css'
+    },
+    'gallery-imagecropper': {
+      fullpath: '/src/gallery-imagecropper/build_tmp/gallery-imagecropper.js',
+      requires: ['widget', 'dd-drag', 'dd-constrain', 'resize-base', 'resize-constrain', 'gallery-imagecropper-styles']
+    }
+  }
+};
+</script>
+<link rel="stylesheet" href="http://yui.yahooapis.com/3.6.0/build/cssbutton/cssbutton-min.css">
+<style>
+#save {
+  position: absolute;
+  top: 10px;
+  left: 380px;
+}
+.example {
+	position: relative;
+}
+</style>
+
+<div class="intro">
+<p>
+This example demonstrates how to instantiate a simple ImageCropper. Try clicking on the button to get the coordinates of the crop area.
+</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    <div id="demo" class="yui3-skin-sam">
+  <button id="save" class="yui3-button" type="button">Save crop area</button>
+  <img id="crop" src="http://farm8.staticflickr.com/7172/6748677447_a444f2cbce.jpg" alt="Bass player">
+</div>
+
+<script type="text/javascript">
+YUI().use('gallery-imagecropper', function(Y) {
+    
+    // Create a new instance of ImageCropper from markup          
+    var imagecropper = new Y.ImageCropper({
+      srcNode: "#crop",
+      width: 335,
+      height: 500
+    }).render();
+
+    Y.one('#save').on('click', function () {
+      var coords = imagecropper.getCropCoords()
+      var msg = 'left: '   + coords.left  + '\n';
+         msg += 'top: '    + coords.top   + '\n';
+         msg += 'width: '  + coords.width + '\n';
+         msg += 'height: ' + coords.height;
+      alert(msg);
+    });
+    
+});
+</script>
+
+</div>
+
+<h2>Complete Example Source</h2>
+
+<pre class="code prettyprint">&lt;div id=&quot;demo&quot; class=&quot;yui3-skin-sam&quot;&gt;
+  &lt;button id=&quot;save&quot; class=&quot;yui3-button&quot; type=&quot;button&quot;&gt;Save crop area&lt;&#x2F;button&gt;
+  &lt;img id=&quot;crop&quot; src=&quot;http:&#x2F;&#x2F;farm8.staticflickr.com&#x2F;7172&#x2F;6748677447_a444f2cbce.jpg&quot; alt=&quot;Bass player&quot;&gt;
+&lt;&#x2F;div&gt;
+
+&lt;script type=&quot;text&#x2F;javascript&quot;&gt;
+YUI().use(&#x27;gallery-imagecropper&#x27;, function(Y) {
+    
+    &#x2F;&#x2F; Create a new instance of ImageCropper from markup          
+    var imagecropper = new Y.ImageCropper({
+      srcNode: &quot;#crop&quot;,
+      width: 335,
+      height: 500
+    }).render();
+
+    Y.one(&#x27;#save&#x27;).on(&#x27;click&#x27;, function () {
+      var coords = imagecropper.getCropCoords()
+      var msg = &#x27;left: &#x27;   + coords.left  + &#x27;\n&#x27;;
+         msg += &#x27;top: &#x27;    + coords.top   + &#x27;\n&#x27;;
+         msg += &#x27;width: &#x27;  + coords.width + &#x27;\n&#x27;;
+         msg += &#x27;height: &#x27; + coords.height;
+      alert(msg);
+    });
+    
+});
+&lt;&#x2F;script&gt;</pre>
+
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                        <li data-description="This example shows how to create an ImageCropper from markup">
+                                            <a href="imagecropper-basic.html">Augmenting an image with an ImageCropper</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="This example shows how to use ImageCropper events to show a preview of the image being cropped">
+                                            <a href="imagecropper-events.html">Using the crop event</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="This example shows how to select the image to crop from a list of thumbnails">
+                                            <a href="imagecropper-gallery.html">Cropping images from thumbnails</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="This example shows how to develop a Plugin for ImageCropper that resizes the widget automatically based on the size of its image">
+                                            <a href="imagecropper-autosize.html">Writing an ImageCropper AutoSize plugin</a>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+
+</body>
+</html>

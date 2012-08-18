@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>TreeView</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Maven+Pro:400,700">
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.4.1/build/cssgrids/grids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+
+<div id="doc">
+    <h1>TreeView</h1>
+
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset-context/cssreset-context-min.css">
+
+<div class="intro">
+<p>This example demonstrates how to enable users 
+to mutate a tree's contents, 
+while preventing malicious XSS attacks.</p>
+
+</div>
+
+<div class="yui3-skin-sam">
+    <style>
+.new { color: green; }
+</style>
+
+<div class="yui3-skin-sam yui3-cssreset">
+    <form>
+        <input id="label-text" type="text" value="New Leaf">
+        <button id="add">Add Leaf</button>
+        <button id="remove">Remove Leaf</button>
+    </form>
+    <div id="mytree"></div>
+</div>
+
+<script>
+YUI().use('treeview', 'escape', function (Y) {
+    var tree = new Y.TreeView({
+            label: "This my tree",
+            children: [
+               { label: "Leaf One" },
+               { label: "Leaf Two" }
+            ]
+        });
+    
+    tree.render("#mytree");
+    tree.expand();
+
+    // Add a new leaf, using the specified label value    
+    Y.one("#add").on("click", function (ev) {
+        var text = Y.one('#label-text').get('value');
+        tree.add({ label: '<span class="new">' + Y.Escape.html(text) + '</span>' });
+        ev.preventDefault();
+    });
+    
+    // Remove the first element of the tree if present
+    Y.one("#remove").on("click", function (ev) {
+        if (tree.item(0)) {
+            tree.item(0).remove();
+        }
+        ev.preventDefault();
+    });
+});
+</script>
+
+</div>
+
+
+<h2 id="the-markup">The Markup</h2>
+
+<p>The only markup you need to create a <code>TreeView</code>
+is an empty container element, wrapped in the 
+<code>yui3-skin-sam</code> class. 
+You'll also need to include some form controls
+for adding and removing leaves from the tree.</p> 
+
+<pre class="code prettyprint">&lt;div class=&quot;yui3-skin-sam yui3-cssreset&quot;&gt;
+    &lt;form&gt;
+        &lt;input id=&quot;label-text&quot; type=&quot;text&quot; value=&quot;New Leaf&quot;&gt;
+        &lt;button id=&quot;add&quot;&gt;Add Leaf&lt;&#x2F;button&gt;
+        &lt;button id=&quot;remove&quot;&gt;Remove Leaf&lt;&#x2F;button&gt;
+    &lt;&#x2F;form&gt;
+    &lt;div id=&quot;mytree&quot;&gt;&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<h2 id="the-css">The CSS</h2>
+
+<p>To make sure that newly added leaves are visually distinct,
+add a single CSS class:</p>
+
+<pre class="code prettyprint">&lt;style&gt;
+.new { color: green; }
+&lt;&#x2F;style&gt;</pre>
+
+
+<h2 id="the-javascript">The JavaScript</h2>
+
+<p>
+Create a YUI sandbox and load the <code>treeview</code> and 
+<code>escape</code> modules (to be used later).
+Then render a simple tree and expand it:
+</p>
+
+<pre class="code prettyprint">YUI().use(&#x27;treeview&#x27;, &#x27;escape&#x27;, function (Y) {
+    var tree = new Y.TreeView({
+            label: &quot;This my tree&quot;,
+            children: [
+               { label: &quot;Leaf One&quot; },
+               { label: &quot;Leaf Two&quot; }
+            ]
+        });
+    
+    tree.render(&quot;#mytree&quot;);
+    tree.expand();</pre>
+
+
+<p>
+Create an event listener for the "Add" button.
+When the user clicks the button, 
+get the value of the text field and
+pass it in to the tree's <code>add()</code> method 
+to create a new leaf with a new label.
+Since clicking the button submits the form,
+call <code>preventDefault()</code> to prevent a page reload.
+</p>
+
+<pre class="code prettyprint">Y.one(&quot;#add&quot;).on(&quot;click&quot;, function (ev) {
+    var text = Y.one(&#x27;#label-text&#x27;).get(&#x27;value&#x27;);
+    tree.add({ label: &#x27;&lt;span class=&quot;new&quot;&gt;&#x27; + Y.Escape.html(text) + &#x27;&lt;&#x2F;span&gt;&#x27; });
+    ev.preventDefault();
+});</pre>
+
+
+<p>
+The label is wrapped in an HTML <code>&lt;span&gt;</code> element 
+that applies the "new" class, turning the leaf green.
+However, the code uses <code>Y.Escape.html()</code> to escape
+possibly dangerous user input. 
+Since the default <code>TreeView</code> templates 
+allow the label to be arbitrary HTML,
+it's important to keep track of the HTML <em>you</em> 
+want to add versus the HTML that a user might try to inject.
+</p>
+
+<p>
+Finally, create an event listener for the "Remove" button
+to select and remove the first element of the tree.
+</p>
+
+<pre class="code prettyprint">Y.one(&quot;#remove&quot;).on(&quot;click&quot;, function (ev) {
+    if (tree.item(0)) {
+        tree.item(0).remove();
+    }
+    ev.preventDefault();
+});</pre>
+
+
+<h2 id="complete-example-source">Complete Example Source</h2>
+
+<pre class="code prettyprint">&lt;style&gt;
+.new { color: green; }
+&lt;&#x2F;style&gt;
+
+&lt;div class=&quot;yui3-skin-sam yui3-cssreset&quot;&gt;
+   &lt;form&gt;
+       &lt;input id=&quot;label-text&quot; type=&quot;text&quot; value=&quot;New Leaf&quot;&gt;
+       &lt;button id=&quot;add&quot;&gt;Add Leaf&lt;&#x2F;button&gt;
+       &lt;button id=&quot;remove&quot;&gt;Remove Leaf&lt;&#x2F;button&gt;
+   &lt;&#x2F;form&gt;
+   &lt;div id=&quot;mytree&quot;&gt;&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+
+&lt;script&gt;
+YUI().use(&#x27;treeview&#x27;, &#x27;escape&#x27;, function (Y) {
+   var tree = new Y.TreeView({
+           label: &quot;This my tree&quot;,
+           children: [
+              { label: &quot;Leaf One&quot; },
+              { label: &quot;Leaf Two&quot; }
+           ]
+       });
+   
+   tree.render(&quot;#mytree&quot;);
+   tree.expand();
+
+   &#x2F;&#x2F; Add a new leaf, using the specified label value    
+   Y.one(&quot;#add&quot;).on(&quot;click&quot;, function (ev) {
+       var text = Y.one(&#x27;#label-text&#x27;).get(&#x27;value&#x27;);
+       tree.add({ label: &#x27;&lt;span class=&quot;new&quot;&gt;&#x27; + Y.Escape.html(text) + &#x27;&lt;&#x2F;span&gt;&#x27; });
+       ev.preventDefault();
+   });
+   
+   &#x2F;&#x2F; Remove the first element of the tree if present
+   Y.one(&quot;#remove&quot;).on(&quot;click&quot;, function (ev) {
+       if (tree.item(0)) {
+           tree.item(0).remove();
+       }
+       ev.preventDefault();
+   });
+});
+&lt;&#x2F;script&gt;</pre>
+
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+                    <div id="toc" class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Table of Contents</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="toc">
+<li>
+<a href="#the-markup">The Markup</a>
+</li>
+<li>
+<a href="#the-css">The CSS</a>
+</li>
+<li>
+<a href="#the-javascript">The JavaScript</a>
+</li>
+<li>
+<a href="#complete-example-source">Complete Example Source</a>
+</li>
+</ul>
+                        </div>
+                    </div>
+                
+
+                
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+
+</body>
+</html>
