@@ -1,0 +1,27 @@
+{{>yui-config}}
+<style>
+.thumbs img {
+    max-width: 150px;
+    border: 4px solid transparent;
+    cursor: pointer;
+}
+.thumbs img:hover {
+    border-color: blue;
+}
+</style>
+
+<div class="intro">
+<p>
+This example expands on the <a href="imagecropper-gallery.html">Cropping images from thumbnails</a> example and shows how to make an AutoSize plugin automatically figures out the size of the ImageCropper based on the image being cropped. It uses the <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLImageElement">HTML5 Image API</a> and falls back to a less optimal strategy in older browsers.
+</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    {{>imagecropper-autosize-source}}
+</div>
+
+<h2>Complete Example Source</h2>
+
+```
+{{>imagecropper-autosize-source}}
+```
