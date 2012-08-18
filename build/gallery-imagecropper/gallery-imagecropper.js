@@ -1,9 +1,9 @@
 YUI.add('gallery-imagecropper', function(Y) {
 
-
+'use strict';
 /**
  * @description <p>Creates an Image Cropper control.</p>
- * @requires widget, resize, gallery-event-arrow
+ * @requires widget, dd-drag, dd-constrain, resize-base, resize-constrain, gallery-event-arrow
  * @module gallery-imagecropper
  */
 
@@ -20,7 +20,7 @@ var Lang = Y.Lang,
 		cropMask: getClassName(IMAGE_CROPPER, MASK),
 		resizeKnob: getClassName(IMAGE_CROPPER, RESIZE, KNOB),
 		resizeMask: getClassName(IMAGE_CROPPER, RESIZE, MASK)
-	},
+	};
 
 /**
  * @constructor
@@ -39,7 +39,10 @@ var Lang = Y.Lang,
  * @protected
  * @static
  */
-ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
+function ImageCropper() {
+	ImageCropper.superclass.constructor.apply(this, arguments);
+}
+Y.extend(ImageCropper, Y.Widget, {
 	
 	CONTENT_TEMPLATE: '<img/>',
 	
@@ -141,7 +144,7 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 
 	_handleSrcChange: function (e) {
 		this.get('contentBox').set('src', e.newVal);
-		this.get('cropResizeMask').setStyle('backgroundImage', 'url(' + e.newVal + ')');
+		this.get('resizeKnob').setStyle('backgroundImage', 'url(' + e.newVal + ')');
 	},
 	
 	_syncResizeKnob: function () {
@@ -399,7 +402,10 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	 * @chainable
 	 */
 	reset: function () {
-		this.get('resizeKnob').setXY(this.get('initialXY')).setStyles({
+		var initialXY = this.get('initialXY');
+		this.get('resizeKnob').setStyles({
+			left: initialXY[0],
+			top: initialXY[1],
 			width: this.get('initWidth'),
 			height: this.get('initHeight')
 		});
@@ -424,6 +430,8 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 	}
 	
 }, {
+
+	NAME: 'imagecropper',
 	
 	/**
 	 * Template that will contain the ImageCropper's mask.
@@ -705,4 +713,5 @@ ImageCropper = Y.Base.create('imagecropper', Y.Widget, [], {
 Y.ImageCropper = ImageCropper;
 
 
-}, 'gallery-2011.06.29-23-18' ,{skinnable:true, requires:['widget','resize','gallery-event-arrow']});
+
+}, '@VERSION@' ,{skinnable:true, requires:['widget','dd-drag','dd-constrain','resize-base','resize-constrain','gallery-event-arrow']});
