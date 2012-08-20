@@ -205,6 +205,19 @@ Y.extend(ImageCropper, Y.Widget, {
             resizeKnob.resize.con.set(e.attrName, e.newVal);
         }
     },
+
+    _syncControlsVisibility: function (e) {
+        var hidden = !e.newVal,
+            hiddenClass = this.getClassName('controls', 'hidden');
+
+        this.get('resizeKnob').toggleClass(hiddenClass, hidden);
+        this.get('cropMask').toggleClass(hiddenClass, hidden);
+    },
+
+    _syncSize: function (e) {
+        this.get('cropMask').setStyle(e.attrName, e.newVal);
+        this.get('contentBox').setStyle(e.attrName, e.newVal);
+    },
     
     _icEventProxy: function (target, ns, eventType) {
         var sourceEvent = ns + ':' + eventType,
@@ -351,6 +364,8 @@ Y.extend(ImageCropper, Y.Widget, {
         this.set('initHeight', this.get('initHeight'));
 
         this.after('sourceChange', this._handleSrcChange);
+        this.after('visibleControlsChange', this._syncControlsVisibility);
+        this.after(['widthChange', 'heightChange'], this._syncSize);
         
         YArray.each(Y.ImageCropper.RESIZE_ATTRS, function (attr) {
             this.after(attr + 'Change', this._syncResizeAttr);
@@ -378,6 +393,7 @@ Y.extend(ImageCropper, Y.Widget, {
         
         this._syncResizeKnob();
         this._syncResizeMask();
+        this._syncControlsVisibility({newVal: this.get('visibleControls')});
     },
     
     /**
@@ -628,6 +644,11 @@ Y.extend(ImageCropper, Y.Widget, {
             value: 0,
             validator: isNumber,
             setter: '_defInitWidthSetter'
+        },
+
+        visibleControls: {
+            value: true,
+            validator: Lang.isBoolean
         }
         
     }

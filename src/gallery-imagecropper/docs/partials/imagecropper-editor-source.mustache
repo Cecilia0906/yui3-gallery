@@ -1,0 +1,266 @@
+<style>
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+button {
+  background: none;
+  color: #f8f8f2;
+  border: none;
+  height: 26px;
+  line-height: 26px;
+  font-size: 14px;
+}
+#app {
+  background: #171814;
+  height: 100%;
+  position: relative;
+  color: #f8f8f2;
+}
+#bd, #ft {
+  text-align: center;
+}
+#hd,#bd, #ft {
+  width: 100%;
+}
+#bd {
+  height: 100%;
+  display: table;
+}
+#bd .canvas {
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
+}
+#hd, #ft {
+  position: fixed;
+  height: 40px;
+  line-height: 40px;
+  z-index: 2;
+  background: -moz-linear-gradient(top,  rgba(55,56,50,0.85) 0%, rgba(39,40,34,0.85) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(55,56,50,0.85)), color-stop(100%,rgba(39,40,34,0.85))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(55,56,50,0.85) 0%,rgba(39,40,34,0.85) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(55,56,50,0.85) 0%,rgba(39,40,34,0.85) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(55,56,50,0.85) 0%,rgba(39,40,34,0.85) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(55,56,50,0.85) 0%,rgba(39,40,34,0.85) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cc373832', endColorstr='#cc272822',GradientType=0 ); /* IE6-9 */
+}
+#ft {
+  bottom: 0px;
+}
+#hd {
+  top: 0px;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  *margin-right: .3em;
+  line-height: 14px;
+  vertical-align: text-top;
+  background-image: url("../img/glyphicons-halflings.png");
+  background-position: 14px 14px;
+  background-repeat: no-repeat;
+}
+
+[class^="icon-"]:last-child,
+[class*=" icon-"]:last-child {
+  *margin-left: 0;
+}
+
+.icon-white {
+  background-image: url("{{componentAssets}}/img/glyphicons-halflings-white.png");
+}
+
+.icon-ok {
+  background-position: -288px 0;
+}
+
+.icon-remove {
+  background-position: -312px 0;
+}
+
+.icon-zoom-in {
+  background-position: -336px 0;
+}
+
+.icon-chevron-left {
+  background-position: -432px -72px;
+}
+
+.icon-chevron-right {
+  background-position: -456px -72px;
+}
+
+.icon-adjust {
+  background-position: -48px -72px;
+}
+
+.icon-tint {
+  background-position: -72px -72px;
+}
+
+.icon-fire {
+  background-position: -72px -120px;
+}
+
+.icon-crop {
+  background: url({{componentAssets}}/img/icon_crop_small.png) no-repeat;
+}
+
+button[disabled=disabled] {
+  opacity: 0.5;
+}
+
+.yui3-imagecropper {
+  display: inline-block;
+}
+
+.yui3-menu .yui3-menu,
+.yui3-menu-label-menuvisible {
+  background: rgba(0, 0, 0, 0.95);
+}
+.yui3-menu .yui3-menuitem-content {
+  color: #f8f8f2;
+  text-decoration: none;
+}
+.yui3-menu .yui3-menu-content {
+  padding-left: 8px;
+}
+.yui3-menu .yui3-menuitem {
+  padding-left: 10px;
+  margin-right: 40px;
+}
+.yui3-menu .yui3-menuitem:last-child {
+  margin-right: 0;
+  text-align: right;
+}
+.yui3-menu .yui3-menu .yui3-menuitem {
+  min-width: 100px;
+  margin-right: 0;
+}
+.yui3-menu .yui3-menu .yui3-menu-content {
+  padding: 0;
+}
+.yui3-menu-label,
+.yui3-menu-content {
+  padding: 0 10px;
+}
+.yui3-menu .yui3-menu .yui3-menuitem:hover {
+  background: rgb(16,147,229); /* Old browsers */
+  background: -moz-linear-gradient(top,  rgba(16,147,229,1) 0%, rgba(18,100,186,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(16,147,229,1)), color-stop(100%,rgba(18,100,186,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(16,147,229,1) 0%,rgba(18,100,186,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(16,147,229,1) 0%,rgba(18,100,186,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(16,147,229,1) 0%,rgba(18,100,186,1) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(16,147,229,1) 0%,rgba(18,100,186,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1093e5', endColorstr='#1264ba',GradientType=0 ); /* IE6-9 */
+}
+.yui3-menu a {
+  outline: none;
+}
+
+</style>
+<div id="app">
+  <div id="hd" class="yui3-menu yui3-menu-horizontal">
+    <div class="yui3-menu-content">
+      <ul>
+        <li class="yui3-menuitem">
+          <a class="yui3-menu-label" href="#size">
+            <i class="icon-crop"></i>
+          </a>
+          <div id="size" class="yui3-menu yui3-menu-hidden"><!-- Submenu bounding box -->
+            <div class="yui3-menu-content"><!-- Submenu content box -->
+              <ul>
+                <li class="yui3-menuitem">
+                  <a class="yui3-menuitem-content" href="http://mail.yahoo.com">Crop</a>
+                </li>
+                <li class="yui3-menuitem">
+                  <a class="yui3-menuitem-content" href="http://addressbook.yahoo.com">Resize</a>
+                </li>
+                <li class="yui3-menuitem">
+                  <a class="yui3-menuitem-content" href="http://calendar.yahoo.com">Rotate</a>
+                </li>
+                <li class="yui3-menuitem">
+                  <a class="yui3-menuitem-content" href="http://notepad.yahoo.com">Straighten</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+        <li class="yui3-menuitem">
+          <a class="yui3-menu-content" href="#adjust">
+            <i class="icon-adjust icon-white"></i>
+          </a>
+        </li>
+        <li class="yui3-menuitem">
+          <a class="yui3-menu-content" href="#tint">
+            <i class="icon-tint icon-white"></i>
+          </a>
+        </li>
+        <li class="yui3-menuitem">
+          <a class="yui3-menu-content" href="#fx">
+            <i class="icon-fire icon-white"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="bd">
+    <div class="canvas">
+      <img src="http://farm9.staticflickr.com/8307/7820230280_e7f3664e9d.jpg" alt="By FilipeMoreira">
+    </div>
+  </div>
+  <div id="ft">
+    <button class="undo" disabled="disabled"><i class="icon-chevron-left icon-white"></i></button>
+    <button class="redo" disabled="disabled"><i class="icon-chevron-right icon-white"></i></button>
+  </div>
+</div>
+
+<script>
+  scrollTo(0, 0);
+YUI({
+  skin: 'night'
+}).use('node-menunav', 'resize-plugin', 'gallery-imagecropper', function (Y) {
+
+  var image = Y.one('#bd img'),
+    cropper = new Y.ImageCropper({
+      srcNode: image,
+      width: image.get('naturalWidth'),
+      height: image.get('naturalHeight'),
+      visibleControls: false,
+      render: true
+    });
+
+  if (!image.get('complete')) {
+    image.on('load', function () {
+      cropper.setAttrs({
+        width: image.get('naturalWidth'),
+        height: image.get('naturalHeight')
+      });
+    });
+  }
+
+  Y.one('#hd').plug(Y.Plugin.NodeMenuNav, {
+    autoSubmenuDisplay: false,
+    mouseOutHideDelay: 20000
+  });
+
+  Y.all('#hd .yui3-menu a').on('click', function (e) {
+    e.preventDefault();
+    switch (this.indexOf(e.target)) {
+      case 0:
+        cropper.set('visibleControls', true);
+        break;
+      case 1:
+        cropper.plug(Y.Plugin.Resize);
+        break;
+    }
+  });
+});
+</script>

@@ -24,3 +24,7 @@
 	cursor: move;
 	border: 1px dashed #fff;
 }
+
+.yui3-imagecropper-controls-hidden {
+	visibility: hidden;
+}

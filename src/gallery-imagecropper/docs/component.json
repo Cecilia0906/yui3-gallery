@@ -49,6 +49,23 @@
             "tags"          : ["imagecropper", "plugin"],
 
             "hideTableOfContents": true
+        },
+
+        {
+            "name"          : "imagecropper-editor",
+            "displayName"   : "Writing an image editor",
+            "description"   : "This example shows how to develop a simple image editor with YUI",
+            "modules"       : ["gallery-imagecropper"],
+            "tags"          : ["imagecropper", "plugin"],
+
+            "hideTableOfContents": true
         }
-    ]
+    ],
+
+    "pages": {
+        "imagecropper-editor-example": {
+            "displayName": "Image editor example",
+            "layout"     : "imagecropper-example"
+        }
+    }
 }
