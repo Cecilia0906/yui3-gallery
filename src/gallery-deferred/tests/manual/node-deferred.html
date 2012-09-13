@@ -20,14 +20,14 @@
 </head>
 <body>
 	<div class="test"></div>
-	<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script>
+	<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui.js"></script>
 	<script>
 		YUI({
 			filter: 'raw',
 			modules: {
 				'gallery-deferred': {
-					fullpath: '../build_tmp/gallery-deferred.js',
-					requires: ['event-custom']
+					fullpath: '../../build_tmp/gallery-deferred.js',
+					requires: ['oop']
 				}
 			}
 		}).use('node', 'node-load', 'transition', 'plugin', 'gallery-deferred', function (Y) {
