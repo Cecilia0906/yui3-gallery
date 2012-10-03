@@ -1,0 +1,88 @@
+{
+    "project": {},
+    "files": {
+        "js\\debounce.js": {
+            "name": "js\\debounce.js",
+            "modules": {
+                "gallery-debounce": 1
+            },
+            "classes": {},
+            "fors": {
+                "YUI": 1
+            },
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "yui": {
+            "name": "yui",
+            "submodules": {
+                "gallery-debounce": 1
+            },
+            "classes": {
+                "YUI": 1
+            },
+            "fors": {
+                "YUI": 1
+            },
+            "namespaces": {}
+        },
+        "gallery-debounce": {
+            "name": "gallery-debounce",
+            "submodules": {},
+            "classes": {
+                "YUI": 1
+            },
+            "fors": {},
+            "is_submodule": 1,
+            "namespaces": {},
+            "module": "yui",
+            "namespace": "",
+            "file": "js\\debounce.js",
+            "line": 1,
+            "description": "Debouncing is a similar strategy to throttling (see yui-throttle)\n\nY.debounce delays the execution of a function by a certain number\nof milliseconds, starting over every time the function is called.\nThat way it allows you to listen only once to events happening\nrepeated times over a time span.\n\nFor example, you can debounce a callback to a keypress event\nso that you know when the user stopped typing:\n```\nY.one('input').on('click', Y.debounce(500, function () {\n    alert('The user stopped typing');\n}));\n```"
+        }
+    },
+    "classes": {
+        "YUI": {
+            "name": "YUI",
+            "shortname": "YUI",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "yui",
+            "submodule": "gallery-debounce",
+            "namespace": ""
+        }
+    },
+    "classitems": [
+        {
+            "file": "js\\debounce.js",
+            "line": 21,
+            "description": "Debounces a function call so that it's only executed once after a certain\ntime lapse after the last time it was called",
+            "itemtype": "method",
+            "name": "debounce",
+            "params": [
+                {
+                    "name": "ms",
+                    "description": "The number of milliseconds to debounce the function call.\nPassing a -1 will disable the debounce",
+                    "type": "Number"
+                },
+                {
+                    "name": "fn",
+                    "description": "The function to delay",
+                    "type": "Function"
+                }
+            ],
+            "return": {
+                "description": "Returns a wrapped function that calls fn",
+                "type": "Function"
+            },
+            "class": "YUI",
+            "module": "yui",
+            "submodule": "gallery-debounce"
+        }
+    ]
+}
