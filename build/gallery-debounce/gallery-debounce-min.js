@@ -1,0 +1,1 @@
+YUI.add("gallery-debounce",function(a){a.debounce=function(b,d){var c;return function(){var e=this,f=arguments;if(b===-1){d.apply(e,f);return;}if(c){clearTimeout(c);}c=setTimeout(function(){d.apply(e,f);},b);};};},"@VERSION@");
