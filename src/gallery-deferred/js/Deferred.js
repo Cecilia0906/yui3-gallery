@@ -55,7 +55,7 @@ Y.mix(Deferred.prototype, {
     @return {Promise}
     **/
     promise: function (obj) {
-        return typeof obj === 'object' ? Y.mix(obj, this._promise, true) : this._promise;
+        return Y.Lang.isObject(obj) ? Y.mix(obj, this._promise, true) : this._promise;
     },
 
     /**
