@@ -21,16 +21,10 @@
 		<div id="result"></div>
 		<p id="coords"></p>
 	</div>
-	<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script> 
+	<script src="http://yui.yahooapis.com/3.7.2/build/yui/yui-min.js"></script> 
 	<script> 
 YUI({
-	filter: 'raw',
-	modules: {
-		'gallery-imagecropper': {
-			fullpath: '../build_tmp/gallery-imagecropper.js',
-			requires: ['widget','resize','gallery-event-arrow','dd-constrain']
-		}
-	}
+	gallery: 'gallery-2012.08.15-20-00'
 }).use('gallery-imagecropper', function (Y) {
 	
 	var images = [{
